@@ -5,7 +5,7 @@ from psycopg2.extras import RealDictCursor
 def create_connection():
     try:
         connection = psycopg2.connect(
-            dbname="dvdrental",        # nome do banco
+            dbname="sace",        # nome do banco
             user="postgres",        # usuário
             password="db8809&",      # senha
             host="localhost",          # ou IP do servidor
