@@ -5,9 +5,9 @@ from psycopg2.extras import RealDictCursor
 def create_connection():
     try:
         connection = psycopg2.connect(
-            dbname="sace",        # nome do banco
-            user="postgres",        # usuário
-            password="db8809&",      # senha
+            dbname="postgres",        # nome do banco
+            user="user",        # usuário
+            password="secret",      # senha
             host="localhost",          # ou IP do servidor
             port="5432"                # porta padrão do Postgres
         )

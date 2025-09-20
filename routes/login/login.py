@@ -49,6 +49,7 @@ def protected():
 
 
 @login.route('/teste_db', methods=['GET'])
+@token_required
 def login_user():
     # username = request.json['username']  # aqui você pode pegar de request.json['username']
     # password = request.json['password']  # aqui você pode pegar de request.json['username']
@@ -61,11 +62,10 @@ def login_user():
     try:
         cursor = conn.cursor()
 
-        search_user = """SELECT *
-                         FROM usuario;"""
+        search_user = """SELECT u.nome_completo, u.cpf, u.usuario_id, s.usuario_id, s.supervisor_id  FROM supervisor s INNER JOIN usuario u USING(usuario_id);"""
         
         cursor.execute(search_user)
-        fech_user = cursor.fetchone()
+        fech_user = cursor.fetchall() 
 
 
         # Se tudo certo, retorna o usuário
