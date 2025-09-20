@@ -55,7 +55,7 @@ def login_user():
     # password = request.json['password']  # aqui você pode pegar de request.json['username']
 
     # Cria conexão
-    conn = create_connection()
+    conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
 
