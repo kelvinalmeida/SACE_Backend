@@ -17,7 +17,8 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - db_data:/var/lib/postgresql/data
-
+      # Mapeia seu arquivo de backup local para o diretório de inicialização do Postgres
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
   
   adminer:
     image: adminer
