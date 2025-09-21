@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Blueprint, current_app, app
+from flask import Flask, request, jsonify, Blueprint, current_app
 import jwt
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
@@ -9,37 +9,51 @@ login = Blueprint('login', __name__)
 
 
 @login.route('/login', methods=['POST'])
-def login_page():
-    username = request.json['username']  # aqui você pode pegar de request.json['username']
+def login_user():
+    cpf = request.json['username']  # aqui você pode pegar de request.json['username']
     password = request.json['password']  # aqui você pode pegar de request.json['username']
 
-    # app.logger.debug('A value for debugging')
-    # app.logger.warning('A warning occurred (%d apples)', 42)
-    # app.logger.error('An error occurred')
+    # Cria conexão
+    conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
+    if conn is None:
+        return jsonify({"error": "Database connection failed"}), 500
 
     try:
-        if not username == 'admin': 
-            return jsonify({"error": "Username not found"}), 404
+        cursor = conn.cursor()
+
+        search_user = """SELECT cpf, senha, nivel_de_acesso FROM usuario WHERE cpf = %s AND senha = %s;"""
         
-        if not password == '123456':
-            return jsonify({"error": "Incorrect password"}), 401
+        cursor.execute(search_user, (cpf, password))
+        fech_user = cursor.fetchone()
+
+        # return f"fech_user: {fech_user}"
+
+        if fech_user is None:
+            return jsonify({"error": "User not found"}), 404
         
+
         # Define tempo de expiração (30 minutos a partir de agora)
         exp_time = datetime.utcnow() + timedelta(minutes=120)
 
         token = jwt.encode({
-            "username": username,
+            "username": cpf,
             "exp": exp_time  # Define a expiração do token
         }, current_app.config['SECRET_KEY'], algorithm="HS256")
 
         # Se tudo certo, retorna o usuário
         return jsonify({
-            "username": username,
+            "username": fech_user["cpf"],
+            "nivel_de_acesso": fech_user["nivel_de_acesso"],
             "token": token
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
     
     
 @login.route("/protected", methods=["GET"])
@@ -50,19 +64,20 @@ def protected():
 
 @login.route('/teste_db', methods=['GET'])
 @token_required
-def login_user():
+def login_teste():
     # username = request.json['username']  # aqui você pode pegar de request.json['username']
     # password = request.json['password']  # aqui você pode pegar de request.json['username']
 
     # Cria conexão
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
+
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
 
     try:
         cursor = conn.cursor()
 
-        search_user = """SELECT u.nome_completo, u.cpf, u.usuario_id, s.usuario_id, s.supervisor_id  FROM supervisor s INNER JOIN usuario u USING(usuario_id);"""
+        search_user = """SELECT cpf, senha, nivel_de_acesso FROM usuario;"""
         
         cursor.execute(search_user)
         fech_user = cursor.fetchall() 

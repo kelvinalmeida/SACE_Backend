@@ -15,8 +15,14 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
   
   adminer:
     image: adminer
     ports:
       - 8080:8080
+
+volumes:
+  db_data:
