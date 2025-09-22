@@ -1,7 +1,37 @@
 # 📌 Como rodar o projeto
 
+## 1 - Instale o Docker Descktop:
+
+[https://www.docker.com/](https://www.docker.com/)
+
+## 2. Clone o repositório
+```bash
+git clone <link-do-repositorio>
+cd <nome-da-pasta>
+```
+
+## 2. Entre na pasta do projeto
+
+## 3. Crie as imagems (flask + postgres)
+```bash
+docker-compose build
+```
+
+## 3. Inicie o peojeto
+```bash
+docker-compose up
+```
+
+## A API será iniciada e estará disponível em:
+```
+http://localhost:5000
+```
+
+
+<!-- # 📌 Como rodar o projeto
+
 ## 1. Instale o Python
-- Baixe e instale o Python no site oficial: [https://www.python.org/](https://www.python.org/)
+- Baixe e instale o Python no site oficial: 
 
 ---
 
@@ -46,4 +76,4 @@ python app.py
 A API será iniciada e estará disponível em:
 ```
 http://localhost:5000
-```
+``` -->
