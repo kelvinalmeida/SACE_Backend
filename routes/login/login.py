@@ -65,27 +65,28 @@ def protected():
 @login.route('/teste_db', methods=['GET'])
 @token_required
 def login_teste():
-    # username = request.json['username']  # aqui você pode pegar de request.json['username']
+    role = request.json['role']  # aqui você pode pegar de request.json['username']
     # password = request.json['password']  # aqui você pode pegar de request.json['username']
 
     # Cria conexão
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
 
+    
+
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
-
     try:
         cursor = conn.cursor()
 
-        search_user = """SELECT cpf, senha, nivel_de_acesso FROM usuario;"""
+        search_user = """SELECT * FROM usuario WHERE nivel_de_acesso = %s;"""
         
-        cursor.execute(search_user)
-        fech_user = cursor.fetchall() 
+        cursor.execute(search_user, (role,))
+        fech = cursor.fetchall()
 
 
         # Se tudo certo, retorna o usuário
         return jsonify({
-            "db": fech_user
+            "db": fech
         })
 
     except Exception as e:
@@ -94,6 +95,9 @@ def login_teste():
     finally:
         cursor.close()
         conn.close()
+
+
+
 
 
     
