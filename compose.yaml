@@ -20,7 +20,7 @@ services:
         LC_CTYPE: C.UTF-8 
       volumes:
         - db_data:/var/lib/postgresql/data
-        - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+        # - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
   
   adminer:
     image: adminer

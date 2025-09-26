@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, Blueprint, current_app, session
 from db import create_connection
 from token_required import token_required
 import json
+from werkzeug.utils import secure_filename
+
 
 registro_de_campo = Blueprint('registro_de_campo', __name__)
 
@@ -9,7 +11,6 @@ registro_de_campo = Blueprint('registro_de_campo', __name__)
 @token_required
 def send_registro_de_campo():
 
-    
     rua = request.form.get('rua')
     imovel_numero = request.form.get('imovel_numero')
     imovel_lado = request.form.get('imovel_lado')
@@ -18,11 +19,16 @@ def send_registro_de_campo():
     imovel_status = request.form.get('imovel_status')
     imovel_complemento = request.form.get('imovel_complemento')
     formulario_tipo = request.form.get('formulario_tipo')
-    li = request.form.get('li')
-    pe = request.form.get('pe')
-    t = request.form.get('t')
-    df = request.form.get('df')
-    pve = request.form.get('pve')
+
+    try:
+        li = bool(request.form.get('li'))
+        pe = bool(request.form.get('pe'))
+        t = bool(request.form.get('t'))
+        df = bool(request.form.get('df'))
+        pve = bool(request.form.get('pve'))
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid input for li, pe, t, df, or pve. They must be boolean values."}), 400
+
     numero_da_amostra = request.form.get('numero_da_amostra')
     quantiade_tubitos = request.form.get('quantiade_tubitos')
     observacao = request.form.get('observacao')
@@ -49,9 +55,9 @@ def send_registro_de_campo():
         return jsonify({"error": "Database connection failed"}), 500
     
 
-
+    
+    # Query para buscar a área de visita do agente logado
     try:
-        # Query para buscar a área de visita do agente logado
         cursor = conn.cursor()
         search_agente_area_de_visita = """SELECT area_de_visita_id FROM agente_area_de_visita WHERE agente_id = %s AND area_de_visita_id = %s;"""
 
@@ -63,8 +69,9 @@ def send_registro_de_campo():
 
     except Exception as e:
         return jsonify({"error": "Agente não está associado a área de visita informada."}), 400
+    
 
-
+    # Inserir Depósito
     try:
         cursor = conn.cursor()
         insir_deposito = """
@@ -89,16 +96,105 @@ def send_registro_de_campo():
         if resultado:
             deposito_id = resultado["deposito_id"]
         else:
+            conn.rollback()
             raise Exception("Falha ao obter o ID do depósito após a inserção.")
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+    #Inserir Registro de Campo
+    try:
+        cursor = conn.cursor()
+        inserir_registro_de_campo = """INSERT INTO registro_de_campo(
+            rua, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING registro_de_campo_id; """
+        
+        cursor.execute(inserir_registro_de_campo, (rua, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id))
 
+        registro_de_campo_id = cursor.fetchone()
+        registro_de_campo_id = registro_de_campo_id['registro_de_campo_id']
+        conn.commit()
 
     except Exception as e:
+        conn.rollback()
         return jsonify({"error": str(e)}), 500
+    
+
+    # Inserir Larvicidas
+    try:
+        # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
+        cursor = conn.cursor()
+        larvicidas = json.loads(request.form.get('larvicidas', '[]'))
+
+        for larvicida in larvicidas:
+            tipo = larvicida.get('tipo')
+            forma = larvicida.get('forma')
+            quantidade = larvicida.get('quantidade')
+            registro_de_campo_id = registro_de_campo_id
+
+            inserir_larvicidas = """INSERT INTO larvicida(tipo, forma, quantidade, registro_de_campo_id) VALUES (%s, %s, %s, %s);"""
+
+            print("Larvicidas: ", tipo, forma, quantidade, registro_de_campo_id)
+
+            cursor.execute(inserir_larvicidas, (tipo, forma, quantidade, registro_de_campo_id))
+        
+        conn.commit()
+            
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": "Database error: " + str(e)}), 500
+    
+
+
+    # Inserir Adulticidas
+    try:
+        # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
+        cursor = conn.cursor()
+        adulticidas = json.loads(request.form.get('adulticidas', '[]'))
+
+        for adulticida in adulticidas:
+            tipo = adulticida.get('tipo')
+            quantidade = adulticida.get('quantidade')
+            registro_de_campo_id = registro_de_campo_id
+
+            inserir_adulticidas = """INSERT INTO adulticida(tipo, quantidade, registro_de_campo_id) VALUES (%s, %s, %s);"""
+
+            print("adulticida: ", tipo, quantidade, registro_de_campo_id)
+
+            cursor.execute(inserir_adulticidas, (tipo, quantidade, registro_de_campo_id))
+        
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": "Database error: " + str(e)}), 500
+    
+
+    try:
+        # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
+        # cursor = conn.cursor()
+        # arquivos = json.loads(request.form.get('arquivos', '[]'))
+        print("request.files: ", request.files)
+        files = {}
+        count = 0
+        for file in request.files.getlist('files'):
+            files[secure_filename(file.filename)] = secure_filename(file.filename)
+            
+            arquivo_nome = secure_filename(file.filename)
+
+            inserir_arquivos = """INSERT INTO registro_de_campo_arquivos(arquivo_nome, registro_de_campo_id) VALUES (%s, %s);""" 
+
+            print("inserir_arquivos: ", arquivo_nome, registro_de_campo_id)
+
+            cursor.execute(inserir_arquivos, (arquivo_nome, registro_de_campo_id))
+
+            file.save(f'uploads/registro_de_campo_arquivos/reg_de_campo_id_{registro_de_campo_id}_{arquivo_nome}')
+        
+        conn.commit()
     finally:
+        conn.rollback()
         conn.close()
         cursor.close()
-
-    
 
 
     return jsonify({
@@ -130,7 +226,8 @@ def send_registro_de_campo():
             'd1': d1,
             'd2': d2,
             'e': e,
-            'deposito_id': deposito_id
+            'deposito_id': deposito_id,
+            'files': files
         }
     })
 

@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict IkDj5uW3JrHJnwDjIuCtMCL8Tjm1SeJacholQn5NnxZsqGzzpjW0S90rHOGE7IF
+\restrict eW4OzxuOKPADaqIcYhjnHlUTzcIYFtC8G1DLcVXixlGXmN4d5wRqoBBrqxrsPi4
 
--- Dumped from database version 17.6 (Debian 17.6-1.pgdg13+1)
--- Dumped by pg_dump version 17.6 (Debian 17.6-1.pgdg13+1)
+-- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
+-- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -29,6 +29,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.adulticida (
     adulticida_id integer NOT NULL,
+    registro_de_campo_id integer,
     tipo character varying(100),
     quantidade smallint
 );
@@ -349,6 +350,7 @@ ALTER TABLE public.depositos ALTER COLUMN deposito_id ADD GENERATED ALWAYS AS ID
 
 CREATE TABLE public.larvicida (
     larvicida_id integer NOT NULL,
+    registro_de_campo_id integer,
     tipo character varying(100),
     forma character varying(100),
     quantidade smallint
@@ -376,7 +378,7 @@ ALTER TABLE public.larvicida ALTER COLUMN larvicida_id ADD GENERATED ALWAYS AS I
 --
 
 CREATE TABLE public.registro_de_campo (
-    registro_de_campo integer NOT NULL,
+    registro_de_campo_id integer NOT NULL,
     rua character varying(200) NOT NULL,
     imovel_numero smallint NOT NULL,
     imovel_lado character varying(10) NOT NULL,
@@ -395,10 +397,7 @@ CREATE TABLE public.registro_de_campo (
     observacao character varying(200),
     area_de_visita_id integer,
     agente_id integer,
-    deposito_id integer,
-    larvicida_id integer,
-    adulticida_id integer,
-    registro_de_campo_arquivo_id integer
+    deposito_id integer
 );
 
 
@@ -409,7 +408,8 @@ ALTER TABLE public.registro_de_campo OWNER TO "user";
 --
 
 CREATE TABLE public.registro_de_campo_arquivos (
-    registro_de_campo_arquivo_id integer NOT NULL,
+    registro_de_campo_arquivo_id integer CONSTRAINT registro_de_campo_arquivos_registro_de_campo_arquivo_i_not_null NOT NULL,
+    registro_de_campo_id integer,
     arquivo_nome character varying(100)
 );
 
@@ -431,11 +431,11 @@ ALTER TABLE public.registro_de_campo_arquivos ALTER COLUMN registro_de_campo_arq
 
 
 --
--- Name: registro_de_campo_registro_de_campo_seq; Type: SEQUENCE; Schema: public; Owner: user
+-- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
-ALTER TABLE public.registro_de_campo ALTER COLUMN registro_de_campo ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.registro_de_campo_registro_de_campo_seq
+ALTER TABLE public.registro_de_campo ALTER COLUMN registro_de_campo_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.registro_de_campo_registro_de_campo_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -519,37 +519,37 @@ ALTER TABLE public.usuario ALTER COLUMN usuario_id ADD GENERATED ALWAYS AS IDENT
 -- Data for Name: adulticida; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.adulticida (adulticida_id, tipo, quantidade) FROM stdin;
-1	Adulticida de Borrifação Residual (Piretróide)	20
-2	Adulticida de Borrifação Residual (Piretróide)	15
-3	Adulticida de Borrifação Residual (Piretróide)	25
-4	Adulticida de Borrifação Residual (Piretróide)	10
-5	Adulticida de Borrifação Residual (Piretróide)	30
-6	Adulticida de Borrifação Residual (Piretróide)	20
-7	Adulticida de Borrifação Residual (Piretróide)	18
-8	Adulticida de Borrifação Residual (Piretróide)	22
-9	Adulticida de Borrifação Residual (Piretróide)	35
-10	Adulticida de Borrifação Residual (Piretróide)	15
-11	Adulticida de Borrifação Residual (Piretróide)	20
-12	Adulticida de Borrifação Residual (Piretróide)	25
-13	Adulticida de Borrifação Residual (Piretróide)	12
-14	Adulticida de Borrifação Residual (Piretróide)	28
-15	Adulticida de Borrifação Residual (Piretróide)	20
-16	Adulticida de Borrifação Residual (Piretróide)	15
-17	Adulticida de Borrifação Residual (Piretróide)	30
-18	Adulticida de Borrifação Residual (Piretróide)	24
-19	Adulticida de Borrifação Residual (Piretróide)	16
-20	Adulticida de Borrifação Residual (Piretróide)	20
-21	Adulticida de Borrifação Residual (Piretróide)	25
-22	Adulticida de Borrifação Residual (Piretróide)	10
-23	Adulticida de Borrifação Residual (Piretróide)	40
-24	Adulticida de Borrifação Residual (Piretróide)	22
-25	Adulticida de Borrifação Residual (Piretróide)	18
-26	Adulticida de Borrifação Residual (Piretróide)	20
-27	Adulticida de Borrifação Residual (Piretróide)	30
-28	Adulticida de Borrifação Residual (Piretróide)	15
-29	Adulticida de Borrifação Residual (Piretróide)	25
-30	Adulticida de Borrifação Residual (Piretróide)	20
+COPY public.adulticida (adulticida_id, registro_de_campo_id, tipo, quantidade) FROM stdin;
+1	1	Adulticida de Borrifação Residual (Piretróide)	20
+2	4	Adulticida de Borrifação Residual (Piretróide)	15
+3	7	Adulticida de Borrifação Residual (Piretróide)	25
+4	9	Adulticida de Borrifação Residual (Piretróide)	10
+5	11	Adulticida de Borrifação Residual (Piretróide)	30
+6	15	Adulticida de Borrifação Residual (Piretróide)	20
+7	17	Adulticida de Borrifação Residual (Piretróide)	18
+8	21	Adulticida de Borrifação Residual (Piretróide)	22
+9	24	Adulticida de Borrifação Residual (Piretróide)	35
+10	26	Adulticida de Borrifação Residual (Piretróide)	15
+11	31	Adulticida de Borrifação Residual (Piretróide)	20
+12	34	Adulticida de Borrifação Residual (Piretróide)	25
+13	37	Adulticida de Borrifação Residual (Piretróide)	12
+14	41	Adulticida de Borrifação Residual (Piretróide)	28
+15	45	Adulticida de Borrifação Residual (Piretróide)	20
+16	3	Adulticida de Borrifação Residual (Piretróide)	15
+17	5	Adulticida de Borrifação Residual (Piretróide)	30
+18	8	Adulticida de Borrifação Residual (Piretróide)	24
+19	10	Adulticida de Borrifação Residual (Piretróide)	16
+20	13	Adulticida de Borrifação Residual (Piretróide)	20
+21	16	Adulticida de Borrifação Residual (Piretróide)	25
+22	19	Adulticida de Borrifação Residual (Piretróide)	10
+23	22	Adulticida de Borrifação Residual (Piretróide)	40
+24	25	Adulticida de Borrifação Residual (Piretróide)	22
+25	28	Adulticida de Borrifação Residual (Piretróide)	18
+26	30	Adulticida de Borrifação Residual (Piretróide)	20
+27	33	Adulticida de Borrifação Residual (Piretróide)	30
+28	38	Adulticida de Borrifação Residual (Piretróide)	15
+29	4	Adulticida de Borrifação Residual (Piretróide)	25
+30	21	Adulticida de Borrifação Residual (Piretróide)	20
 \.
 
 
@@ -820,47 +820,47 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 -- Data for Name: larvicida; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.larvicida (larvicida_id, tipo, forma, quantidade) FROM stdin;
-1	Pyriproxyfen	Granulado	2
-2	Bti (Bacillus thuringiensis israelensis)	Tablete	1
-3	Spinosad	Tablete	1
-4	Pyriproxyfen	Granulado	5
-5	Bti (Bacillus thuringiensis israelensis)	Granulado	10
-6	Bti (Bacillus thuringiensis israelensis)	Tablete	2
-7	Pyriproxyfen	Granulado	3
-8	Pyriproxyfen	Granulado	4
-9	Bti (Bacillus thuringiensis israelensis)	Granulado	15
-10	Methoprene	Líquido	20
-11	Spinosad	Tablete	1
-12	Pyriproxyfen	Granulado	2
-13	Bti (Bacillus thuringiensis israelensis)	Tablete	1
-14	Pyriproxyfen	Granulado	5
-15	Pyriproxyfen	Granulado	3
-16	Bti (Bacillus thuringiensis israelensis)	Granulado	8
-17	Bti (Bacillus thuringiensis israelensis)	Tablete	1
-18	Pyriproxyfen	Granulado	6
-19	Methoprene	Líquido	30
-20	Pyriproxyfen	Granulado	4
-21	Bti (Bacillus thuringiensis israelensis)	Granulado	12
-22	Spinosad	Tablete	2
-23	Pyriproxyfen	Granulado	2
-24	Bti (Bacillus thuringiensis israelensis)	Tablete	1
-25	Pyriproxyfen	Granulado	7
-26	Bti (Bacillus thuringiensis israelensis)	Granulado	5
-27	Bti (Bacillus thuringiensis israelensis)	Tablete	2
-28	Pyriproxyfen	Granulado	3
-29	Pyriproxyfen	Granulado	5
-30	Bti (Bacillus thuringiensis israelensis)	Granulado	10
-31	Spinosad	Tablete	1
-32	Pyriproxyfen	Granulado	4
-33	Bti (Bacillus thuringiensis israelensis)	Tablete	1
-34	Pyriproxyfen	Granulado	2
-35	Bti (Bacillus thuringiensis israelensis)	Granulado	20
-36	Pyriproxyfen	Granulado	3
-37	Bti (Bacillus thuringiensis israelensis)	Tablete	1
-38	Methoprene	Líquido	25
-39	Pyriproxyfen	Granulado	5
-40	Bti (Bacillus thuringiensis israelensis)	Granulado	10
+COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantidade) FROM stdin;
+1	1	Pyriproxyfen	Granulado	2
+2	2	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+3	4	Spinosad	Tablete	1
+4	6	Pyriproxyfen	Granulado	5
+5	7	Bti (Bacillus thuringiensis israelensis)	Granulado	10
+6	9	Bti (Bacillus thuringiensis israelensis)	Tablete	2
+7	11	Pyriproxyfen	Granulado	3
+8	14	Pyriproxyfen	Granulado	4
+9	15	Bti (Bacillus thuringiensis israelensis)	Granulado	15
+10	17	Methoprene	Líquido	20
+11	21	Spinosad	Tablete	1
+12	24	Pyriproxyfen	Granulado	2
+13	26	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+14	27	Pyriproxyfen	Granulado	5
+15	31	Pyriproxyfen	Granulado	3
+16	32	Bti (Bacillus thuringiensis israelensis)	Granulado	8
+17	33	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+18	34	Pyriproxyfen	Granulado	6
+19	37	Methoprene	Líquido	30
+20	41	Pyriproxyfen	Granulado	4
+21	44	Bti (Bacillus thuringiensis israelensis)	Granulado	12
+22	45	Spinosad	Tablete	2
+23	1	Pyriproxyfen	Granulado	2
+24	3	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+25	5	Pyriproxyfen	Granulado	7
+26	8	Bti (Bacillus thuringiensis israelensis)	Granulado	5
+27	10	Bti (Bacillus thuringiensis israelensis)	Tablete	2
+28	12	Pyriproxyfen	Granulado	3
+29	13	Pyriproxyfen	Granulado	5
+30	16	Bti (Bacillus thuringiensis israelensis)	Granulado	10
+31	18	Spinosad	Tablete	1
+32	20	Pyriproxyfen	Granulado	4
+33	7	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+34	25	Pyriproxyfen	Granulado	2
+35	28	Bti (Bacillus thuringiensis israelensis)	Granulado	20
+36	29	Pyriproxyfen	Granulado	3
+37	30	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+38	15	Methoprene	Líquido	25
+39	35	Pyriproxyfen	Granulado	5
+40	4	Bti (Bacillus thuringiensis israelensis)	Granulado	10
 \.
 
 
@@ -868,52 +868,52 @@ COPY public.larvicida (larvicida_id, tipo, forma, quantidade) FROM stdin;
 -- Data for Name: registro_de_campo; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.registro_de_campo (registro_de_campo, rua, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id, larvicida_id, adulticida_id, registro_de_campo_arquivo_id) FROM stdin;
-1	Rua Engenheiro Mário de Gusmão	123	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1	1	1	1
-2	Avenida João Davino	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	2	2	2	2	2
-3	Rua Epaminondas Gracindo	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	3	3	3	3	3
-4	Rua Íris Alagoense	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	4	4	4	4	4
-5	Rua Lauro Machado da Costa	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	5	5	5	5	5
-6	Rua São José	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A001	2	Coleta de amostra em ralo.	6	6	6	6	6	6
-7	Avenida Norma Pimentel da Costa	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	7	7	7	7	7
-8	Avenida Presidente Roosevelt	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	8	8	8	8	8
-9	Rua Doutor José de Castro Azevedo	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	9	9	9	9	9
-10	Rua Adolfo Monteiro	1500	Par	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda.	10	10	10	10	10	10
-11	Rua General João Saleiro Pitão	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	11	11	11	11
-12	Rua Industrial Cícero Toledo	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	12	12	12	12
-13	Rua Quintino Bocaiúva	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	13	13	13	13
-14	Avenida Moreira e Silva	40	Par	Urbana	Residência	Visitado	\N	Zica	t	f	f	t	f	A002	3	Amostra coletada de balde no quintal.	4	14	14	14	14	14
-15	Rua Bacharel Benigno de Oliveira	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	15	15	15	15
-16	Rua do Sol	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	16	16	\N	16
-17	Rua Caxangá	2048	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Caixa d'água destampada, tratada.	7	17	17	17	\N	17
-18	Rua Adolfo Gustavo	321	Ímpar	Urbana	Comércio	Visitado	Padaria	Dengue	f	f	f	f	f	\N	\N	Sem anormalidades.	8	1	18	18	\N	18
-19	Avenida Artagnan Martins	55	Ímpar	Urbana	Residência	Recusado	Portão alto	Zica	f	f	f	f	f	\N	\N	Proprietário se recusou a abrir.	9	2	19	19	\N	19
-20	Rua Doutor Antônio Cansanção	876	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	3	20	20	\N	20
-21	Rua Doutor Noel Nutels	901	Ímpar	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em piscina abandonada, tratada.	1	4	21	21	\N	\N
-22	Rua Bancário Rady Gusmão do Nascimento	112	Par	Urbana	Outros	Visitado	Igreja	Dengue	f	t	f	f	f	\N	\N	Verificado bebedouros e calhas.	2	5	22	22	\N	\N
-23	Rua Doutor Lessa de Azevedo	433	Ímpar	Urbana	Residência	Visitado	Apto 505	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	6	23	23	\N	\N
-24	Rua Professor Guedes de Miranda	1800	Par	Urbana	Comércio	Tratado	Supermercado	Zica	f	t	t	t	f	\N	\N	Tratamento em área de carga/descarga.	4	7	24	24	\N	\N
-25	Rua João Lins	21	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	t	f	f	f	f	A003	1	Coleta de amostra positiva.	5	8	25	25	\N	\N
-26	Rua Santa Inês	777	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	9	26	26	\N	\N
-27	Avenida Garça Torta	1234	Par	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	10	27	27	\N	\N
-28	Rua Emérito de Farias	56	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	11	28	28	\N	\N
-29	Rua Elói de Lemos	821	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água.	9	12	29	29	\N	\N
-30	Rua Pompeu Sarmento	10	Par	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	30	30	\N	\N
-31	Avenida Álvaro Otacílio	222	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Tratamento focal realizado.	1	14	31	\N	\N	\N
-32	Avenida Doutor Antônio Gomes de Barros	345	Ímpar	Urbana	Outros	Visitado	Cemitério	Zica	f	t	f	t	f	\N	\N	Verificação de vasos e jazigos.	2	15	32	\N	\N	\N
-33	Rua Jangadeiros Alagoanos	981	Ímpar	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	t	f	\N	\N	Pneus armazenados corretamente.	3	16	33	\N	\N	\N
-34	Avenida Fernandes Lima	1730	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	17	34	\N	\N	\N
-35	Avenida Brigadeiro Eduardo Gomes de Brito	501	Ímpar	Urbana	Residência	Fechado	Apto 501	Dengue	f	f	f	f	f	\N	\N	Morador não atendeu.	5	1	35	\N	\N	\N
-36	Rua Cleto Campelo	48	Par	Urbana	Comércio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	6	2	36	\N	\N	\N
-37	Avenida Cachoeira do Meirim	679	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Denúncia procedente. Local tratado.	7	3	37	\N	\N	\N
-38	Avenida Menino Marcelo	1111	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum verificada.	8	4	38	\N	\N	\N
-39	Rua Artur Vital da Silva	30	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	5	39	\N	\N	\N
-40	Rua Professora Maria Esther da Costa Barros	499	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Sem água parada no momento.	10	6	40	\N	\N	\N
-41	Rua Engenheiro Mário de Gusmão	580	Par	Urbana	Residência	Tratado	\N	Dengue	t	f	t	t	f	A004	4	Amostra coletada e local tratado.	1	7	41	\N	\N	\N
-42	Avenida João Davino	128	Par	Urbana	Comércio	Visitado	Galpão	Dengue	f	t	f	f	f	\N	\N	Inspecionado.	2	8	42	\N	\N	\N
-43	Rua Epaminondas Gracindo	77	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tentativa de visita sem sucesso.	3	9	43	\N	\N	\N
-44	Rua Íris Alagoense	300	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Orientações verbais fornecidas.	4	10	44	\N	\N	\N
-45	Rua Lauro Machado da Costa	1420	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	11	45	\N	\N	\N
+COPY public.registro_de_campo (registro_de_campo_id, rua, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id) FROM stdin;
+1	Rua Engenheiro Mário de Gusmão	123	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1
+2	Avenida João Davino	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	2	2
+3	Rua Epaminondas Gracindo	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	3	3
+4	Rua Íris Alagoense	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	4	4
+5	Rua Lauro Machado da Costa	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	5	5
+6	Rua São José	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A001	2	Coleta de amostra em ralo.	6	6	6
+7	Avenida Norma Pimentel da Costa	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	7	7
+8	Avenida Presidente Roosevelt	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	8	8
+9	Rua Doutor José de Castro Azevedo	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	9	9
+10	Rua Adolfo Monteiro	1500	Par	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda.	10	10	10
+11	Rua General João Saleiro Pitão	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	11
+12	Rua Industrial Cícero Toledo	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	12
+13	Rua Quintino Bocaiúva	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	13
+14	Avenida Moreira e Silva	40	Par	Urbana	Residência	Visitado	\N	Zica	t	f	f	t	f	A002	3	Amostra coletada de balde no quintal.	4	14	14
+15	Rua Bacharel Benigno de Oliveira	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	15
+16	Rua do Sol	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	16
+17	Rua Caxangá	2048	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Caixa d'água destampada, tratada.	7	17	17
+18	Rua Adolfo Gustavo	321	Ímpar	Urbana	Comércio	Visitado	Padaria	Dengue	f	f	f	f	f	\N	\N	Sem anormalidades.	8	1	18
+19	Avenida Artagnan Martins	55	Ímpar	Urbana	Residência	Recusado	Portão alto	Zica	f	f	f	f	f	\N	\N	Proprietário se recusou a abrir.	9	2	19
+20	Rua Doutor Antônio Cansanção	876	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	3	20
+21	Rua Doutor Noel Nutels	901	Ímpar	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em piscina abandonada, tratada.	1	4	21
+22	Rua Bancário Rady Gusmão do Nascimento	112	Par	Urbana	Outros	Visitado	Igreja	Dengue	f	t	f	f	f	\N	\N	Verificado bebedouros e calhas.	2	5	22
+23	Rua Doutor Lessa de Azevedo	433	Ímpar	Urbana	Residência	Visitado	Apto 505	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	6	23
+24	Rua Professor Guedes de Miranda	1800	Par	Urbana	Comércio	Tratado	Supermercado	Zica	f	t	t	t	f	\N	\N	Tratamento em área de carga/descarga.	4	7	24
+25	Rua João Lins	21	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	t	f	f	f	f	A003	1	Coleta de amostra positiva.	5	8	25
+26	Rua Santa Inês	777	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	9	26
+27	Avenida Garça Torta	1234	Par	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	10	27
+28	Rua Emérito de Farias	56	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	11	28
+29	Rua Elói de Lemos	821	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água.	9	12	29
+30	Rua Pompeu Sarmento	10	Par	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	30
+31	Avenida Álvaro Otacílio	222	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Tratamento focal realizado.	1	14	31
+32	Avenida Doutor Antônio Gomes de Barros	345	Ímpar	Urbana	Outros	Visitado	Cemitério	Zica	f	t	f	t	f	\N	\N	Verificação de vasos e jazigos.	2	15	32
+33	Rua Jangadeiros Alagoanos	981	Ímpar	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	t	f	\N	\N	Pneus armazenados corretamente.	3	16	33
+34	Avenida Fernandes Lima	1730	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	17	34
+35	Avenida Brigadeiro Eduardo Gomes de Brito	501	Ímpar	Urbana	Residência	Fechado	Apto 501	Dengue	f	f	f	f	f	\N	\N	Morador não atendeu.	5	1	35
+36	Rua Cleto Campelo	48	Par	Urbana	Comércio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	6	2	36
+37	Avenida Cachoeira do Meirim	679	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Denúncia procedente. Local tratado.	7	3	37
+38	Avenida Menino Marcelo	1111	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum verificada.	8	4	38
+39	Rua Artur Vital da Silva	30	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	5	39
+40	Rua Professora Maria Esther da Costa Barros	499	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Sem água parada no momento.	10	6	40
+41	Rua Engenheiro Mário de Gusmão	580	Par	Urbana	Residência	Tratado	\N	Dengue	t	f	t	t	f	A004	4	Amostra coletada e local tratado.	1	7	41
+42	Avenida João Davino	128	Par	Urbana	Comércio	Visitado	Galpão	Dengue	f	t	f	f	f	\N	\N	Inspecionado.	2	8	42
+43	Rua Epaminondas Gracindo	77	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tentativa de visita sem sucesso.	3	9	43
+44	Rua Íris Alagoense	300	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Orientações verbais fornecidas.	4	10	44
+45	Rua Lauro Machado da Costa	1420	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	11	45
 \.
 
 
@@ -921,27 +921,27 @@ COPY public.registro_de_campo (registro_de_campo, rua, imovel_numero, imovel_lad
 -- Data for Name: registro_de_campo_arquivos; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, arquivo_nome) FROM stdin;
-1	IMG_20250921_101532.jpg
-2	IMG_20250921_101545_foco_caixa_dagua.jpg
-3	IMG_20250921_110510_pneus_quintal.jpg
-4	d3e4f5a6-b7c8-9012-d3e4-f5a6b7c89012.jpg
-5	foto_terreno_antes_limpeza.png
-6	foto_terreno_depois_limpeza.png
-7	IMG_20250921_093301_prova_visita.jpg
-8	IMG_20250921_093315_larvicida_aplicado.jpg
-9	VID_20250921_093500_vistoria.mp4
-10	e4f5a6b7-c8d9-0123-e4f5-a6b7c8d90123.jpg
-11	IMG_20250921_104520_vasos_de_planta.jpg
-12	IMG_20250921_104535_tratamento_focal.jpg
-13	a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890.jpg
-14	foto_calha_entupida_com_agua.jpg
-15	foto_prova_tratamento.jpg
-16	IMG_20250921_112005.jpg
-17	IMG_20250921_112018_prova_visita_recusada.jpg
-18	b2c3d4e5-f6a7-8901-b2c3-d4e5f6a78901.png
-19	VID_20250921_141000_conversa_com_morador.mp4
-20	IMG_20250921_141230_imovel_fechado.jpg
+COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, registro_de_campo_id, arquivo_nome) FROM stdin;
+1	1	IMG_20250926_101532.jpg
+2	1	IMG_20250926_101545_foco_caixa_dagua.jpg
+3	4	IMG_20250926_110510_pneus_quintal.jpg
+4	4	d3e4f5a6-b7c8-9012-d3e4-f5a6b7c89012.jpg
+5	4	foto_terreno_antes_limpeza.png
+6	4	foto_terreno_depois_limpeza.png
+7	6	IMG_20250926_093301_prova_visita.jpg
+8	7	IMG_20250926_093315_larvicida_aplicado.jpg
+9	9	VID_20250926_093500_vistoria.mp4
+10	10	e4f5a6b7-c8d9-0123-e4f5-a6b7c8d90123.jpg
+11	11	IMG_20250926_104520_vasos_de_planta.jpg
+12	11	IMG_20250926_104535_tratamento_focal.jpg
+13	15	a1b2c3d4-e5f6-7890-a1b2-c3d4e5f67890.jpg
+14	17	foto_calha_entupida_com_agua.jpg
+15	21	foto_prova_tratamento.jpg
+16	26	IMG_20250926_112005.jpg
+17	5	IMG_20250926_112018_prova_visita_recusada.jpg
+18	29	b2c3d4e5-f6a7-8901-b2c3-d4e5f6a78901.png
+19	37	VID_20250926_141000_conversa_com_morador.mp4
+20	3	IMG_20250926_141230_imovel_fechado.jpg
 \.
 
 
@@ -1077,10 +1077,10 @@ SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_ar
 
 
 --
--- Name: registro_de_campo_registro_de_campo_seq; Type: SEQUENCE SET; Schema: public; Owner: user
+-- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_seq', 45, true);
+SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 45, true);
 
 
 --
@@ -1206,7 +1206,7 @@ ALTER TABLE ONLY public.registro_de_campo_arquivos
 --
 
 ALTER TABLE ONLY public.registro_de_campo
-    ADD CONSTRAINT registro_de_campo_pkey PRIMARY KEY (registro_de_campo);
+    ADD CONSTRAINT registro_de_campo_pkey PRIMARY KEY (registro_de_campo_id);
 
 
 --
@@ -1223,14 +1223,6 @@ ALTER TABLE ONLY public.supervisor
 
 ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_pkey PRIMARY KEY (usuario_id);
-
-
---
--- Name: registro_de_campo fk_adulticida; Type: FK CONSTRAINT; Schema: public; Owner: user
---
-
-ALTER TABLE ONLY public.registro_de_campo
-    ADD CONSTRAINT fk_adulticida FOREIGN KEY (adulticida_id) REFERENCES public.adulticida(adulticida_id) ON DELETE SET NULL;
 
 
 --
@@ -1314,19 +1306,27 @@ ALTER TABLE ONLY public.registro_de_campo
 
 
 --
--- Name: registro_de_campo fk_larvicida; Type: FK CONSTRAINT; Schema: public; Owner: user
+-- Name: larvicida fk_registro_de_campo; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
-ALTER TABLE ONLY public.registro_de_campo
-    ADD CONSTRAINT fk_larvicida FOREIGN KEY (larvicida_id) REFERENCES public.larvicida(larvicida_id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.larvicida
+    ADD CONSTRAINT fk_registro_de_campo FOREIGN KEY (registro_de_campo_id) REFERENCES public.registro_de_campo(registro_de_campo_id) ON DELETE SET NULL;
 
 
 --
--- Name: registro_de_campo fk_registro_de_campo_arquivos; Type: FK CONSTRAINT; Schema: public; Owner: user
+-- Name: adulticida fk_registro_de_campo; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
-ALTER TABLE ONLY public.registro_de_campo
-    ADD CONSTRAINT fk_registro_de_campo_arquivos FOREIGN KEY (registro_de_campo_arquivo_id) REFERENCES public.registro_de_campo_arquivos(registro_de_campo_arquivo_id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.adulticida
+    ADD CONSTRAINT fk_registro_de_campo FOREIGN KEY (registro_de_campo_id) REFERENCES public.registro_de_campo(registro_de_campo_id) ON DELETE SET NULL;
+
+
+--
+-- Name: registro_de_campo_arquivos fk_registro_de_campo; Type: FK CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.registro_de_campo_arquivos
+    ADD CONSTRAINT fk_registro_de_campo FOREIGN KEY (registro_de_campo_id) REFERENCES public.registro_de_campo(registro_de_campo_id) ON DELETE SET NULL;
 
 
 --
@@ -1381,5 +1381,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict IkDj5uW3JrHJnwDjIuCtMCL8Tjm1SeJacholQn5NnxZsqGzzpjW0S90rHOGE7IF
+\unrestrict eW4OzxuOKPADaqIcYhjnHlUTzcIYFtC8G1DLcVXixlGXmN4d5wRqoBBrqxrsPi4
 
