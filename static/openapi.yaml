@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: Score API
+  version: '1.0'
+servers:
+  - url: http://127.0.0.1:5000
+paths:
+  /tela_inicial:
+    get:
+      summary: Retrieves the initial screen message
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /login: # New path for the login route
+    post: # The method is POST as defined in your Flask route
+      summary: Authenticates a user and returns a JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: # Corresponds to 'cpf' in your code (request.json['username'])
+                  type: string
+                  description: The user's CPF (used as username).
+                  example: "12345678900"
+                password: # Corresponds to 'password' in your code (request.json['password'])
+                  type: string
+                  description: The user's password.
+                  format: password # Suggests the input is sensitive
+                  example: "mysecretpassword"
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Successful login, returns user data and a JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: The user's CPF.
+                  nivel_de_acesso:
+                    type: string # Assuming nivel_de_acesso is a string (e.g., 'admin', 'user')
+                    description: The user's access level.
+                  token:
+                    type: string
+                    description: The JSON Web Token (JWT) for authentication.
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: Authentication failed. (Incorrect CPF or password).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Authentication failed."
+        '500':
+          description: Server error, typically a database connection failure or general exception.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed"

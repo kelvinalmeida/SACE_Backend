@@ -1,7 +1,4 @@
 from flask import Flask, request, jsonify, Blueprint, current_app
-import jwt
-from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime, timedelta
 from db import create_connection
 from token_required import token_required
 

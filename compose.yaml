@@ -10,15 +10,17 @@ services:
     command: flask run --host="0.0.0.0"
 
   db:
-    image: postgres
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: postgres
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      # Mapeia seu arquivo de backup local para o diretório de inicialização do Postgres
-      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+      image: postgres
+      environment:
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: secret
+        POSTGRES_DB: postgres
+        # Alterado para C.UTF-8 para evitar problemas de localidade ausente
+        LC_COLLATE: C.UTF-8 
+        LC_CTYPE: C.UTF-8 
+      volumes:
+        - db_data:/var/lib/postgresql/data
+        - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
   
   adminer:
     image: adminer
