@@ -7,9 +7,21 @@ from werkzeug.utils import secure_filename
 
 registro_de_campo = Blueprint('registro_de_campo', __name__)
 
+def check_required_filds(required_fild):
+    for fild in required_fild:
+        if fild not in request.form or request.form[fild] is None or request.form[fild].strip() == "":
+            return {"error": f"{fild} is required"}
+    return False
+
+
 @registro_de_campo.route('/registro_de_campo', methods=['POST'])
 @token_required
 def send_registro_de_campo():
+
+    check_filds = check_required_filds(['rua', 'imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
+
+    if(check_filds):
+        return jsonify(check_filds), 400
 
     rua = request.form.get('rua')
     imovel_numero = request.form.get('imovel_numero')
@@ -169,17 +181,16 @@ def send_registro_de_campo():
         conn.rollback()
         return jsonify({"error": "Database error: " + str(e)}), 500
     
-
     try:
         # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
         # cursor = conn.cursor()
         # arquivos = json.loads(request.form.get('arquivos', '[]'))
-        print("request.files: ", request.files)
         files = {}
-        count = 0
+        count = 1
         for file in request.files.getlist('files'):
-            files[secure_filename(file.filename)] = secure_filename(file.filename)
-            
+            files[f"Arquivo {count}"] = secure_filename(file.filename)
+            count += 1
+
             arquivo_nome = secure_filename(file.filename)
 
             inserir_arquivos = """INSERT INTO registro_de_campo_arquivos(arquivo_nome, registro_de_campo_id) VALUES (%s, %s);""" 
