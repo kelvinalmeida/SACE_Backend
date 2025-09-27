@@ -7,20 +7,28 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
 
-        # Token should be sent in the Authorization header
         if 'Authorization' in request.headers:
-            token = request.headers['Authorization'].split(" ")[1]  # "Bearer <token>"
+            token = request.headers['Authorization'].split(" ")[1] # "Bearer <token>"
 
         if not token:
-            return jsonify({"error": "Token is missing!"}), 401
+            return jsonify({"error": "O token está faltando!"}), 401
 
         try:
+            # Decodifica o token e guarda os dados
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            # you can also check roles or username here if needed
+            # 'data' agora contém: {"username": cpf, "exp": ..., "agente_id": ...}
+            
+            # Aqui está a mudança principal!
+            # Passamos 'data' como o primeiro argumento para a sua função de rota.
+            # O nome da variável pode ser qualquer um, mas 'current_user' ou 'token_data' é comum.
+            current_user = data 
+        
         except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token has expired!"}), 401
+            return jsonify({"error": "O token expirou!"}), 401
         except jwt.InvalidTokenError:
-            return jsonify({"error": "Invalid token!"}), 401
+            return jsonify({"error": "Token inválido!"}), 401
 
-        return f(*args, **kwargs)
+        # Executa a função de rota original (send_registro_de_campo)
+        # passando o usuário decodificado junto com os outros argumentos
+        return f(current_user, *args, **kwargs) 
     return decorated

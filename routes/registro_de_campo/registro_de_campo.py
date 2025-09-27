@@ -16,7 +16,7 @@ def check_required_filds(required_fild):
 
 @registro_de_campo.route('/registro_de_campo', methods=['POST'])
 @token_required
-def send_registro_de_campo():
+def send_registro_de_campo(current_user):
 
     check_filds = check_required_filds(['rua', 'imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
 
@@ -46,7 +46,7 @@ def send_registro_de_campo():
     observacao = request.form.get('observacao')
     area_de_visita_id = request.form.get('area_de_visita_id')
     
-    agente_id = session.get("usuario_id")
+    agente_id = current_user['agente_id']
 
     try:
         a1 = int(request.form.get('a1'))
@@ -68,6 +68,8 @@ def send_registro_de_campo():
     
 
     
+    print(">>>>>>>>>>", area_de_visita_id, agente_id)
+
     # Query para buscar a área de visita do agente logado
     try:
         cursor = conn.cursor()
@@ -256,7 +258,7 @@ def get_registro_de_campo():
         cursor = conn.cursor()
 
         # Query para buscar todos os usuários agentes relacionando a sua área de visita
-        search_users = """SELECT * FROM registro_de_campo;"""
+        search_users = """SELECT * FROM registro_de_campo INNER JOIN area_de_visita USING(area_de_visita_id) INNER JOIN depositos USiNG(deposito_id) INNER JOIN agente USING(agente_id) INNER JOIN usuario USING(usuario_id);"""
 
 
         cursor.execute(search_users)

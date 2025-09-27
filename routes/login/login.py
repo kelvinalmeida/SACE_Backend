@@ -37,10 +37,9 @@ def login_user():
 
         token = jwt.encode({
             "username": cpf,
-            "exp": exp_time  # Define a expiração do token
+            "exp": exp_time,  # Define a expiração do token
+            "agente_id": fech_user["usuario_id"],
         }, current_app.config['SECRET_KEY'], algorithm="HS256")
-
-        session["usuario_id"] = fech_user["usuario_id"]
 
         # Se tudo certo, retorna o usuário
         return jsonify({
