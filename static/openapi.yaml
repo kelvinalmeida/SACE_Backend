@@ -79,17 +79,6 @@ components:
           items:
             $ref: '#/components/schemas/Arquivo'
 paths:
-  /tela_inicial:
-    get:
-      summary: Retrieves the initial screen message
-      responses:
-        '200':
-          description: Success
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: "API do Projeto Score!"
 
   /login:
     post:
