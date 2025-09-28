@@ -6,7 +6,7 @@ usuario = Blueprint('usuario', __name__)
 
 @usuario.route('/usuarios/agentes', methods=['GET'])
 @token_required
-def get_usuarios():
+def get_usuarios(current_user):
     # Cria conexão
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
 

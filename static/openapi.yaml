@@ -12,7 +12,72 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
+  schemas:
+    Deposito:
+      type: object
+      properties:
+        a1: { type: integer, example: 5 }
+        a2: { type: integer, example: 2 }
+        b: { type: integer, example: 0 }
+        c: { type: integer, example: 1 }
+        d1: { type: integer, example: 3 }
+        d2: { type: integer, example: 0 }
+        e: { type: integer, example: 4 }
+    Larvicida:
+      type: object
+      properties:
+        tipo: { type: string, example: "temefos" }
+        forma: { type: string, example: "g" }
+        quantidade: { type: integer, example: 10 }
+    Adulticida:
+      type: object
+      properties:
+        tipo: { type: string, example: "malathion" }
+        quantidade: { type: integer, example: 200 }
+    Arquivo:
+      type: object
+      properties:
+        registro_de_campo_arquivo_id: { type: integer, example: "23" }
+        arquivo_nome: { type: string, example: "foto_quintal.jpg" }
 
+    RegistroDeCampoCompleto:
+      type: object
+      properties:
+        registro_de_campo_id: { type: integer, example: 1 }
+        rua: { type: string, example: "Rua das Flores" }
+        imovel_numero: { type: string, example: "123A" }
+        imovel_lado: { type: string, example: "Par" }
+        imovel_categoria_da_localidade: { type: string, example: "Urbana" }
+        imovel_tipo: { type: string, example: "Residencial" }
+        imovel_status: { type: string, example: "Trabalhado" }
+        imovel_complemento: { type: string, nullable: true, example: "Apto 101" }
+        formulario_tipo: { type: string, nullable: true, example: "F1" }
+        li: { type: boolean, example: true }
+        pe: { type: boolean, example: false }
+        t: { type: boolean, example: true }
+        df: { type: boolean, example: false }
+        pve: { type: boolean, example: false }
+        numero_da_amostra: { type: string, nullable: true, example: "A-002" }
+        quantiade_tubitos: { type: string, nullable: true, example: "3" }
+        observacao: { type: string, nullable: true, example: "Cão bravo no quintal." }
+        area_de_visita_id: { type: integer, example: 101 }
+        agente_id: { type: integer, example: 12 }
+        deposito_id: { type: integer, example: 45 }
+        agente_nome: { type: string, example: "João da Silva" }
+        deposito:
+          $ref: '#/components/schemas/Deposito'
+        larvicidas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Larvicida'
+        adulticidas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Adulticida'
+        arquivos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Arquivo'
 paths:
   /tela_inicial:
     get:
@@ -242,3 +307,41 @@ paths:
                 type: object
                 properties:
                   error: { type: string, example: "Database connection failed" }
+
+    get:
+      summary: Lista todos os registros de campo
+      description: |
+        Retorna uma lista completa de todos os registros de campo existentes no banco de dados.
+        Cada registro na lista inclui informações detalhadas sobre o imóvel, o agente responsável, e dados aninhados sobre depósitos, larvicidas, adulticidas e arquivos associados.
+        A autenticação via Token JWT é obrigatória.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Uma lista de registros de campo foi retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegistroDeCampoCompleto'
+        '401':
+          description: Não autorizado. O token JWT está ausente, inválido ou expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token inválido!"
+        '500':
+          description: Erro interno do servidor. Geralmente relacionado a uma falha no banco de dados.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed"

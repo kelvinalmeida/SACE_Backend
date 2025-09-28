@@ -59,13 +59,13 @@ def login_user():
     
 @login.route("/protected", methods=["GET"])
 @token_required
-def protected():
+def protected(current_user):
     return jsonify({"message": "You’ve entered a protected route. Welcome! You are logged in."})
 
 
 @login.route('/teste_db', methods=['GET'])
 @token_required
-def login_teste():
+def login_teste(current_user):
     role = request.json['role']  # aqui você pode pegar de request.json['username']
     # password = request.json['password']  # aqui você pode pegar de request.json['username']
 
