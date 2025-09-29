@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Blueprint, current_app
+from flask import Flask, request, jsonify, Blueprint, current_app, session
 import jwt
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
@@ -21,7 +21,7 @@ def login_user():
     try:
         cursor = conn.cursor()
 
-        search_user = """SELECT cpf, senha, nivel_de_acesso FROM usuario WHERE cpf = %s AND senha = %s;"""
+        search_user = """SELECT usuario_id, cpf, senha, nivel_de_acesso FROM usuario WHERE cpf = %s AND senha = %s;"""
         
         cursor.execute(search_user, (cpf, password))
         fech_user = cursor.fetchone()
@@ -29,7 +29,7 @@ def login_user():
         # return f"fech_user: {fech_user}"
 
         if fech_user is None:
-            return jsonify({"error": "User not found"}), 404
+            return jsonify({"error": "Authentication failed."}), 401
         
 
         # Define tempo de expiração (30 minutos a partir de agora)
@@ -37,14 +37,15 @@ def login_user():
 
         token = jwt.encode({
             "username": cpf,
-            "exp": exp_time  # Define a expiração do token
+            "exp": exp_time,  # Define a expiração do token
+            "agente_id": fech_user["usuario_id"],
         }, current_app.config['SECRET_KEY'], algorithm="HS256")
 
         # Se tudo certo, retorna o usuário
         return jsonify({
             "username": fech_user["cpf"],
             "nivel_de_acesso": fech_user["nivel_de_acesso"],
-            "token": token
+            "token": token,
         })
 
     except Exception as e:
@@ -58,13 +59,13 @@ def login_user():
     
 @login.route("/protected", methods=["GET"])
 @token_required
-def protected():
+def protected(current_user):
     return jsonify({"message": "You’ve entered a protected route. Welcome! You are logged in."})
 
 
 @login.route('/teste_db', methods=['GET'])
 @token_required
-def login_teste():
+def login_teste(current_user):
     role = request.json['role']  # aqui você pode pegar de request.json['username']
     # password = request.json['password']  # aqui você pode pegar de request.json['username']
 

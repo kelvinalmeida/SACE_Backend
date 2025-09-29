@@ -10,8 +10,6 @@ git clone <link-do-repositorio>
 cd <nome-da-pasta>
 ```
 
-## 2. Entre na pasta do projeto
-
 ## 3. Crie as imagems (flask + postgres)
 ```bash
 docker-compose build
@@ -23,12 +21,15 @@ docker-compose up
 ```
 
 ## A API será iniciada e estará disponível em:
-```
-http://localhost:5000
-```
+
+[http://localhost:5000](http://localhost:5000)
 
 
-<!-- # 📌 Como rodar o projeto
+## Documentação da API
+[http://localhost:5000/api/docs](http://localhost:5000/api/docs)
+
+![Alt Swagger](static/Screenshot_1.png)
+<!-- #  Como rodar o projeto
 
 ## 1. Instale o Python
 - Baixe e instale o Python no site oficial: 

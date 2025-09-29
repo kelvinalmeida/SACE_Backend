@@ -1,0 +1,336 @@
+openapi: 3.0.3
+info:
+  title: Score API
+  version: '1.0'
+servers:
+  - url: http://127.0.0.1:5000
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
+  schemas:
+    Deposito:
+      type: object
+      properties:
+        a1: { type: integer, example: 5 }
+        a2: { type: integer, example: 2 }
+        b: { type: integer, example: 0 }
+        c: { type: integer, example: 1 }
+        d1: { type: integer, example: 3 }
+        d2: { type: integer, example: 0 }
+        e: { type: integer, example: 4 }
+    Larvicida:
+      type: object
+      properties:
+        tipo: { type: string, example: "temefos" }
+        forma: { type: string, example: "g" }
+        quantidade: { type: integer, example: 10 }
+    Adulticida:
+      type: object
+      properties:
+        tipo: { type: string, example: "malathion" }
+        quantidade: { type: integer, example: 200 }
+    Arquivo:
+      type: object
+      properties:
+        registro_de_campo_arquivo_id: { type: integer, example: "23" }
+        arquivo_nome: { type: string, example: "foto_quintal.jpg" }
+
+    RegistroDeCampoCompleto:
+      type: object
+      properties:
+        registro_de_campo_id: { type: integer, example: 1 }
+        rua: { type: string, example: "Rua das Flores" }
+        imovel_numero: { type: string, example: "123A" }
+        imovel_lado: { type: string, example: "Par" }
+        imovel_categoria_da_localidade: { type: string, example: "Urbana" }
+        imovel_tipo: { type: string, example: "Residencial" }
+        imovel_status: { type: string, example: "Trabalhado" }
+        imovel_complemento: { type: string, nullable: true, example: "Apto 101" }
+        formulario_tipo: { type: string, nullable: true, example: "F1" }
+        li: { type: boolean, example: true }
+        pe: { type: boolean, example: false }
+        t: { type: boolean, example: true }
+        df: { type: boolean, example: false }
+        pve: { type: boolean, example: false }
+        numero_da_amostra: { type: string, nullable: true, example: "A-002" }
+        quantiade_tubitos: { type: string, nullable: true, example: "3" }
+        observacao: { type: string, nullable: true, example: "Cão bravo no quintal." }
+        area_de_visita_id: { type: integer, example: 101 }
+        agente_id: { type: integer, example: 12 }
+        deposito_id: { type: integer, example: 45 }
+        agente_nome: { type: string, example: "João da Silva" }
+        deposito:
+          $ref: '#/components/schemas/Deposito'
+        larvicidas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Larvicida'
+        adulticidas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Adulticida'
+        arquivos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Arquivo'
+paths:
+
+  /login:
+    post:
+      summary: Authenticates a user and returns a JWT token
+      description: Após a autenticação bem-sucedida, a API retorna um token JWT no corpo da resposta e define um cookie de sessão (HttpOnly) que é necessário para operações subsequentes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  description: The user's CPF (used as username).
+                  example: "12345678900"
+                password:
+                  type: string
+                  description: The user's password.
+                  format: password
+                  example: "mysecretpassword"
+      responses:
+        '200':
+          description: Successful login, returns user data and a JWT token.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: "session=eyJ1c3VhcmlvX2lkIjoxfQ.some_signature; HttpOnly; Path=/"
+              description: "Define o cookie de sessão que será usado para identificar o usuário nas próximas requisições."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: The user's CPF.
+                  nivel_de_acesso:
+                    type: string
+                    description: The user's access level.
+                  token:
+                    type: string
+                    description: The JSON Web Token (JWT) for authentication.
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: Authentication failed. (Incorrect CPF or password).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Authentication failed."
+        '500':
+          description: Server error, typically a database connection failure or general exception.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed"
+
+  /registro_de_campo:
+    post:
+      summary: Cria um novo registro de campo
+      # DESCRIÇÃO ATUALIZADA
+      description: |
+        Submete um registro de campo completo.
+        **Atenção:** Este endpoint requer que o **Token JWT** seja enviado.
+        1.  **Token JWT:** Para passar na barreira de autenticação (`Authorization: Bearer <token>`).
+      
+      # SEÇÃO DE SEGURANÇA 
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - rua
+                - imovel_numero
+                - imovel_lado
+                - imovel_categoria_da_localidade
+                - imovel_tipo
+                - imovel_status
+                - area_de_visita_id
+                - a1
+                - a2
+                - b
+                - c
+                - d1
+                - d2
+                - e
+              properties:
+                # ... (as propriedades do formulário permanecem as mesmas)
+                rua:
+                  type: string
+                  description: Nome da rua.
+                  example: "Rua das Flores"
+                imovel_numero:
+                  type: string
+                  description: Número do imóvel.
+                  example: "123"
+                imovel_lado:
+                  type: string
+                  description: Lado da rua (ex 'Par', 'Ímpar').
+                  example: "Par"
+                imovel_categoria_da_localidade:
+                  type: string
+                  description: Categoria da localidade.
+                  example: "Urbana"
+                imovel_tipo:
+                  type: string
+                  description: Tipo do imóvel (ex 'Residencial', 'Comercial').
+                  example: "Residencial"
+                imovel_status:
+                  type: string
+                  description: Status da visita (ex 'Trabalhado', 'Recusado').
+                  example: "Trabalhado"
+                area_de_visita_id:
+                  type: integer
+                  description: ID da área de visita associada ao agente.
+                  example: 2
+                a1: { type: integer, description: "Contagem para depósito tipo A1.", example: 5 }
+                a2: { type: integer, description: "Contagem para depósito tipo A2.", example: 2 }
+                b: { type: integer, description: "Contagem para depósito tipo B.", example: 1 }
+                c: { type: integer, description: "Contagem para depósito tipo C.", example: 1 }
+                d1: { type: integer, description: "Contagem para depósito tipo D1.", example: 3 }
+                d2: { type: integer, description: "Contagem para depósito tipo D2.", example: 1 }
+                e: { type: integer, description: "Contagem para depósito tipo E.", example: 4 }
+                imovel_complemento:
+                  type: string
+                  description: Informação adicional do endereço (ex 'Apto 4B').
+                  example: "Apto 4B"
+                formulario_tipo:
+                  type: string
+                  description: Tipo de formulário utilizado.
+                  example: "F1"
+                numero_da_amostra:
+                  type: string
+                  description: Número da amostra coletada, se houver.
+                  example: "A-001"
+                quantiade_tubitos:
+                  type: string
+                  description: Quantidade de tubitos coletados.
+                  example: "3"
+                observacao:
+                  type: string
+                  description: Observações gerais.
+                  example: "Cão bravo no quintal."
+                li: { type: boolean, description: "Flag booleana para LI." }
+                pe: { type: boolean, description: "Flag booleana para PE." }
+                t: { type: boolean, description: "Flag booleana para T." }
+                df: { type: boolean, description: "Flag booleana para DF." }
+                pve: { type: boolean, description: "Flag booleana para PVE." }
+                larvicidas:
+                  type: string
+                  description: "String JSON representando um array de larvicidas utilizados."
+                  example: '[{"tipo": "C", "forma": "g", "quantidade": 3}, {"tipo": "S", "forma": "g", "quantidade": 10}]'
+                adulticidas:
+                  type: string
+                  description: "String JSON representando um array de adulticidas utilizados."
+                  example: '[{"tipo": "A", "quantidade": 200}, {"tipo": "B", "quantidade": 100}]'
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Um ou mais arquivos relacionados ao registro de campo.
+      responses:
+        '200':
+          description: Registro de campo criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Registro de campo recebido com sucesso" }
+                  data: { type: object, description: "Um espelho dos dados enviados." }
+        '401':
+          description: Não autorizado. O token JWT está ausente, inválido ou expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string, example: "Token is missing!" }
+        '400':
+          description: Requisição inválida. Ocorre se faltarem campos obrigatórios, se os tipos de dados estiverem incorretos, ou se o cookie de sessão estiver ausente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: "Mensagem descritiva do erro."
+                    example: "Required field 'rua' is missing."
+        '500':
+          description: Erro interno do servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string, example: "Database connection failed" }
+
+    get:
+      summary: Lista todos os registros de campo
+      description: |
+        Retorna uma lista completa de todos os registros de campo existentes no banco de dados.
+        Cada registro na lista inclui informações detalhadas sobre o imóvel, o agente responsável, e dados aninhados sobre depósitos, larvicidas, adulticidas e arquivos associados.
+        A autenticação via Token JWT é obrigatória.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Uma lista de registros de campo foi retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegistroDeCampoCompleto'
+        '401':
+          description: Não autorizado. O token JWT está ausente, inválido ou expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token inválido!"
+        '500':
+          description: Erro interno do servidor. Geralmente relacionado a uma falha no banco de dados.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed"
