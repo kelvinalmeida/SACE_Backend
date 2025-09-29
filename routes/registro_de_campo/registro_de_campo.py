@@ -18,6 +18,15 @@ def check_required_filds(required_fild):
 @token_required
 def send_registro_de_campo(current_user):
 
+    print("current_user token data:", current_user)
+    # Pega o agente_id do token
+    try:
+        agente_id = current_user['agente_id']
+    except Exception as e:
+        return jsonify({"error": "Invalid token: 'É nescessário ser agente para cadastrar registro de campo. Peça para um supervisor cadastrar você.'"}), 401
+    
+
+
     check_filds = check_required_filds(['imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
 
     if(check_filds):
@@ -44,8 +53,6 @@ def send_registro_de_campo(current_user):
     quantiade_tubitos = request.form.get('quantiade_tubitos')
     observacao = request.form.get('observacao')
     area_de_visita_id = request.form.get('area_de_visita_id')
-    
-    agente_id = current_user['agente_id']
 
     try:
         a1 = int(request.form.get('a1'))
