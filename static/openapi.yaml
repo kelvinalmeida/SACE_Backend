@@ -339,3 +339,61 @@ paths:
                   error:
                     type: string
                     example: "Database connection failed"
+  # Adicionar dentro de paths:
+
+  /registro_de_campo/{registro_de_campo_id}:
+    get:
+      summary: Busca um registro de campo por ID
+      description: |
+        Retorna os detalhes completos de um único registro de campo, identificado pelo seu ID.
+        As informações incluem dados do imóvel, agente, área de visita, depósitos, tratamentos e arquivos.
+        A autenticação via Token JWT é obrigatória.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: registro_de_campo_id
+          in: path
+          required: true
+          description: O ID único do registro de campo a ser buscado.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Detalhes do registro de campo retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                # O seu código retorna um array com um item, então documentamos assim
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegistroDeCampoCompleto'
+        '401':
+          description: Não autorizado. O token JWT está ausente, inválido ou expirado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token inválido!"
+        '404':
+          description: Nenhum registro de campo foi encontrado com o ID especificado.
+          content:
+            application/json:
+              schema:
+                # Seu código retorna um array vazio com status 200, mas um 404 seria o ideal.
+                # A documentação reflete o comportamento do código (array vazio).
+                type: array
+                example: []
+        '500':
+          description: Erro interno do servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed"
