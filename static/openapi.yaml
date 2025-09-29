@@ -34,17 +34,26 @@ components:
       properties:
         tipo: { type: string, example: "malathion" }
         quantidade: { type: integer, example: 200 }
-    Arquivo:
+    Arquivos:
       type: object
       properties:
         registro_de_campo_arquivo_id: { type: integer, example: "23" }
+        arquivo_nome: { type: string, example: "foto_quintal.jpg" }
+    Area_de_visita:
+      type: object
+      properties:
+        bairro: { type: string, example: "Serraria" }
+        cep: { type: string, example: "57046-140" }
+        estado: { type: string, example: "AL" }
+        logadouro: { type: string, example: "Avenida Menino Marcelo" }
+        municipio: { type: string, example: "Maceió" }
+        setor: { type: string, example: "Setor Serraria 08" }
         arquivo_nome: { type: string, example: "foto_quintal.jpg" }
 
     RegistroDeCampoCompleto:
       type: object
       properties:
         registro_de_campo_id: { type: integer, example: 1 }
-        rua: { type: string, example: "Rua das Flores" }
         imovel_numero: { type: string, example: "123A" }
         imovel_lado: { type: string, example: "Par" }
         imovel_categoria_da_localidade: { type: string, example: "Urbana" }
@@ -78,6 +87,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Arquivo'
+        area_de_visita:
+          $ref: '#/components/schemas/Area_de_visita'
 paths:
 
   /login:
@@ -168,7 +179,6 @@ paths:
             schema:
               type: object
               required:
-                - rua
                 - imovel_numero
                 - imovel_lado
                 - imovel_categoria_da_localidade
@@ -183,11 +193,6 @@ paths:
                 - d2
                 - e
               properties:
-                # ... (as propriedades do formulário permanecem as mesmas)
-                rua:
-                  type: string
-                  description: Nome da rua.
-                  example: "Rua das Flores"
                 imovel_numero:
                   type: string
                   description: Número do imóvel.

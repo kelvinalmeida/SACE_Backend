@@ -18,12 +18,11 @@ def check_required_filds(required_fild):
 @token_required
 def send_registro_de_campo(current_user):
 
-    check_filds = check_required_filds(['rua', 'imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
+    check_filds = check_required_filds(['imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
 
     if(check_filds):
         return jsonify(check_filds), 400
 
-    rua = request.form.get('rua')
     imovel_numero = request.form.get('imovel_numero')
     imovel_lado = request.form.get('imovel_lado')
     imovel_categoria_da_localidade = request.form.get('imovel_categoria_da_localidade')
@@ -120,10 +119,10 @@ def send_registro_de_campo(current_user):
     try:
         cursor = conn.cursor()
         inserir_registro_de_campo = """INSERT INTO registro_de_campo(
-            rua, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING registro_de_campo_id; """
+            imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING registro_de_campo_id; """
         
-        cursor.execute(inserir_registro_de_campo, (rua, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id))
+        cursor.execute(inserir_registro_de_campo, (imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id))
 
         registro_de_campo_id = cursor.fetchone()
         registro_de_campo_id = registro_de_campo_id['registro_de_campo_id']
@@ -214,7 +213,6 @@ def send_registro_de_campo(current_user):
         'status': 'success',
         'message': 'Registro de campo recebido com sucesso',
         'data': {
-            'rua': rua,
             'imovel_numero': imovel_numero,
             'imovel_lado': imovel_lado,
             'imovel_categoria_da_localidade': imovel_categoria_da_localidade,
@@ -257,14 +255,37 @@ def get_registro_de_campo(current_user):
     try:
         cursor = conn.cursor()
 
-        # Query para buscar todos os usuários agentes relacionando a sua área de visita
-        search_registros_de_campo = """SELECT reg_camp.registro_de_campo_id, reg_camp.rua, reg_camp.imovel_numero, reg_camp.imovel_lado, reg_camp.imovel_categoria_da_localidade, reg_camp.imovel_tipo, reg_camp.imovel_status, reg_camp.imovel_complemento, reg_camp.formulario_tipo, reg_camp.li, reg_camp.pe, reg_camp.t, reg_camp.df, reg_camp.pve, reg_camp.numero_da_amostra, reg_camp.quantiade_tubitos, reg_camp.observacao, reg_camp.area_de_visita_id, reg_camp.agente_id, reg_camp.deposito_id, usu.nome_completo agente_nome FROM registro_de_campo reg_camp INNER JOIN agente USING(agente_id) INNER JOIN usuario usu USING(usuario_id);"""
-
-        # INNER JOIN agente USING(agente_id) INNER JOIN usuario USING(usuario_id)
+        # Query para buscar todos os usuários agentes relacionando ao registro de campo
+        search_registros_de_campo = """SELECT reg_camp.registro_de_campo_id, reg_camp.imovel_numero, reg_camp.imovel_lado, reg_camp.imovel_categoria_da_localidade, reg_camp.imovel_tipo, reg_camp.imovel_status, reg_camp.imovel_complemento, reg_camp.formulario_tipo, reg_camp.li, reg_camp.pe, reg_camp.t, reg_camp.df, reg_camp.pve, reg_camp.numero_da_amostra, reg_camp.quantiade_tubitos, reg_camp.observacao, reg_camp.area_de_visita_id, reg_camp.agente_id, reg_camp.deposito_id, usu.nome_completo agente_nome FROM registro_de_campo reg_camp INNER JOIN agente USING(agente_id) INNER JOIN usuario usu USING(usuario_id);"""
 
         cursor.execute(search_registros_de_campo)
         registro_de_campo = cursor.fetchall()
 
+    except Exception as e:
+        conn.rollback()
+        cursor.close()
+        return jsonify({"error": str(e)}), 500
+    
+
+    # relacionar registro de campo a sua area de visita
+    try:
+        cursor.close()
+        cursor = conn.cursor()
+
+        # Buscar áreas de visita
+        search_areas_de_visita = """SELECT area_de_visita.area_de_visita_id, area_de_visita.cep, area_de_visita.setor, area_de_visita.numero_quarteirao, area_de_visita.logadouro, area_de_visita.bairro, area_de_visita.municipio, area_de_visita.estado
+                            FROM registro_de_campo reg_campo
+                            LEFT JOIN area_de_visita USING(area_de_visita_id);"""
+        
+        cursor.execute(search_areas_de_visita)
+        areas_de_visita = cursor.fetchall()
+
+        for reg in registro_de_campo:
+            area_de_visita = next((area for area in areas_de_visita if area['area_de_visita_id'] == reg['area_de_visita_id']), None)
+            if area_de_visita:
+                area_de_visita = area_de_visita.copy()  # Faz uma cópia para não alterar o original
+                area_de_visita.pop('area_de_visita_id', None)  # Remove a chave se existir
+            reg['area_de_visita'] = area_de_visita
     except Exception as e:
         conn.rollback()
         cursor.close()
@@ -288,7 +309,6 @@ def get_registro_de_campo(current_user):
                 deposito = deposito.copy()  # Faz uma cópia para não alterar o original
                 deposito.pop('registro_de_campo_id', None)  # Remove a chave se existir
             reg['deposito'] = deposito
-            # reg['deposito'] = next((dep for dep in depositos if dep['registro_de_campo_id'] == reg['registro_de_campo_id']), None)
 
     except Exception as e:
         conn.rollback()
@@ -318,8 +338,6 @@ def get_registro_de_campo(current_user):
             
 
             reg['larvicidas'] = larvicidas_reg
-
-            # reg['larvicidas'] = [larv for larv in larvicidas if larv['registro_de_campo_id'] == reg['registro_de_campo_id'] and larv['tipo'] is not None]
 
     except Exception as e:
         conn.rollback()
