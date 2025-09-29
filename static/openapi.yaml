@@ -86,7 +86,7 @@ components:
         arquivos:
           type: array
           items:
-            $ref: '#/components/schemas/Arquivo'
+            $ref: '#/components/schemas/Arquivos'
         area_de_visita:
           $ref: '#/components/schemas/Area_de_visita'
 paths:
