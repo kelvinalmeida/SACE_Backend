@@ -49,11 +49,16 @@ components:
         municipio: { type: string, example: "Maceió" }
         setor: { type: string, example: "Setor Serraria 08" }
         arquivo_nome: { type: string, example: "foto_quintal.jpg" }
+    Ciclo:
+      type: object
+      properties:
+        ano_de_criacao: { type: string, example: "Fri, 19 Sep 2025 00:00:00 GMT" }
+        ciclo: { type: integer, example: 6 }
 
     RegistroDeCampoCompleto:
       type: object
       properties:
-        registro_de_campo_id: { type: integer, example: 1 }
+        ano_de_criacao: { type: integer, example: 1 }
         imovel_numero: { type: string, example: "123A" }
         imovel_lado: { type: string, example: "Par" }
         imovel_categoria_da_localidade: { type: string, example: "Urbana" }
@@ -89,6 +94,8 @@ components:
             $ref: '#/components/schemas/Arquivos'
         area_de_visita:
           $ref: '#/components/schemas/Area_de_visita'
+        ciclo:
+          $ref: '#/components/schemas/Ciclo'
 paths:
 
   /login:
