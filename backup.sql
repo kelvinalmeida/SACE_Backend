@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict eW4OzxuOKPADaqIcYhjnHlUTzcIYFtC8G1DLcVXixlGXmN4d5wRqoBBrqxrsPi4
+\restrict oAFwjSmincOf5ViWtaougDBriPDdIxKUFJIMZC1NIInLWx3eNucRgHe3n42mSsa
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -379,7 +379,6 @@ ALTER TABLE public.larvicida ALTER COLUMN larvicida_id ADD GENERATED ALWAYS AS I
 
 CREATE TABLE public.registro_de_campo (
     registro_de_campo_id integer NOT NULL,
-    rua character varying(200) NOT NULL,
     imovel_numero smallint NOT NULL,
     imovel_lado character varying(10) NOT NULL,
     imovel_categoria_da_localidade character varying(20) NOT NULL,
@@ -868,52 +867,52 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 -- Data for Name: registro_de_campo; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.registro_de_campo (registro_de_campo_id, rua, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id) FROM stdin;
-1	Rua Engenheiro Mário de Gusmão	123	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1
-2	Avenida João Davino	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	2	2
-3	Rua Epaminondas Gracindo	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	3	3
-4	Rua Íris Alagoense	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	4	4
-5	Rua Lauro Machado da Costa	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	5	5
-6	Rua São José	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A001	2	Coleta de amostra em ralo.	6	6	6
-7	Avenida Norma Pimentel da Costa	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	7	7
-8	Avenida Presidente Roosevelt	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	8	8
-9	Rua Doutor José de Castro Azevedo	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	9	9
-10	Rua Adolfo Monteiro	1500	Par	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda.	10	10	10
-11	Rua General João Saleiro Pitão	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	11
-12	Rua Industrial Cícero Toledo	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	12
-13	Rua Quintino Bocaiúva	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	13
-14	Avenida Moreira e Silva	40	Par	Urbana	Residência	Visitado	\N	Zica	t	f	f	t	f	A002	3	Amostra coletada de balde no quintal.	4	14	14
-15	Rua Bacharel Benigno de Oliveira	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	15
-16	Rua do Sol	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	16
-17	Rua Caxangá	2048	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Caixa d'água destampada, tratada.	7	17	17
-18	Rua Adolfo Gustavo	321	Ímpar	Urbana	Comércio	Visitado	Padaria	Dengue	f	f	f	f	f	\N	\N	Sem anormalidades.	8	1	18
-19	Avenida Artagnan Martins	55	Ímpar	Urbana	Residência	Recusado	Portão alto	Zica	f	f	f	f	f	\N	\N	Proprietário se recusou a abrir.	9	2	19
-20	Rua Doutor Antônio Cansanção	876	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	3	20
-21	Rua Doutor Noel Nutels	901	Ímpar	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em piscina abandonada, tratada.	1	4	21
-22	Rua Bancário Rady Gusmão do Nascimento	112	Par	Urbana	Outros	Visitado	Igreja	Dengue	f	t	f	f	f	\N	\N	Verificado bebedouros e calhas.	2	5	22
-23	Rua Doutor Lessa de Azevedo	433	Ímpar	Urbana	Residência	Visitado	Apto 505	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	6	23
-24	Rua Professor Guedes de Miranda	1800	Par	Urbana	Comércio	Tratado	Supermercado	Zica	f	t	t	t	f	\N	\N	Tratamento em área de carga/descarga.	4	7	24
-25	Rua João Lins	21	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	t	f	f	f	f	A003	1	Coleta de amostra positiva.	5	8	25
-26	Rua Santa Inês	777	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	9	26
-27	Avenida Garça Torta	1234	Par	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	10	27
-28	Rua Emérito de Farias	56	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	11	28
-29	Rua Elói de Lemos	821	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água.	9	12	29
-30	Rua Pompeu Sarmento	10	Par	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	30
-31	Avenida Álvaro Otacílio	222	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Tratamento focal realizado.	1	14	31
-32	Avenida Doutor Antônio Gomes de Barros	345	Ímpar	Urbana	Outros	Visitado	Cemitério	Zica	f	t	f	t	f	\N	\N	Verificação de vasos e jazigos.	2	15	32
-33	Rua Jangadeiros Alagoanos	981	Ímpar	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	t	f	\N	\N	Pneus armazenados corretamente.	3	16	33
-34	Avenida Fernandes Lima	1730	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	17	34
-35	Avenida Brigadeiro Eduardo Gomes de Brito	501	Ímpar	Urbana	Residência	Fechado	Apto 501	Dengue	f	f	f	f	f	\N	\N	Morador não atendeu.	5	1	35
-36	Rua Cleto Campelo	48	Par	Urbana	Comércio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	6	2	36
-37	Avenida Cachoeira do Meirim	679	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Denúncia procedente. Local tratado.	7	3	37
-38	Avenida Menino Marcelo	1111	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum verificada.	8	4	38
-39	Rua Artur Vital da Silva	30	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	5	39
-40	Rua Professora Maria Esther da Costa Barros	499	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Sem água parada no momento.	10	6	40
-41	Rua Engenheiro Mário de Gusmão	580	Par	Urbana	Residência	Tratado	\N	Dengue	t	f	t	t	f	A004	4	Amostra coletada e local tratado.	1	7	41
-42	Avenida João Davino	128	Par	Urbana	Comércio	Visitado	Galpão	Dengue	f	t	f	f	f	\N	\N	Inspecionado.	2	8	42
-43	Rua Epaminondas Gracindo	77	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tentativa de visita sem sucesso.	3	9	43
-44	Rua Íris Alagoense	300	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Orientações verbais fornecidas.	4	10	44
-45	Rua Lauro Machado da Costa	1420	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	11	45
+COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id) FROM stdin;
+1	123	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1
+2	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	2	2
+3	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	3	3
+4	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	4	4
+5	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	5	5
+6	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A001	2	Coleta de amostra em ralo.	6	6	6
+7	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	7	7
+8	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	8	8
+9	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	9	9
+10	1500	Par	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda.	10	10	10
+11	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	11
+12	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	12
+13	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	13
+14	40	Par	Urbana	Residência	Visitado	\N	Zica	t	f	f	t	f	A002	3	Amostra coletada de balde no quintal.	4	14	14
+15	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	15
+16	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	16
+17	2048	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Caixa d'água destampada, tratada.	7	17	17
+18	321	Ímpar	Urbana	Comércio	Visitado	Padaria	Dengue	f	f	f	f	f	\N	\N	Sem anormalidades.	8	1	18
+19	55	Ímpar	Urbana	Residência	Recusado	Portão alto	Zica	f	f	f	f	f	\N	\N	Proprietário se recusou a abrir.	9	2	19
+20	876	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	3	20
+21	901	Ímpar	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em piscina abandonada, tratada.	1	4	21
+22	112	Par	Urbana	Outros	Visitado	Igreja	Dengue	f	t	f	f	f	\N	\N	Verificado bebedouros e calhas.	2	5	22
+23	433	Ímpar	Urbana	Residência	Visitado	Apto 505	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	6	23
+24	1800	Par	Urbana	Comércio	Tratado	Supermercado	Zica	f	t	t	t	f	\N	\N	Tratamento em área de carga/descarga.	4	7	24
+25	21	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	t	f	f	f	f	A003	1	Coleta de amostra positiva.	5	8	25
+26	777	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	9	26
+27	1234	Par	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	10	27
+28	56	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	11	28
+29	821	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água.	9	12	29
+30	10	Par	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	30
+31	222	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Tratamento focal realizado.	1	14	31
+32	345	Ímpar	Urbana	Outros	Visitado	Cemitério	Zica	f	t	f	t	f	\N	\N	Verificação de vasos e jazigos.	2	15	32
+33	981	Ímpar	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	t	f	\N	\N	Pneus armazenados corretamente.	3	16	33
+34	1730	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	17	34
+35	501	Ímpar	Urbana	Residência	Fechado	Apto 501	Dengue	f	f	f	f	f	\N	\N	Morador não atendeu.	5	1	35
+36	48	Par	Urbana	Comércio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	6	2	36
+37	679	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Denúncia procedente. Local tratado.	7	3	37
+38	1111	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum verificada.	8	4	38
+39	30	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	5	39
+40	499	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Sem água parada no momento.	10	6	40
+41	580	Par	Urbana	Residência	Tratado	\N	Dengue	t	f	t	t	f	A004	4	Amostra coletada e local tratado.	1	7	41
+42	128	Par	Urbana	Comércio	Visitado	Galpão	Dengue	f	t	f	f	f	\N	\N	Inspecionado.	2	8	42
+43	77	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tentativa de visita sem sucesso.	3	9	43
+44	300	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Orientações verbais fornecidas.	4	10	44
+45	1420	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	11	45
 \.
 
 
@@ -1381,5 +1380,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict eW4OzxuOKPADaqIcYhjnHlUTzcIYFtC8G1DLcVXixlGXmN4d5wRqoBBrqxrsPi4
+\unrestrict oAFwjSmincOf5ViWtaougDBriPDdIxKUFJIMZC1NIInLWx3eNucRgHe3n42mSsa
 
