@@ -23,7 +23,7 @@ def send_registro_de_campo(current_user):
     try:
         agente_id = current_user['agente_id']
     except Exception as e:
-        return jsonify({"error": "Invalid token: 'É nescessário ser agente para cadastrar registro de campo. Peça para um supervisor cadastrar você.'"}), 401
+        return jsonify({"error": "Invalid token: É nescessário ser agente para cadastrar registro de campo. Peça para um supervisor cadastrar você."}), 401
     
 
 
@@ -446,6 +446,9 @@ def get_one_registro_de_campo(current_user, registro_de_campo_id):
         cursor.execute(search_registros_de_campo, (registro_de_campo_id,))
         registro_de_campo = cursor.fetchall()
 
+        if not registro_de_campo:
+            return jsonify({"error": "Registro de campo not found"}), 404
+
     except Exception as e:
         conn.rollback()
         cursor.close()
@@ -603,4 +606,4 @@ def get_one_registro_de_campo(current_user, registro_de_campo_id):
         conn.close()
         cursor.close()
 
-        return jsonify(registro_de_campo), 200
+        return jsonify(registro_de_campo[0]), 200

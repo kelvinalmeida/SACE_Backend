@@ -72,7 +72,16 @@ def login_user():
     # Define tempo de expiração (30 minutos a partir de agora)
     exp_time = datetime.utcnow() + timedelta(minutes=120)
 
-    if fech_agente:
+    if fech_supervisor and fech_agente:
+        token = jwt.encode({
+        "username": cpf,
+        "exp": exp_time,  # Define a expiração do token
+        "usuario_id": fech_user["usuario_id"],
+        "agente_id": fech_agente["agente_id"],
+        "supervisor_id": fech_supervisor["supervisor_id"],
+        "nivel_de_acesso": fech_user["nivel_de_acesso"]
+    }, current_app.config['SECRET_KEY'], algorithm="HS256")
+    elif fech_agente:
         token = jwt.encode({
         "username": cpf,
         "exp": exp_time,  # Define a expiração do token
