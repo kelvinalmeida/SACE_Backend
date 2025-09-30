@@ -34,3 +34,4 @@ instance/
 .DS_Store
 Thumbs.db
 
+uploads/registro_de_campo_arquivos/*
