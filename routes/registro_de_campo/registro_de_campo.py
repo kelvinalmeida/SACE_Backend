@@ -18,6 +18,15 @@ def check_required_filds(required_fild):
 @token_required
 def send_registro_de_campo(current_user):
 
+    print("current_user token data:", current_user)
+    # Pega o agente_id do token
+    try:
+        agente_id = current_user['agente_id']
+    except Exception as e:
+        return jsonify({"error": "Invalid token: É nescessário ser agente para cadastrar registro de campo. Peça para um supervisor cadastrar você."}), 401
+    
+
+
     check_filds = check_required_filds(['imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
 
     if(check_filds):
@@ -44,8 +53,6 @@ def send_registro_de_campo(current_user):
     quantiade_tubitos = request.form.get('quantiade_tubitos')
     observacao = request.form.get('observacao')
     area_de_visita_id = request.form.get('area_de_visita_id')
-    
-    agente_id = current_user['agente_id']
 
     try:
         a1 = int(request.form.get('a1'))
@@ -280,10 +287,13 @@ def get_registro_de_campo(current_user):
         cursor.execute(search_areas_de_visita)
         areas_de_visita = cursor.fetchall()
 
+        area_de_visita_id = None
+
         for reg in registro_de_campo:
             area_de_visita = next((area for area in areas_de_visita if area['area_de_visita_id'] == reg['area_de_visita_id']), None)
             if area_de_visita:
                 area_de_visita = area_de_visita.copy()  # Faz uma cópia para não alterar o original
+                area_de_visita_id = area_de_visita['area_de_visita_id']
                 area_de_visita.pop('area_de_visita_id', None)  # Remove a chave se existir
             reg['area_de_visita'] = area_de_visita
     except Exception as e:
@@ -309,6 +319,23 @@ def get_registro_de_campo(current_user):
                 deposito = deposito.copy()  # Faz uma cópia para não alterar o original
                 deposito.pop('registro_de_campo_id', None)  # Remove a chave se existir
             reg['deposito'] = deposito
+
+    except Exception as e:
+        conn.rollback()
+        cursor.close()
+        return jsonify({"error": str(e)}), 500
+    
+    try:
+        cursor.close()
+        cursor = conn.cursor()
+
+        # buscar ciclo da área de visita
+        search_ciclo_area_de_visita = """SELECT ciclo_id ciclo, ano_de_criacao FROM ciclos INNER JOIN ciclo_area_de_visita USING(ciclo_id) INNER JOIN area_de_visita USING(area_de_visita_id) WHERE ativo = true AND area_de_visita_id = %s;"""
+        cursor.execute(search_ciclo_area_de_visita, (area_de_visita_id,))
+        ciclo_area_de_visita = cursor.fetchone()
+
+        for reg in registro_de_campo:
+            reg['ciclo'] = ciclo_area_de_visita
 
     except Exception as e:
         conn.rollback()
@@ -419,6 +446,9 @@ def get_one_registro_de_campo(current_user, registro_de_campo_id):
         cursor.execute(search_registros_de_campo, (registro_de_campo_id,))
         registro_de_campo = cursor.fetchall()
 
+        if not registro_de_campo:
+            return jsonify({"error": "Registro de campo not found"}), 404
+
     except Exception as e:
         conn.rollback()
         cursor.close()
@@ -438,12 +468,32 @@ def get_one_registro_de_campo(current_user, registro_de_campo_id):
         cursor.execute(search_areas_de_visita)
         areas_de_visita = cursor.fetchall()
 
+        area_de_visita_id = None
+
         for reg in registro_de_campo:
             area_de_visita = next((area for area in areas_de_visita if area['area_de_visita_id'] == reg['area_de_visita_id']), None)
             if area_de_visita:
                 area_de_visita = area_de_visita.copy()  # Faz uma cópia para não alterar o original
+                area_de_visita_id = area_de_visita['area_de_visita_id']
                 area_de_visita.pop('area_de_visita_id', None)  # Remove a chave se existir
             reg['area_de_visita'] = area_de_visita
+    except Exception as e:
+        conn.rollback()
+        cursor.close()
+        return jsonify({"error": str(e)}), 500
+    
+    try:
+        cursor.close()
+        cursor = conn.cursor()
+
+        # buscar ciclo da área de visita
+        search_ciclo_area_de_visita = """SELECT ciclo_id ciclo, ano_de_criacao FROM ciclos INNER JOIN ciclo_area_de_visita USING(ciclo_id) INNER JOIN area_de_visita USING(area_de_visita_id) WHERE ativo = true AND area_de_visita_id = %s;"""
+        cursor.execute(search_ciclo_area_de_visita, (area_de_visita_id,))
+        ciclo_area_de_visita = cursor.fetchone()
+
+        for reg in registro_de_campo:
+            reg['ciclo'] = ciclo_area_de_visita
+
     except Exception as e:
         conn.rollback()
         cursor.close()
@@ -556,7 +606,4 @@ def get_one_registro_de_campo(current_user, registro_de_campo_id):
         conn.close()
         cursor.close()
 
-        return jsonify(registro_de_campo), 200
-
-
-        
+        return jsonify(registro_de_campo[0]), 200
