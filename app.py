@@ -5,9 +5,17 @@ from routes.login.login import login
 from routes.usuario.usuario import usuario
 from routes.tela_inicial.tela_inicial import tela_inicial
 from routes.registro_de_campo.post_one_registro_de_campo import registro_de_campo
-from routes.area_de_visita.bluprint import area_para_visita
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
+
+
+# area_de_visita
+from routes.area_de_visita.bluprint import area_para_visita
+from routes.area_de_visita import get_all
+from routes.area_de_visita import get_by_id
+from routes.area_de_visita import post_one_area_de_visita
+from routes.area_de_visita import post_several_areas
+from routes.area_de_visita import post_several_areas
 
 app = Flask(__name__)
 

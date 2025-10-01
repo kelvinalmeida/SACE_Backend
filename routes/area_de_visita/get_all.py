@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint, current_app, session
 from db import create_connection
 from routes.login.token_required import token_required
-from bluprint import area_para_visita
+from .bluprint import area_para_visita
 
 
 @area_para_visita.route('/area_de_visita', methods=['GET'])

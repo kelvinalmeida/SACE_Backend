@@ -383,3 +383,59 @@ paths:
           description: Área de visita não encontrada com o ID especificado.
         '500':
           description: Erro interno do servidor.
+
+  /varias_areas_de_visita:
+    post:
+      summary: Cria múltiplas áreas de visita (em lote)
+      description: |
+        Registra uma ou mais áreas de visita no sistema a partir de uma lista JSON. A operação é transacional: ou todas as áreas são criadas com sucesso, ou nenhuma é.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: Uma lista de objetos, onde cada objeto representa uma nova área de visita a ser criada.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AreaDeVisita'
+            example:
+              - cep: "57000-001"
+                setor: "Setor A 01"
+                numero_quarteirao: 10
+                estado: "AL"
+                municipio: "Maceió"
+                bairro: "Centro"
+                logadouro: "Rua do Comércio"
+              - cep: "57000-002"
+                setor: "Setor B 02"
+                numero_quarteirao: 25
+                estado: "AL"
+                municipio: "Maceió"
+                bairro: "Ponta Verde"
+                logadouro: "Avenida Álvaro Otacílio"
+      responses:
+        '201':
+          description: Áreas de visita criadas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: "2 Áreas de visita criadas com sucesso." }
+                  supervisor_id: { type: integer, example: 5 }
+                  areas_criadas_ids:
+                    type: array
+                    items:
+                      type: integer
+                    example: [103, 104]
+        '400':
+          description: Requisição inválida. Ocorre se o corpo não for uma lista JSON, se a lista estiver vazia, ou se algum objeto na lista tiver dados faltando ou inválidos.
+        '401':
+          description: Não autorizado (token ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '500':
+          description: Erro interno do servidor.
