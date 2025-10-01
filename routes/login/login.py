@@ -3,7 +3,7 @@ import jwt
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 from db import create_connection
-from token_required import token_required
+from routes.login.token_required import token_required
 
 login = Blueprint('login', __name__)
 

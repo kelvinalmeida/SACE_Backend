@@ -2,12 +2,29 @@ from flask import Flask
 from flask_cors import CORS
 from config import Config
 from routes.login.login import login
-from routes.usuario.usuario import usuario
 from routes.tela_inicial.tela_inicial import tela_inicial
-from routes.registro_de_campo.registro_de_campo import registro_de_campo
-from routes.area_de_visita.area_para_visita import area_para_visita
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
+
+
+# registro_de_campo
+from routes.registro_de_campo.bluprint import registro_de_campo
+from routes.registro_de_campo import get_all
+from routes.registro_de_campo import por_id
+from routes.registro_de_campo import post_one_registro_de_campo
+
+
+# area_de_visita
+from routes.area_de_visita.bluprint import area_para_visita
+from routes.area_de_visita import get_all
+from routes.area_de_visita import get_by_id
+# from routes.area_de_visita import post_one_area_de_visita
+from routes.area_de_visita import post_several_areas
+
+# usuario
+from routes.usuario.bluprint import usuario
+from routes.usuario import post_sereval_users
+from routes.usuario import get_all_users
 
 app = Flask(__name__)
 
@@ -33,6 +50,8 @@ app.register_blueprint(usuario)
 app.register_blueprint(tela_inicial)
 app.register_blueprint(registro_de_campo)
 app.register_blueprint(area_para_visita)
+
+print(app.url_map)
 
 app.config.from_object(Config)
 
