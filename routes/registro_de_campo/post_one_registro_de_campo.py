@@ -3,9 +3,10 @@ from db import create_connection
 from routes.login.token_required import token_required
 import json
 from werkzeug.utils import secure_filename
+from .bluprint import registro_de_campo
 
 
-registro_de_campo = Blueprint('registro_de_campo', __name__)
+
 
 def check_required_filds(required_fild):
     for fild in required_fild:
@@ -73,8 +74,6 @@ def send_registro_de_campo(current_user):
         return jsonify({"error": "Database connection failed"}), 500
     
 
-    
-    print(">>>>>>>>>>", area_de_visita_id, agente_id)
 
     # Query para buscar a área de visita do agente logado
     try:
@@ -144,7 +143,12 @@ def send_registro_de_campo(current_user):
     try:
         # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
         cursor = conn.cursor()
-        larvicidas = json.loads(request.form.get('larvicidas', '[]'))
+
+        try:
+            larvicidas = json.loads(request.form.get('larvicidas', '[]'))
+        except Exception:
+            larvicidas = []
+
 
         for larvicida in larvicidas:
             tipo = larvicida.get('tipo')
@@ -154,7 +158,7 @@ def send_registro_de_campo(current_user):
 
             inserir_larvicidas = """INSERT INTO larvicida(tipo, forma, quantidade, registro_de_campo_id) VALUES (%s, %s, %s, %s);"""
 
-            print("Larvicidas: ", tipo, forma, quantidade, registro_de_campo_id)
+            # print("Larvicidas: ", tipo, forma, quantidade, registro_de_campo_id)
 
             cursor.execute(inserir_larvicidas, (tipo, forma, quantidade, registro_de_campo_id))
         
@@ -170,8 +174,13 @@ def send_registro_de_campo(current_user):
     try:
         # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
         cursor = conn.cursor()
-        adulticidas = json.loads(request.form.get('adulticidas', '[]'))
 
+        try:
+            adulticidas = json.loads(request.form.get('adulticidas', '[]'))
+        except Exception:
+            adulticidas = []
+        
+        # if(adulticida):
         for adulticida in adulticidas:
             tipo = adulticida.get('tipo')
             quantidade = adulticida.get('quantidade')

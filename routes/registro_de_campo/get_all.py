@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint, current_app, session
 from db import create_connection
 from routes.login.token_required import token_required
-from routes.registro_de_campo.post_one_registro_de_campo import registro_de_campo
+from .bluprint import registro_de_campo
 
 
 @registro_de_campo.route('/registro_de_campo', methods=['GET'])

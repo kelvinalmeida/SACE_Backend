@@ -8,10 +8,11 @@ import logging
 # Configuração básica de log para exibir erros
 logging.basicConfig(level=logging.INFO)
 
-@area_para_visita.route('/varias_areas_de_visita', methods=['POST'])
+@area_para_visita.route('/area_de_visita', methods=['POST'])
 @token_required
 def criar_varias_areas_de_visita(current_user):
     # 1. Validação de Supervisor
+    print("current_user: ", current_user)
     if not current_user or current_user.get("supervisor_id") is None or current_user.get("nivel_de_acesso") not in ["supervisor"]: 
         return jsonify({"error": "É necessário ser supervisor para cadastrar áreas."}), 403
     

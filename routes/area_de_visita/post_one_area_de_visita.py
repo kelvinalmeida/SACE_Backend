@@ -53,5 +53,3 @@ def criar_area_de_visita(current_user):
         if conn:
             conn.close()
             conn.close()
-
-
