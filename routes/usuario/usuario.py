@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, Blueprint, current_app
 from db import create_connection
-from token_required import token_required
+from routes.login.token_required import token_required
 
 usuario = Blueprint('usuario', __name__)
 
