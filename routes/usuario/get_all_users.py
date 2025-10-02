@@ -28,7 +28,7 @@ def get_usuarios(current_user):
         usuario_id, nome_completo, cpf, rg, data_nascimento, email, 
         telefone_ddd, telefone_numero, estado, municipio, bairro, 
         logradouro, numero, registro_do_servidor, cargo, situacao_atual, 
-        data_de_admissao, setor_de_atuacao, nivel_de_acesso, agente_id
+        data_de_admissao, nivel_de_acesso, agente_id
     FROM usuario INNER JOIN agente USING(usuario_id);
 """
 
@@ -51,7 +51,7 @@ def get_usuarios(current_user):
         usuario_id, nome_completo, cpf, rg, data_nascimento, email, 
         telefone_ddd, telefone_numero, estado, municipio, bairro, 
         logradouro, numero, registro_do_servidor, cargo, situacao_atual, 
-        data_de_admissao, setor_de_atuacao, nivel_de_acesso, agente_id
+        data_de_admissao, nivel_de_acesso, agente_id
     FROM usuario INNER JOIN supervisor USING(usuario_id);
 """
 

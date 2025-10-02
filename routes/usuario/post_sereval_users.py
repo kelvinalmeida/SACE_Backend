@@ -42,15 +42,15 @@ def criar_varios_usuarios(current_user):
         check_unique_sql = """
             SELECT cpf, email FROM usuario WHERE cpf = %s OR email = %s;
         """
-        
+     
         # Inserção na tabela 'usuario'
         insert_usuario_sql = """
             INSERT INTO usuario (
                 nome_completo, cpf, rg, data_nascimento, email, telefone_ddd, telefone_numero, 
                 estado, municipio, bairro, logradouro, numero, registro_do_servidor, 
-                cargo, situacao_atual, data_de_admissao, setor_de_atuacao, senha, nivel_de_acesso
+                cargo, situacao_atual, data_de_admissao, senha, nivel_de_acesso
             ) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
             RETURNING usuario_id;
         """
         
@@ -59,7 +59,7 @@ def criar_varios_usuarios(current_user):
             required_fields = ['nome_completo', 'cpf', 'data_nascimento', 'email', 'telefone_ddd', 
                                'telefone_numero', 'estado', 'municipio', 'bairro', 'logradouro', 
                                'numero', 'registro_do_servidor', 'cargo', 'situacao_atual', 
-                               'data_de_admissao', 'setor_de_atuacao', 'senha', 'nivel_de_acesso']
+                               'data_de_admissao', 'senha', 'nivel_de_acesso']
 
             for field in required_fields:
                 if field not in user_data:
@@ -103,8 +103,7 @@ def criar_varios_usuarios(current_user):
                 user_data['email'], telefone_ddd, user_data['telefone_numero'], user_data['estado'], 
                 user_data['municipio'], user_data['bairro'], user_data['logradouro'], numero, 
                 user_data['registro_do_servidor'], user_data['cargo'], situacao_atual, 
-                user_data['data_de_admissao'], user_data['setor_de_atuacao'], user_data['senha'], 
-                user_data['nivel_de_acesso']
+                user_data['data_de_admissao'], user_data['senha'], user_data['nivel_de_acesso']
             )
 
             # Inserção na tabela principal
@@ -115,13 +114,30 @@ def criar_varios_usuarios(current_user):
             # 5. Criação de Agente ou Supervisor
             
             # CORREÇÃO: Nível de acesso para Agente é 'usuario' (não 'agante')
+            agente_id = None
             if user_data['nivel_de_acesso'] == 'agente':
                 inserir_agente = """INSERT INTO agente(usuario_id) VALUES (%s) RETURNING agente_id;"""
                 cursor.execute(inserir_agente, (usuario_id,))
+                agente_id = cursor.fetchone()['agente_id']
+
+                # cadastrando o agente a area de visita
+                try:
+                    inserir_agente_area_de_visita = """INSERT INTO agente_area_de_visita(agente_id, area_de_visita_id) VALUES(%s, %s)"""
+
+                    for id_area in user_data['setor_de_atuacao']:
+                        cursor.execute(inserir_agente_area_de_visita, (agente_id, id_area))
+                        print(agente_id, id_area)
+                except Exception as e:
+                    conn.rollback()
+                    cursor.close()
+                    conn.close()
+                    # return jsonify({"erro": str(e)})
+                    return jsonify({"erro": 'ids da area_de_visita no setor de atuacao estão incorretos!'})
+                
             elif user_data['nivel_de_acesso'] == 'supervisor':
                 inserir_supervisor = """INSERT INTO supervisor(usuario_id) VALUES (%s) RETURNING supervisor_id;"""
                 cursor.execute(inserir_supervisor, (usuario_id,))
-            
+
         
         # 6. Commit de todas as inserções
         conn.commit()
