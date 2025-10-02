@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict oAFwjSmincOf5ViWtaougDBriPDdIxKUFJIMZC1NIInLWx3eNucRgHe3n42mSsa
+\restrict aVLUD37ZHM3qwb9NG0Ja1loOKsgCcgPUcAE4qeOKi4R7e6YE0Yd6XUTd3B2KVNT
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -475,7 +475,6 @@ ALTER TABLE public.supervisor ALTER COLUMN supervisor_id ADD GENERATED ALWAYS AS
 
 CREATE TABLE public.usuario (
     usuario_id integer NOT NULL,
-    supervisor_criador_id integer,
     nome_completo character varying(100) NOT NULL,
     cpf character varying(11) NOT NULL,
     rg character varying(10),
@@ -533,7 +532,7 @@ COPY public.adulticida (adulticida_id, registro_de_campo_id, tipo, quantidade) F
 12	34	Adulticida de Borrifação Residual (Piretróide)	25
 13	37	Adulticida de Borrifação Residual (Piretróide)	12
 14	41	Adulticida de Borrifação Residual (Piretróide)	28
-15	45	Adulticida de Borrifação Residual (Piretróide)	20
+15	44	Adulticida de Borrifação Residual (Piretróide)	20
 16	3	Adulticida de Borrifação Residual (Piretróide)	15
 17	5	Adulticida de Borrifação Residual (Piretróide)	30
 18	8	Adulticida de Borrifação Residual (Piretróide)	24
@@ -561,10 +560,10 @@ COPY public.agente (agente_id, usuario_id) FROM stdin;
 2	2
 3	3
 4	4
-5	6
+5	5
 6	7
 7	8
-8	10
+8	9
 9	11
 10	12
 11	13
@@ -572,7 +571,7 @@ COPY public.agente (agente_id, usuario_id) FROM stdin;
 13	15
 14	16
 15	17
-16	19
+16	18
 17	20
 \.
 
@@ -583,24 +582,31 @@ COPY public.agente (agente_id, usuario_id) FROM stdin;
 
 COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_visita_id) FROM stdin;
 1	1	1
-2	2	2
-3	3	3
-4	4	4
-5	5	5
-6	6	6
-7	7	7
-8	8	8
-9	9	9
-10	10	10
-11	11	1
-12	12	2
-13	13	4
-14	14	6
+2	11	1
+3	3	2
+4	12	2
+5	2	2
+6	4	3
+7	13	3
+8	5	4
+9	14	4
+10	7	5
+11	15	5
+12	8	6
+13	16	6
+14	9	7
 15	15	7
-16	16	8
-17	17	7
-18	1	3
-19	2	5
+16	11	8
+17	16	8
+18	12	9
+19	1	9
+20	13	10
+21	16	10
+22	1	5
+23	7	2
+24	9	4
+25	15	6
+26	16	7
 \.
 
 
@@ -610,14 +616,14 @@ COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_
 
 COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro) FROM stdin;
 1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Avenida Álvaro Otacílio
-2	2	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Avenida Doutor Antônio Gomes de Barros
-3	3	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Rua Jangadeiros Alagoanos
-4	1	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Avenida Fernandes Lima
-5	2	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Avenida Brigadeiro Eduardo Gomes de Brito
+2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Avenida Doutor Antônio Gomes de Barros
+3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Rua Jangadeiros Alagoanos
+4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Avenida Fernandes Lima
+5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Avenida Brigadeiro Eduardo Gomes de Brito
 6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Rua Cleto Campelo
-7	1	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Avenida Cachoeira do Meirim
-8	2	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Avenida Menino Marcelo
-9	3	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Rua Artur Vital da Silva
+7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Avenida Cachoeira do Meirim
+8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Avenida Menino Marcelo
+9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Rua Artur Vital da Silva
 10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Rua Professora Maria Esther da Costa Barros
 \.
 
@@ -841,7 +847,7 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 19	37	Methoprene	Líquido	30
 20	41	Pyriproxyfen	Granulado	4
 21	44	Bti (Bacillus thuringiensis israelensis)	Granulado	12
-22	45	Spinosad	Tablete	2
+22	44	Spinosad	Tablete	2
 23	1	Pyriproxyfen	Granulado	2
 24	3	Bti (Bacillus thuringiensis israelensis)	Tablete	1
 25	5	Pyriproxyfen	Granulado	7
@@ -869,50 +875,49 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 
 COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id) FROM stdin;
 1	123	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1
-2	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	2	2
-3	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	3	3
-4	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	4	4
-5	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	5	5
-6	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A001	2	Coleta de amostra em ralo.	6	6	6
-7	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	7	7
-8	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	8	8
-9	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	9	9
-10	1500	Par	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda.	10	10	10
-11	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	11
-12	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	12
-13	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	13
-14	40	Par	Urbana	Residência	Visitado	\N	Zica	t	f	f	t	f	A002	3	Amostra coletada de balde no quintal.	4	14	14
-15	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	15
-16	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	16
-17	2048	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Caixa d'água destampada, tratada.	7	17	17
-18	321	Ímpar	Urbana	Comércio	Visitado	Padaria	Dengue	f	f	f	f	f	\N	\N	Sem anormalidades.	8	1	18
-19	55	Ímpar	Urbana	Residência	Recusado	Portão alto	Zica	f	f	f	f	f	\N	\N	Proprietário se recusou a abrir.	9	2	19
-20	876	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	3	20
-21	901	Ímpar	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em piscina abandonada, tratada.	1	4	21
-22	112	Par	Urbana	Outros	Visitado	Igreja	Dengue	f	t	f	f	f	\N	\N	Verificado bebedouros e calhas.	2	5	22
-23	433	Ímpar	Urbana	Residência	Visitado	Apto 505	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	6	23
-24	1800	Par	Urbana	Comércio	Tratado	Supermercado	Zica	f	t	t	t	f	\N	\N	Tratamento em área de carga/descarga.	4	7	24
-25	21	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	t	f	f	f	f	A003	1	Coleta de amostra positiva.	5	8	25
-26	777	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	9	26
-27	1234	Par	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	10	27
-28	56	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	11	28
-29	821	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água.	9	12	29
-30	10	Par	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	30
-31	222	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Tratamento focal realizado.	1	14	31
-32	345	Ímpar	Urbana	Outros	Visitado	Cemitério	Zica	f	t	f	t	f	\N	\N	Verificação de vasos e jazigos.	2	15	32
-33	981	Ímpar	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	t	f	\N	\N	Pneus armazenados corretamente.	3	16	33
-34	1730	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	17	34
-35	501	Ímpar	Urbana	Residência	Fechado	Apto 501	Dengue	f	f	f	f	f	\N	\N	Morador não atendeu.	5	1	35
-36	48	Par	Urbana	Comércio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	6	2	36
-37	679	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Denúncia procedente. Local tratado.	7	3	37
-38	1111	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum verificada.	8	4	38
-39	30	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	5	39
-40	499	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Sem água parada no momento.	10	6	40
-41	580	Par	Urbana	Residência	Tratado	\N	Dengue	t	f	t	t	f	A004	4	Amostra coletada e local tratado.	1	7	41
-42	128	Par	Urbana	Comércio	Visitado	Galpão	Dengue	f	t	f	f	f	\N	\N	Inspecionado.	2	8	42
-43	77	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tentativa de visita sem sucesso.	3	9	43
-44	300	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Orientações verbais fornecidas.	4	10	44
-45	1420	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	11	45
+2	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	11
+3	901	Ímpar	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em piscina abandonada, tratada.	1	1	21
+4	222	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Tratamento focal realizado.	1	11	31
+5	580	Par	Urbana	Residência	Tratado	\N	Dengue	t	f	t	t	f	A004	4	Amostra coletada e local tratado.	1	1	41
+6	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	7	2
+7	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	12
+8	112	Par	Urbana	Outros	Visitado	Igreja	Dengue	f	t	f	f	f	\N	\N	Verificado bebedouros e calhas.	2	7	22
+9	345	Ímpar	Urbana	Outros	Visitado	Cemitério	Zica	f	t	f	t	f	\N	\N	Verificação de vasos e jazigos.	2	12	32
+10	128	Par	Urbana	Comércio	Visitado	Galpão	Dengue	f	t	f	f	f	\N	\N	Inspecionado.	2	3	42
+11	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	4	3
+12	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	13
+13	433	Ímpar	Urbana	Residência	Visitado	Apto 505	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	4	23
+14	981	Ímpar	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	t	f	\N	\N	Pneus armazenados corretamente.	3	13	33
+15	77	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tentativa de visita sem sucesso.	3	4	43
+16	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	5	4
+17	40	Par	Urbana	Residência	Visitado	\N	Zica	t	f	f	t	f	A002	3	Amostra coletada de balde no quintal.	4	14	14
+18	1800	Par	Urbana	Comércio	Tratado	Supermercado	Zica	f	t	t	t	f	\N	\N	Tratamento em área de carga/descarga.	4	9	24
+19	1730	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	14	34
+20	300	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Orientações verbais fornecidas.	4	5	44
+21	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	7	5
+22	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	15
+23	21	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	t	f	f	f	f	A003	1	Coleta de amostra positiva.	5	1	25
+24	501	Ímpar	Urbana	Residência	Fechado	Apto 501	Dengue	f	f	f	f	f	\N	\N	Morador não atendeu.	5	1	35
+25	1420	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	15	45
+26	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A001	2	Coleta de amostra em ralo.	6	8	6
+27	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	16
+28	777	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	15	26
+29	48	Par	Urbana	Comércio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	6	8	36
+30	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	9	7
+31	2048	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Caixa d'água destampada, tratada.	7	15	17
+32	1234	Par	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	16	27
+33	679	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Denúncia procedente. Local tratado.	7	9	37
+34	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	11	8
+35	56	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	16	28
+36	1111	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum verificada.	8	11	38
+37	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	12	9
+38	55	Ímpar	Urbana	Residência	Recusado	Portão alto	Zica	f	f	f	f	f	\N	\N	Proprietário se recusou a abrir.	9	1	19
+39	821	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água.	9	12	29
+40	30	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	1	39
+41	1500	Par	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda.	10	13	10
+42	876	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	20
+43	10	Par	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	30
+44	499	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Sem água parada no momento.	10	16	40
 \.
 
 
@@ -949,9 +954,10 @@ COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, registro_d
 --
 
 COPY public.supervisor (supervisor_id, usuario_id) FROM stdin;
-1	5
-2	9
-3	18
+1	2
+2	6
+3	10
+4	19
 \.
 
 
@@ -959,28 +965,28 @@ COPY public.supervisor (supervisor_id, usuario_id) FROM stdin;
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.usuario (usuario_id, supervisor_criador_id, nome_completo, cpf, rg, data_nascimento, email, telefone_ddd, telefone_numero, estado, municipio, bairro, logradouro, numero, registro_do_servidor, cargo, situacao_atual, data_de_admissao, setor_de_atuacao, senha, nivel_de_acesso) FROM stdin;
-1	1	João da Silva	12345678901	1234567	1985-06-15	joao.silva@example.com	11	987654321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	TI	senhaSegura123	usuario
-2	1	Pedro Cavalcante	admin	212324567	1983-06-15	pedro.silva@example.com	11	987354321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	TI	123456	supervisor
-3	1	Maria Oliveira Santos	23456789012	2345678	1990-03-22	maria.santos@example.com	21	912345678	RJ	Rio de Janeiro	Copacabana	Avenida Atlântica	1702	RS-2025-002	Gerente de Projetos	t	2024-05-20	Projetos	outrasenha456	usuario
-4	2	Carlos Pereira Costa	34567890123	3456789	1988-11-01	carlos.costa@example.com	31	988776655	MG	Belo Horizonte	Savassi	Rua Fernandes Tourinho	500	RS-2025-003	Desenvolvedor Sênior	t	2023-08-15	TI	senhaDev321	usuario
-5	5	Ana Clara Ferreira	45678901234	4567890	1995-09-10	ana.ferreira@example.com	41	977665544	PR	Curitiba	Batel	Avenida do Batel	1868	RS-2025-004	Analista de RH	f	2024-02-01	Recursos Humanos	senhaRH987	usuario
-6	1	Pedro Rodrigues Alves	56789012345	5678901	1982-01-30	pedro.alves@example.com	51	966554433	RS	Porto Alegre	Moinhos de Vento	Rua Padre Chagas	415	RS-2025-005	Coordenador Financeiro	t	2022-11-25	Financeiro	senhaFin159	supervisor
-7	2	Juliana Souza Lima	67890123456	6789012	1998-07-12	juliana.lima@example.com	61	955443322	DF	Brasília	Asa Sul	SCS Quadra 07	10	RS-2025-006	Estagiária	t	2025-07-01	Marketing	senhaEstagio753	usuario
-8	5	Lucas Martins	78901234567	7890123	1992-04-25	lucas.martins@example.com	71	944332211	BA	Salvador	Barra	Avenida Oceânica	2400	RS-2025-007	Analista de Marketing	t	2023-03-18	Marketing	senhaMkt357	usuario
-9	2	Fernanda Gonçalves	89012345678	8901234	1986-12-08	fernanda.g@example.com	81	933221100	PE	Recife	Boa Viagem	Avenida Boa Viagem	97	RS-2025-008	Designer Gráfico	t	2024-09-02	Criação	senhaDesign123	usuario
-10	1	Ricardo Almeida	90123456789	9012345	1979-05-19	ricardo.a@example.com	11	922110099	SP	São Paulo	Pinheiros	Rua dos Pinheiros	1000	RS-2025-009	Diretor de TI	t	2020-01-15	TI	senhaDiretorTop	supervisor
-11	4	Beatriz Rocha	01234567890	0123456	2000-02-28	beatriz.rocha@example.com	21	911009988	RJ	Niterói	Icaraí	Rua Gavião Peixoto	30	RS-2025-010	Assistente Administrativo	t	2025-06-11	Administrativo	senhaAdmin456	usuario
-12	3	Guilherme Barbosa	11223344556	1122334	1993-10-03	guilherme.b@example.com	31	988887777	MG	Contagem	Eldorado	Avenida João César de Oliveira	1275	RS-2025-011	Técnico de Suporte	t	2024-04-10	Suporte	senhaSup555	usuario
-13	3	Larissa Azevedo	22334455667	2233445	1991-08-14	larissa.azevedo@example.com	48	977776666	SC	Florianópolis	Centro	Rua Felipe Schmidt	515	RS-2025-012	Analista de Negócios	t	2023-10-09	Negócios	senhaNegocios333	usuario
-14	3	Rafael Ribeiro	33445566778	3344556	1987-03-29	rafael.r@example.com	85	966665555	CE	Fortaleza	Meireles	Avenida Beira Mar	4260	RS-2025-013	Desenvolvedor Pleno	t	2025-02-20	TI	senhaPleno777	usuario
-15	2	Camila Nogueira	44556677889	4455667	1999-01-05	camila.n@example.com	92	955554444	AM	Manaus	Adrianópolis	Rua Teresina	151	RS-2025-014	Desenvolvedor Júnior	t	2025-08-12	TI	senhaJunior888	usuario
-16	4	Felipe Monteiro	55667788990	5566778	1984-06-07	felipe.m@example.com	62	944443333	GO	Goiânia	Setor Bueno	Avenida T-10	100	RS-2025-015	Contador	t	2021-07-22	Financeiro	senhaContador999	usuario
-17	1	Vanessa Dias	66778899001	6677889	1996-09-21	vanessa.dias@example.com	27	933332222	ES	Vitória	Jardim da Penha	Rua da Lama	50	RS-2025-016	Assistente de Marketing	f	2024-01-30	Marketing	senhaAssistMkt111	usuario
-18	2	Bruno Medeiros	77889900112	7788990	1990-11-18	bruno.m@example.com	11	922221111	SP	Guarulhos	Macedo	Avenida Paulo Faccini	1500	RS-2025-017	Analista de Logística	t	2023-05-16	Logística	senhaLog222	usuario
-19	1	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	41	911110000	PR	São José dos Pinhais	Centro	Rua XV de Novembro	210	RS-2025-018	Gerente de RH	t	2019-12-05	Recursos Humanos	senhaGerenteRH321	supervisor
-20	4	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	21	999998888	RJ	Duque de Caxias	Vila São Luís	Rua Genaro Lomba	15	RS-2025-019	Recrutador	t	2025-03-03	Recursos Humanos	senhaRecrutador444	usuario
-21	5	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	11	988887777	SP	Campinas	Cambuí	Rua Coronel Quirino	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	TI	senhaArquiteto555	usuario
+COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email, telefone_ddd, telefone_numero, estado, municipio, bairro, logradouro, numero, registro_do_servidor, cargo, situacao_atual, data_de_admissao, setor_de_atuacao, senha, nivel_de_acesso) FROM stdin;
+1	João da Silva	12345678901	1234567	1985-06-15	joao.silva@example.com	11	987654321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	TI	senhaSegura123	agente
+2	Pedro Cavalcante	admin	212324567	1983-06-15	pedro.silva@example.com	11	987354321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	TI	123456	supervisor
+3	Maria Oliveira Santos	23456789012	2345678	1990-03-22	maria.santos@example.com	21	912345678	RJ	Rio de Janeiro	Copacabana	Avenida Atlântica	1702	RS-2025-002	Gerente de Projetos	t	2024-05-20	Projetos	outrasenha456	agente
+4	Carlos Pereira Costa	34567890123	3456789	1988-11-01	carlos.costa@example.com	31	988776655	MG	Belo Horizonte	Savassi	Rua Fernandes Tourinho	500	RS-2025-003	Desenvolvedor Sênior	t	2023-08-15	TI	senhaDev321	agente
+5	Ana Clara Ferreira	45678901234	4567890	1995-09-10	ana.ferreira@example.com	41	977665544	PR	Curitiba	Batel	Avenida do Batel	1868	RS-2025-004	Analista de RH	f	2024-02-01	Recursos Humanos	senhaRH987	agente
+6	Pedro Rodrigues Alves	56789012345	5678901	1982-01-30	pedro.alves@example.com	51	966554433	RS	Porto Alegre	Moinhos de Vento	Rua Padre Chagas	415	RS-2025-005	Coordenador Financeiro	t	2022-11-25	Financeiro	senhaFin159	supervisor
+7	Juliana Souza Lima	67890123456	6789012	1998-07-12	juliana.lima@example.com	61	955443322	DF	Brasília	Asa Sul	SCS Quadra 07	10	RS-2025-006	Estagiária	t	2025-07-01	Marketing	senhaEstagio753	agente
+8	Lucas Martins	78901234567	7890123	1992-04-25	lucas.martins@example.com	71	944332211	BA	Salvador	Barra	Avenida Oceânica	2400	RS-2025-007	Analista de Marketing	t	2023-03-18	Marketing	senhaMkt357	agente
+9	Fernanda Gonçalves	89012345678	8901234	1986-12-08	fernanda.g@example.com	81	933221100	PE	Recife	Boa Viagem	Avenida Boa Viagem	97	RS-2025-008	Designer Gráfico	t	2024-09-02	Criação	senhaDesign123	agente
+10	Ricardo Almeida	90123456789	9012345	1979-05-19	ricardo.a@example.com	11	922110099	SP	São Paulo	Pinheiros	Rua dos Pinheiros	1000	RS-2025-009	Diretor de TI	t	2020-01-15	TI	senhaDiretorTop	supervisor
+11	Beatriz Rocha	01234567890	0123456	2000-02-28	beatriz.rocha@example.com	21	911009988	RJ	Niterói	Icaraí	Rua Gavião Peixoto	30	RS-2025-010	Assistente Administrativo	t	2025-06-11	Administrativo	senhaAdmin456	agente
+12	Guilherme Barbosa	11223344556	1122334	1993-10-03	guilherme.b@example.com	31	988887777	MG	Contagem	Eldorado	Avenida João César de Oliveira	1275	RS-2025-011	Técnico de Suporte	t	2024-04-10	Suporte	senhaSup555	agente
+13	Larissa Azevedo	22334455667	2233445	1991-08-14	larissa.azevedo@example.com	48	977776666	SC	Florianópolis	Centro	Rua Felipe Schmidt	515	RS-2025-012	Analista de Negócios	t	2023-10-09	Negócios	senhaNegocios333	agente
+14	Rafael Ribeiro	33445566778	3344556	1987-03-29	rafael.r@example.com	85	966665555	CE	Fortaleza	Meireles	Avenida Beira Mar	4260	RS-2025-013	Desenvolvedor Pleno	t	2025-02-20	TI	senhaPleno777	agente
+15	Camila Nogueira	44556677889	4455667	1999-01-05	camila.n@example.com	92	955554444	AM	Manaus	Adrianópolis	Rua Teresina	151	RS-2025-014	Desenvolvedor Júnior	t	2025-08-12	TI	senhaJunior888	agente
+16	Felipe Monteiro	55667788990	5566778	1984-06-07	felipe.m@example.com	62	944443333	GO	Goiânia	Setor Bueno	Avenida T-10	100	RS-2025-015	Contador	t	2021-07-22	Financeiro	senhaContador999	agente
+17	Vanessa Dias	66778899001	6677889	1996-09-21	vanessa.dias@example.com	27	933332222	ES	Vitória	Jardim da Penha	Rua da Lama	50	RS-2025-016	Assistente de Marketing	f	2024-01-30	Marketing	senhaAssistMkt111	agente
+18	Bruno Medeiros	77889900112	7788990	1990-11-18	bruno.m@example.com	11	922221111	SP	Guarulhos	Macedo	Avenida Paulo Faccini	1500	RS-2025-017	Analista de Logística	t	2023-05-16	Logística	senhaLog222	agente
+19	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	41	911110000	PR	São José dos Pinhais	Centro	Rua XV de Novembro	210	RS-2025-018	Gerente de RH	t	2019-12-05	Recursos Humanos	senhaGerenteRH321	supervisor
+20	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	21	999998888	RJ	Duque de Caxias	Vila São Luís	Rua Genaro Lomba	15	RS-2025-019	Recrutador	t	2025-03-03	Recursos Humanos	senhaRecrutador444	agente
+21	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	11	988887777	SP	Campinas	Cambuí	Rua Coronel Quirino	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	TI	senhaArquiteto555	agente
 \.
 
 
@@ -1002,7 +1008,7 @@ SELECT pg_catalog.setval('public.agente_agente_id_seq', 17, true);
 -- Name: agente_area_de_visita_agente_area_de_visita_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 19, true);
+SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 26, true);
 
 
 --
@@ -1079,14 +1085,14 @@ SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_ar
 -- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 45, true);
+SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 44, true);
 
 
 --
 -- Name: supervisor_supervisor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 3, true);
+SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 4, true);
 
 
 --
@@ -1214,6 +1220,22 @@ ALTER TABLE ONLY public.registro_de_campo
 
 ALTER TABLE ONLY public.supervisor
     ADD CONSTRAINT supervisor_pkey PRIMARY KEY (supervisor_id);
+
+
+--
+-- Name: usuario usuario_cpf_key; Type: CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.usuario
+    ADD CONSTRAINT usuario_cpf_key UNIQUE (cpf);
+
+
+--
+-- Name: usuario usuario_email_key; Type: CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.usuario
+    ADD CONSTRAINT usuario_email_key UNIQUE (email);
 
 
 --
@@ -1380,5 +1402,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict oAFwjSmincOf5ViWtaougDBriPDdIxKUFJIMZC1NIInLWx3eNucRgHe3n42mSsa
+\unrestrict aVLUD37ZHM3qwb9NG0Ja1loOKsgCcgPUcAE4qeOKi4R7e6YE0Yd6XUTd3B2KVNT
 

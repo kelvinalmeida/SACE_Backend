@@ -19,7 +19,7 @@ def get_tela_inicial():
         depositos_totais_e_ruas = calculate_total_depositos(cursor)
 
         # Área de risco
-        areas_de_risco = calcular_areas_de_risco(cursor) 
+        areas_de_risco = calcular_areas_de_risco(cursor)
 
         tela_inicial_response = {
             "aba_depositos": depositos_totais_e_ruas,
