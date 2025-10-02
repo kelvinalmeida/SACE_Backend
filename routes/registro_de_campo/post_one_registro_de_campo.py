@@ -219,8 +219,10 @@ def send_registro_de_campo(current_user):
             file.save(f'uploads/registro_de_campo_arquivos/reg_de_campo_id_{registro_de_campo_id}_{arquivo_nome}')
         
         conn.commit()
-    finally:
+    except Exception as e:
         conn.rollback()
+        return jsonify({"error": "Database error: " + str(e)}), 500
+    finally:
         conn.close()
         cursor.close()
 
