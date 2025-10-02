@@ -46,9 +46,7 @@ def criar_varias_areas_de_visita(current_user):
         """
         
         for index, area in enumerate(areas_data):
-            # Validação básica de campos obrigatórios
-            print('>>>>>>>>>>>>>> ', area['numero_quarteirao'])
-            
+            # Validação básica de campos obrigatórios            
             required_fields = ['cep', 'setor', 'numero_quarteirao', 'estado', 'municipio', 'bairro', 'logadouro']
             for field in required_fields:
                 if field not in area:

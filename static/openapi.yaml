@@ -88,9 +88,36 @@ components:
         cargo: { type: string, example: "Agente de Endemias" }
         situacao_atual: { type: boolean, example: true }
         data_de_admissao: { type: string, format: date, example: "2020-03-15" }
-        setor_de_atuacao: { type: string, example: "Setor Jatiúca 01" }
+        # MUDANÇA IMPORTANTE AQUI:
+        setor_de_atuacao:
+          type: array
+          items:
+            type: integer
+          description: "Lista de IDs das áreas de visita. Obrigatório se 'nivel_de_acesso' for 'agente'."
+          example: [2, 3]
         senha: { type: string, format: password, example: "senhaSegura123" }
         nivel_de_acesso: { type: string, enum: [agente, supervisor], example: "agente" }
+
+    
+    AreaDeVisitaInput:
+      type: object
+      required:
+        - cep
+        - setor
+        - numero_quarteirao
+        - estado
+        - municipio
+        - bairro
+        - logradouro
+      properties:
+        cep: { type: string, example: "57046-140" }
+        setor: { type: string, example: "Setor Serraria 08" }
+        numero_quarteirao: { type: integer, example: 15 }
+        estado: { type: string, example: "AL" }
+        municipio: { type: string, example: "Maceió" }
+        bairro: { type: string, example: "Serraria" }
+        logadouro: { type: string, example: "Avenida Menino Marcelo" }
+        
     AreaDeVisitaDetalhes:
       type: object
       properties:
@@ -163,7 +190,7 @@ components:
         numero_da_amostra: { type: string, nullable: true, example: "A-002" }
         quantiade_tubitos: { type: string, nullable: true, example: "3" }
         observacao: { type: string, nullable: true, example: "Cão bravo no quintal." }
-        area_de_visita_id: { type: integer, example: 101 }
+        area_de_visita_id: { type: integer, example: 2 }
         agente_id: { type: integer, example: 12 }
         deposito_id: { type: integer, example: 45 }
         agente_nome: { type: string, example: "João da Silva" }
@@ -301,7 +328,7 @@ paths:
                     format: binary
                   description: "Um ou mais arquivos para upload."
       responses:
-        '201': # O status code 201 Created é mais apropriado para a criação de um recurso.
+        '201':
           description: Registro de campo criado com sucesso.
         '400':
           description: Requisição inválida (campos faltando ou dados incorretos).
@@ -361,38 +388,29 @@ paths:
         '500':
           description: Erro interno do servidor.
 
-  /area_de_visita/{area_de_visita_id}:
+  /area_de_visita:
     get:
-      summary: Busca uma área de visita por ID
+      summary: Lista todas as áreas de visita
       description: |
-        Retorna os detalhes de uma área de visita específica, identificada pelo seu ID.
+        Retorna uma lista com todas as áreas de visita cadastradas.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
       security:
         - bearerAuth: []
-      parameters:
-        - name: area_de_visita_id
-          in: path
-          required: true
-          description: O ID da área de visita a ser buscada.
-          schema:
-            type: integer
-            example: 101
       responses:
         '200':
-          description: Detalhes da área de visita retornados com sucesso.
+          description: Lista de áreas de visita retornada com sucesso.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AreaDeVisitaDetalhes'
+                type: array
+                items:
+                  $ref: '#/components/schemas/AreaDeVisitaDetalhes'
         '401':
           description: Não autorizado (token ausente ou inválido).
         '403':
           description: Acesso proibido (usuário não é um supervisor).
-        '404':
-          description: Área de visita não encontrada com o ID especificado.
         '500':
           description: Erro interno do servidor.
-
-  /area_de_visita:
     post:
       summary: Cria múltiplas áreas de visita (em lote)
       description: |
@@ -408,7 +426,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/AreaDeVisita'
+                $ref: '#/components/schemas/AreaDeVisitaInput'
             example:
               - cep: "57000-001"
                 setor: "Setor A 01"
@@ -447,7 +465,39 @@ paths:
           description: Acesso proibido (usuário não é um supervisor).
         '500':
           description: Erro interno do servidor.
-  
+
+  /area_de_visita/{area_de_visita_id}:
+    get:
+      summary: Busca uma área de visita por ID
+      description: |
+        Retorna os detalhes de uma área de visita específica, identificada pelo seu ID.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: area_de_visita_id
+          in: path
+          required: true
+          description: O ID da área de visita a ser buscada.
+          schema:
+            type: integer
+            example: 101
+      responses:
+        '200':
+          description: Detalhes da área de visita retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaDeVisitaDetalhes'
+        '401':
+          description: Não autorizado (token ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '404':
+          description: Área de visita não encontrada com o ID especificado.
+        '500':
+          description: Erro interno do servidor.
+          
   /usuarios:
     post:
       summary: Cria múltiplos usuários (em lote)
@@ -482,14 +532,14 @@ paths:
                 cargo: "Agente de Endemias"
                 situacao_atual: true
                 data_de_admissao: "2018-07-22"
-                setor_de_atuacao: "Setor Ponta Verde 03"
+                setor_de_atuacao: [2, 3]
                 senha: "outraSenhaForte456"
                 nivel_de_acesso: "agente"
-              - nome_completo: "Carlos Souza"
-                cpf: "4445566677"
+              - nome_completo: "Luiza Souza"
+                cpf: "4445366677"
                 rg: "7654321"
                 data_nascimento: "1985-05-20"
-                email: "carlos.suza@example.com"
+                email: "carlos.sou3za@example.com"
                 telefone_ddd: 82
                 telefone_numero: "988887777"
                 estado: "AL"
@@ -501,7 +551,6 @@ paths:
                 cargo: "Agente de Endemias"
                 situacao_atual: true
                 data_de_admissao: "2018-07-22"
-                setor_de_atuacao: "Setor Ponta Verde 03"
                 senha: "outraSenhaForte456"
                 nivel_de_acesso: "supervisor"
       responses:
@@ -529,7 +578,7 @@ paths:
           description: Conflito. Um dos usuários na lista já existe (CPF ou e-mail duplicado).
         '500':
           description: Erro interno do servidor.
-
+          
     get:
       summary: Lista todos os usuários (agentes e supervisores)
       description: |
@@ -557,100 +606,3 @@ paths:
           description: Não autorizado (token ausente ou inválido).
         '500':
           description: Erro interno do servidor.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# /area_de_visita:
-  #   post:
-  #     summary: Cria uma nova área de visita
-  #     description: |
-  #       Registra uma nova área de visita no sistema. 
-  #       **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação. A ID do supervisor é extraída do token JWT.
-  #     security:
-  #       - bearerAuth: []
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         multipart/form-data:
-  #           schema:
-  #             type: object
-  #             required:
-  #               - cep
-  #               - setor
-  #               - numero_quarteirao
-  #               - estado
-  #               - municipio
-  #               - bairro
-  #               - logadouro
-  #             properties:
-  #               cep: { type: string, example: "57046-140" }
-  #               setor: { type: string, example: "Setor Serraria 08" }
-  #               numero_quarteirao: { type: integer, example: 15 }
-  #               estado: { type: string, example: "AL" }
-  #               municipio: { type: string, example: "Maceió" }
-  #               bairro: { type: string, example: "Serraria" }
-  #               logadouro: { type: string, example: "Avenida Menino Marcelo" }
-  #     responses:
-  #       '201':
-  #         description: Área de visita criada com sucesso.
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 message: { type: string, example: "Área de visita criada com sucesso" }
-  #                 area_de_visita_id: { type: integer, example: 102 }
-  #                 supervisor_id: { type: integer, example: 5 }
-  #       '400':
-  #         description: Requisição inválida (ex 'numero_quarteirao' não é um inteiro).
-  #       '401':
-  #         description: Não autorizado (token ausente ou inválido).
-  #       '403':
-  #         description: Acesso proibido (usuário não é um supervisor).
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 error: { type: string, example: "É nescessário ser supervisor!" }
-  #       '500':
-  #         description: Erro interno do servidor.
-  #   get:
-  #     summary: Lista todas as áreas de visita
-  #     description: |
-  #       Retorna uma lista com todas as áreas de visita cadastradas.
-  #     security:
-  #       - bearerAuth: []
-  #     responses:
-  #       '200':
-  #         description: Lista de áreas de visita retornada com sucesso.
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/AreaDeVisitaDetalhes'
-  #       '401':
-  #         description: Não autorizado (token ausente ou inválido).
-  #       '403':
-  #         description: Acesso proibido (usuário não é um supervisor).
-  #       '500':
-  #         description: Erro interno do servidor.
-  
