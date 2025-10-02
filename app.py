@@ -10,7 +10,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 # registro_de_campo
 from routes.registro_de_campo.bluprint import registro_de_campo
 from routes.registro_de_campo import get_all
-from routes.registro_de_campo import por_id
+from routes.registro_de_campo import by_id
 from routes.registro_de_campo import post_one_registro_de_campo
 
 
@@ -25,6 +25,7 @@ from routes.area_de_visita import post_several_areas
 from routes.usuario.bluprint import usuario
 from routes.usuario import post_sereval_users
 from routes.usuario import get_all_users
+from routes.usuario import by_id
 
 app = Flask(__name__)
 

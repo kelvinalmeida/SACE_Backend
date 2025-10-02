@@ -489,6 +489,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AreaDeVisitaDetalhes'
+              example:
+                area_de_visita_id: 101
+                cep: "57046-140"
+                setor: "Setor Serraria 08"
+                numero_quarteirao: 15
+                estado: "AL"
+                municipio: "Maceió"
+                bairro: "Serraria"
+                logadouro: "Avenida Menino Marcelo"
         '401':
           description: Não autorizado (token ausente ou inválido).
         '403':
@@ -602,7 +611,87 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/SupervisorOutput'
+                    example:
+                    - 
         '401':
           description: Não autorizado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /usuarios/{user_id}:
+    get:
+      summary: Busca um usuário por ID
+      description: |
+        Retorna os detalhes completos de um único usuário, identificado pelo seu ID.
+        A estrutura da resposta incluirá `agente_id` se o usuário for um agente, ou `supervisor_id` se for um supervisor.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: O ID do usuário a ser buscado.
+          schema:
+            type: integer
+            example: 12
+      responses:
+        '200':
+          description: Detalhes do usuário retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/AgenteOutput'
+                  - $ref: '#/components/schemas/SupervisorOutput'
+              examples:
+                exemploAgente:
+                  summary: Exemplo de resposta para um usuário Agente
+                  value:
+                    usuario_id: 12
+                    nome_completo: "Maria da Silva"
+                    cpf: "11122233344"
+                    rg: "1234567"
+                    data_nascimento: "1990-10-25"
+                    email: "maria.silva@example.com"
+                    telefone_ddd: 82
+                    telefone_numero: "999998888"
+                    estado: "AL"
+                    municipio: "Maceió"
+                    bairro: "Jatiúca"
+                    logradouro: "Avenida João Davino"
+                    numero: 500
+                    registro_do_servidor: "MAT12345"
+                    cargo: "Agente de Endemias"
+                    situacao_atual: true
+                    data_de_admissao: "2020-03-15"
+                    nivel_de_acesso: "agente"
+                    agente_id: 7
+                exemploSupervisor:
+                  summary: Exemplo de resposta para um usuário Supervisor
+                  value:
+                    usuario_id: 5
+                    nome_completo: "Carlos Pereira Costa"
+                    cpf: "34567890123"
+                    rg: "3456789"
+                    data_nascimento: "1988-11-01"
+                    email: "carlos.costa@example.com"
+                    telefone_ddd: 31
+                    telefone_numero: "988776655"
+                    estado: "MG"
+                    municipio: "Belo Horizonte"
+                    bairro: "Savassi"
+                    logradouro: "Rua Fernandes Tourinho"
+                    numero: 500
+                    registro_do_servidor: "RS-2025-003"
+                    cargo: "Supervisor de Campo"
+                    situacao_atual: true
+                    data_de_admissao: "2023-08-15"
+                    nivel_de_acesso: "supervisor"
+                    supervisor_id: 3
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404':
+          description: Usuário não encontrado com o ID especificado.
         '500':
           description: Erro interno do servidor.
