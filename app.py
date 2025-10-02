@@ -27,6 +27,10 @@ from routes.usuario import post_sereval_users
 from routes.usuario import get_all_users
 from routes.usuario import by_id
 
+# denuncia
+from routes.denuncia.bluprint import denuncia
+from routes.denuncia import post_one_denuncia
+
 app = Flask(__name__)
 
 
@@ -51,6 +55,7 @@ app.register_blueprint(usuario)
 app.register_blueprint(tela_inicial)
 app.register_blueprint(registro_de_campo)
 app.register_blueprint(area_para_visita)
+app.register_blueprint(denuncia)
 
 print(app.url_map)
 
