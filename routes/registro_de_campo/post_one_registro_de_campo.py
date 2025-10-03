@@ -26,8 +26,6 @@ def send_registro_de_campo(current_user):
     except Exception as e:
         return jsonify({"error": "Invalid token: É nescessário ser agente para cadastrar registro de campo. Peça para um supervisor cadastrar você."}), 401
     
-
-
     check_filds = check_required_filds(['imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
 
     if(check_filds):

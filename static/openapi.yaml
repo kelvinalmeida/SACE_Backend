@@ -13,6 +13,29 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+    DenunciaCompleta:
+      type: object
+      properties:
+        denuncia_id: { type: integer, example: 51 }
+        rua_avenida: { type: string, example: "Avenida da Paz" }
+        numero: { type: integer, example: 1000 }
+        bairro: { type: string, example: "Centro" }
+        tipo_imovel: { type: string, example: "Terreno Baldio" }
+        endereco_complemento: { type: string, nullable: true, example: "Ao lado da padaria" }
+        data_denuncia: { type: string, format: date, example: "2025-10-02" }
+        hora_denuncia: { type: string, format: time, example: "15:59:00" }
+        observacoes: { type: string, nullable: true, example: "Muitos pneus acumulados com água." }
+        supervisor_id: { type: integer, example: 5 }
+        deposito_id: { type: integer, example: 77 }
+        nome_completo: { type: string, description: "Nome do supervisor que registrou a denúncia", example: "Carlos Pereira Costa" }
+        cpf: { type: string, example: "34567890123" }
+        email: { type: string, format: email, example: "carlos.costa@example.com" }
+        deposito:
+          $ref: '#/components/schemas/Deposito'
+        arquivos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArquivoDenuncia'
     DenunciaResponseData:
       type: object
       properties:
@@ -180,6 +203,11 @@ components:
       type: object
       properties:
         registro_de_campo_arquivo_id: { type: integer, example: 23 }
+        arquivo_nome: { type: string, example: "foto_quintal.jpg" }
+    ArquivoDenuncia:
+      type: object
+      properties:
+        arquivo_denuncia_id: { type: integer, example: 23 }
         arquivo_nome: { type: string, example: "foto_quintal.jpg" }
     AreaDeVisita:
       type: object
@@ -788,3 +816,56 @@ paths:
           description: Acesso proibido (usuário não tem permissão de supervisor).
         '500':
           description: Erro interno do servidor.
+          
+    get:
+      summary: Lista todas as denúncias
+      description: |
+        Retorna uma lista completa de todas as denúncias registradas no sistema.
+        Cada denúncia na lista inclui detalhes do local, do supervisor responsável, depósitos e arquivos associados.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Uma lista de denúncias foi retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DenunciaCompleta'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /denuncia/{denuncia_id}:
+    get:
+      summary: Busca uma denúncia por ID
+      description: |
+        Retorna os detalhes completos de uma única denúncia, identificada pelo seu ID.
+        As informações incluem dados do local, supervisor, depósitos, e arquivos.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: denuncia_id
+          in: path
+          required: true
+          description: O ID único da denúncia a ser buscada.
+          schema:
+            type: integer
+            example: 51
+      responses:
+        '200':
+          description: Detalhes da denúncia retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DenunciaCompleta'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404':
+          description: Nenhuma denúncia foi encontrada com o ID especificado.
+        '500':
+          description: Erro interno do servidor (pode ocorrer se o ID não for encontrado, devido a um IndexError no código).
