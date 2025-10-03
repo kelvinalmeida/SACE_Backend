@@ -30,6 +30,8 @@ from routes.usuario import by_id
 # denuncia
 from routes.denuncia.bluprint import denuncia
 from routes.denuncia import post_one_denuncia
+from routes.denuncia import get_all
+from routes.denuncia import by_id
 
 app = Flask(__name__)
 
