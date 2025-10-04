@@ -34,7 +34,15 @@ instance/
 .DS_Store
 Thumbs.db
 
+# --- Estrutura de Pastas de Uploads ---
+# Ignora todo o conteúdo das subpastas de uploads...
 uploads/registro_de_campo_arquivos/*
 uploads/denuncia_arquivos/*
 uploads/artigo_arquivos/*
 uploads/artigo_documentos/*
+
+# ...mas mantém as pastas no repositório através de um arquivo .gitkeep.
+!uploads/registro_de_campo_arquivos/.gitkeep
+!uploads/denuncia_arquivos/.gitkeep
+!uploads/artigo_arquivos/.gitkeep
+!uploads/artigo_documentos/.gitkeep
