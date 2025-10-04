@@ -1,24 +1,23 @@
-Ambiente virtual
-
+# Ambiente virtual
 venv/
 .env/
 *.env
-Arquivos Python compilados
 
-pycache/
+# Arquivos Python compilados
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
-Configurações locais
 
+# Configurações locais
 instance/
 *.sqlite3
 *.db
-Logs
 
+# Logs
 *.log
-Cache e diretórios temporários
 
+# Cache e diretórios temporários
 *.pid
 *.seed
 *.out
@@ -26,16 +25,14 @@ Cache e diretórios temporários
 *.tmp
 *.temp
 *.swp
-Arquivos de IDE
 
+# Arquivos de IDE
 .vscode/
 .idea/
-Arquivos do sistema
 
+# Arquivos do sistema
 .DS_Store
 Thumbs.db
---- Arquivos de Uploads ---
-Ignora a pasta principal 'uploads/' e todo o seu conteúdo (mais seguro)
 
 uploads/registro_de_campo_arquivos/*
 uploads/denuncia_arquivos/*
