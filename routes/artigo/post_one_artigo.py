@@ -117,36 +117,3 @@ def send_artigo(current_user):
             cursor.close()
         if conn:
             conn.close()
-
-
-    return jsonify({
-        'status': 'success',
-        'message': 'Artigo recebido com sucesso',
-        'data': {
-            'denuncia_id': denuncia_id,
-            'supervisor_id': supervisor_id,
-            'rua_avenida': rua_avenida,
-            'numero': numero,
-            'bairro': bairro,
-            'tipo_imovel': tipo_imovel,
-            'endereco_complemento': endereco_complemento,
-            'data_denuncia': data_denuncia,
-            'hora_denuncia': hora_denuncia,
-            'observacoes': observacoes,
-            'a1': a1,
-            'a2': a2,
-            'b': b,
-            'c': c,
-            'd1': d1,
-            'd2': d2,
-            'e': e,
-            'deposito_id': deposito_id,
-            'files': files
-        }
-    }), 201
-
-
-
-
-    
-
