@@ -13,6 +13,22 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+    ArtigoPOSTResponse:
+      type: object
+      properties:
+        message: { type: string, example: "Artigo e arquivos anexados criados com sucesso." }
+        artigo_id: { type: integer, example: 88 }
+        titulo: { type: string, example: "Guia de Prevenção da Dengue" }
+        descricao: { type: string, example: "Um guia completo sobre como evitar focos do mosquito." }
+        conteudo_artigo_digitado: { type: string, nullable: true, example: "Elimine água parada dos vasos de plantas..." }
+        arqivos_anexados:
+          type: object
+          description: "Um resumo dos nomes dos arquivos que foram enviados."
+          example:
+            Artigo Documento: "guia_completo.pdf"
+            Arquivo 1: "foto_vaso_planta.jpg"
+            Arquivo 2: "video_limpeza_calha.mp4"
+
     DenunciaCompleta:
       type: object
       properties:
@@ -869,3 +885,62 @@ paths:
           description: Nenhuma denúncia foi encontrada com o ID especificado.
         '500':
           description: Erro interno do servidor (pode ocorrer se o ID não for encontrado, devido a um IndexError no código).
+
+  /artigo:
+    post:
+      summary: Cria um novo artigo
+      description: |
+        Registra um novo artigo informativo no sistema. A rota aceita um título, descrição, conteúdo de texto, um documento principal (PDF/DOC) e múltiplos arquivos de mídia (fotos, vídeos).
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem criar artigos.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - titulo
+                - descricao
+              properties:
+                titulo:
+                  type: string
+                  description: "O título do artigo."
+                  example: "Guia de Prevenção da Dengue"
+                descricao:
+                  type: string
+                  description: "Uma breve descrição sobre o conteúdo do artigo."
+                  example: "Um guia completo sobre como evitar focos do mosquito."
+                conteudo_artigo_digitado:
+                  type: string
+                  description: "O conteúdo principal do artigo, em formato de texto (opcional)."
+                  nullable: true
+                  example: "Para evitar a dengue, é crucial eliminar qualquer acúmulo de água parada..."
+                artigo_documento:
+                  type: string
+                  format: binary
+                  description: "Um documento principal para o artigo, como um PDF ou DOC (opcional)."
+                  nullable: true
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: "Arquivos de mídia adicionais, como fotos e vídeos (opcional)."
+                  nullable: true
+      responses:
+        '201':
+          description: Artigo criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtigoPOSTResponse'
+        '400':
+          description: Requisição inválida (campos obrigatórios 'titulo' ou 'descricao' faltando).
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não tem permissão de supervisor).
+        '500':
+          description: Erro interno do servidor (falha na conexão com o banco, erro ao salvar arquivo, etc.).

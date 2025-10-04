@@ -33,6 +33,11 @@ from routes.denuncia import post_one_denuncia
 from routes.denuncia import get_all
 from routes.denuncia import by_id
 
+# artigo
+from routes.artigo.bluprint import blu_artigo
+from routes.artigo import post_one_artigo
+
+
 app = Flask(__name__)
 
 
@@ -58,6 +63,7 @@ app.register_blueprint(tela_inicial)
 app.register_blueprint(registro_de_campo)
 app.register_blueprint(area_para_visita)
 app.register_blueprint(denuncia)
+app.register_blueprint(blu_artigo)
 
 print(app.url_map)
 
