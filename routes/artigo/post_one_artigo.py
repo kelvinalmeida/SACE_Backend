@@ -42,7 +42,8 @@ def send_artigo(current_user):
     
     # Prepara o nome do documento (None se não houver arquivo)
     nome_artigo_documento = secure_filename(documento.filename) if documento else None
-    arqivos_anexados["Artigo Documento"] = nome_artigo_documento
+    
+    
 
     # 4. Conexão com o Banco de Dados
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
@@ -64,6 +65,14 @@ def send_artigo(current_user):
         cursor.execute(inserir_artigo_sql, (supervisor_id, nome_artigo_documento, conteudo_artigo_digitado, titulo, descricao))
         artigo_id = cursor.fetchone()['artigo_id']
 
+        if(nome_artigo_documento):
+            documento_anex = {}
+            documento_anex["documento_nome"] = nome_artigo_documento
+            documento_anex["artigo_id"] = artigo_id
+
+            arqivos_anexados["documento_anexado"] = documento_anex
+
+
         # 6. Salvar e Registrar Documento Principal (Se houver)
         if documento:
             documento_filepath = f'uploads/artigo_documentos/artigo_id_{artigo_id}_{nome_artigo_documento}'
@@ -77,19 +86,28 @@ def send_artigo(current_user):
         if arquivos_media:
             inserir_arquivos_sql = """
                 INSERT INTO arquivo_artigo(artigo_id, arquivo_nome) 
-                VALUES (%s, %s);
+                VALUES (%s, %s) RETURNING arquivo_artigo_id;
             """
+            files_ids = {}
             for file in arquivos_media:
                 if file.filename:
                     arquivo_nome = secure_filename(file.filename)
-                    arqivos_anexados[f"Arquivo {count}"] = arquivo_nome
-                    count = count + 1
+
                     # Salva o arquivo no sistema de arquivos
                     file.save(f'uploads/artigo_arquivos/artigo_id_{artigo_id}_{arquivo_nome}')
                     
+                    
                     # Registra no banco de dados
                     cursor.execute(inserir_arquivos_sql, (artigo_id, arquivo_nome))
-        
+                    arquivo_artigo_id = cursor.fetchone()
+
+                    files_ids["arquivo_id"] = arquivo_artigo_id["arquivo_artigo_id"]
+                    files_ids["arquivo_nome"] = arquivo_nome
+
+                    arqivos_anexados[f"arquivo {count}"] = files_ids
+                    count = count + 1
+
+            
         # 8. Commit final (se tudo acima for bem-sucedido)
         conn.commit()
         

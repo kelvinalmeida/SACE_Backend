@@ -13,21 +13,110 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
-    ArtigoPOSTResponse:
+    ArtigoArquivoAnexo:
       type: object
       properties:
-        message: { type: string, example: "Artigo e arquivos anexados criados com sucesso." }
-        artigo_id: { type: integer, example: 88 }
-        titulo: { type: string, example: "Guia de Prevenção da Dengue" }
-        descricao: { type: string, example: "Um guia completo sobre como evitar focos do mosquito." }
-        conteudo_artigo_digitado: { type: string, nullable: true, example: "Elimine água parada dos vasos de plantas..." }
+        arquivo_artigo_id:
+          type: integer
+          example: 5
+        arquivo_nome:
+          type: string
+          example: "imagem_anexa.png"
+
+    ArtigoAnexos:
+      type: object
+      properties:
+        documento_anexado:
+          type: string
+          nullable: true
+          description: "Nome do arquivo principal do artigo (PDF/DOC)."
+          example: "guia_dengue.pdf"
+        arquivos:
+          type: array
+          description: "Lista de outros arquivos de mídia anexados."
+          items:
+            $ref: '#/components/schemas/ArtigoArquivoAnexo'
+
+    ArtigoCompleto:
+      type: object
+      properties:
+        artigo_id:
+          type: integer
+          example: 42
+        supervisor_id:
+          type: integer
+          example: 5
+        titulo:
+          type: string
+          example: "Guia de Prevenção da Dengue"
+        descricao:
+          type: string
+          example: "Um guia completo sobre como evitar focos do mosquito."
+        conteudo_artigo_digitado:
+          type: string
+          nullable: true
+          example: "Elimine água parada dos vasos de plantas..."
+        nome_artigo_documento:
+          type: string
+          nullable: true
+          example: "guia_dengue.pdf"
+        supervisor_nome:
+          type: string
+          description: "Nome do supervisor que criou o artigo."
+          example: "Carlos Pereira Costa"
+        arqivos_anexados:
+          $ref: '#/components/schemas/ArtigoAnexos'
+    ArtigoAnexoArquivo:
+      type: object
+      properties:
+        arquivo_id:
+          type: integer
+          example: 37
+        arquivo_nome:
+          type: string
+          example: "foto_anexa.png"
+    ArtigoAnexoDocumento:
+      type: object
+      properties:
+        artigo_id:
+          type: integer
+          example: 42
+        documento_nome:
+          type: string
+          example: "documento_principal.pdf"
+    ArtigoResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Artigo e arquivos anexados criados com sucesso."
+        artigo_id:
+          type: integer
+          example: 42
+        titulo:
+          type: string
+          example: "titulo_teste"
+        descricao:
+          type: string
+          example: "descricao_teste"
+        conteudo_artigo_digitado:
+          type: string
+          nullable: true
+          example: "conteudo_artigo_digitado_teste"
         arqivos_anexados:
           type: object
-          description: "Um resumo dos nomes dos arquivos que foram enviados."
+          description: "Objeto contendo os detalhes dos arquivos e do documento anexado. As chaves ('arquivo 1', 'documento_anexado') são dinâmicas."
+          additionalProperties:
+            oneOf:
+              - $ref: '#/components/schemas/ArtigoAnexoArquivo'
+              - $ref: '#/components/schemas/ArtigoAnexoDocumento'
           example:
-            Artigo Documento: "guia_completo.pdf"
-            Arquivo 1: "foto_vaso_planta.jpg"
-            Arquivo 2: "video_limpeza_calha.mp4"
+            "arquivo 1":
+              arquivo_id: 37
+              arquivo_nome: "Screenshot_2025-07-18_224814.png"
+            "documento_anexado":
+              artigo_id: 42
+              documento_nome: "Aula_11_Internet_Banking.pdf"
 
     DenunciaCompleta:
       type: object
@@ -935,7 +1024,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArtigoPOSTResponse'
+                $ref: '#/components/schemas/ArtigoResponse'
         '400':
           description: Requisição inválida (campos obrigatórios 'titulo' ou 'descricao' faltando).
         '401':
@@ -944,3 +1033,64 @@ paths:
           description: Acesso proibido (usuário não tem permissão de supervisor).
         '500':
           description: Erro interno do servidor (falha na conexão com o banco, erro ao salvar arquivo, etc.).
+
+    get:
+      summary: Lista todos os artigos
+      description: |
+        Retorna uma lista de todos os artigos informativos cadastrados no sistema.
+        Cada artigo inclui detalhes do autor (supervisor) e uma lista de arquivos anexados.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Uma lista de artigos foi retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArtigoCompleto'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /artigo/{artigo_id}:
+    get:
+      summary: Busca um artigo por ID
+      description: |
+        Retorna os detalhes completos de um único artigo, identificado pelo seu ID.
+        As informações incluem dados do autor (supervisor) e todos os arquivos anexados.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: artigo_id
+          in: path
+          required: true
+          description: O ID único do artigo a ser buscado.
+          schema:
+            type: integer
+            example: 42
+      responses:
+        '200':
+          description: Detalhes do artigo retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtigoCompleto'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404':
+          description: Artigo não encontrado com o ID especificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Artigo não encontrado"
+        '500':
+          description: Erro interno do servidor.
