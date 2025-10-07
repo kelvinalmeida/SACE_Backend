@@ -135,8 +135,8 @@ components:
         nome_completo: { type: string, description: "Nome do supervisor que registrou a denúncia", example: "Carlos Pereira Costa" }
         cpf: { type: string, example: "34567890123" }
         email: { type: string, format: email, example: "carlos.costa@example.com" }
-        deposito:
-          $ref: '#/components/schemas/Deposito'
+        # deposito:
+        #   $ref: '#/components/schemas/Deposito'
         arquivos:
           type: array
           items:
