@@ -187,15 +187,23 @@ components:
         cargo: { type: string, example: "Agente de Endemias" }
         situacao_atual: { type: boolean, example: true }
         data_de_admissao: { type: string, format: date, example: "2020-03-15" }
-        setor_de_atuacao: { type: string, example: "Setor Jatiúca 01" }
+        # Removido 'setor_de_atuacao' daqui para colocar a estrutura completa em AgenteOutput
         nivel_de_acesso: { type: string, enum: [agente, supervisor], example: "agente" }
+
     AgenteOutput:
       type: object
       allOf:
         - $ref: '#/components/schemas/UsuarioOutput'
         - type: object
           properties:
-            agente_id: { type: integer, example: 7 }
+            agente_id: 
+              type: integer
+              example: 7
+            setor_de_atuacao:
+              type: array
+              description: "Lista detalhada das áreas de atuação do agente."
+              items:
+                $ref: '#/components/schemas/AreaDeVisitaDetalhes'
 
     SupervisorOutput:
       type: object
@@ -768,8 +776,7 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/SupervisorOutput'
-                    example:
-                    - 
+
         '401':
           description: Não autorizado (token ausente ou inválido).
         '500':
@@ -824,6 +831,23 @@ paths:
                     data_de_admissao: "2020-03-15"
                     nivel_de_acesso: "agente"
                     agente_id: 7
+                    setor_de_atuacao:
+                      - area_de_visita_id: 2
+                        cep: "57046-140"
+                        setor: "Setor Serraria 08"
+                        numero_quarteirao: 15
+                        estado: "AL"
+                        municipio: "Maceió"
+                        bairro: "Serraria"
+                        logadouro: "Avenida Menino Marcelo"
+                      - area_de_visita_id: 3
+                        cep: "57046-150"
+                        setor: "Setor Ponta Verde 05"
+                        numero_quarteirao: 8
+                        estado: "AL"
+                        municipio: "Maceió"
+                        bairro: "Ponta Verde"
+                        logadouro: "Rua Professor Antônio Gomes de Barros"
                 exemploSupervisor:
                   summary: Exemplo de resposta para um usuário Supervisor
                   value:

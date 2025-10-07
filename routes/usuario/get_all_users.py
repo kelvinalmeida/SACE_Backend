@@ -43,15 +43,31 @@ def get_usuarios(current_user):
         return jsonify({"error": str(e)}), 500
     
     try:
+
+        search_area_de_atuacao = """ SELECT agen_area.agente_id, agen_area.area_de_visita_id, area.cep, area.setor, area.numero_quarteirao, area.estado, area.municipio, area.bairro, area.logadouro FROM agente_area_de_visita agen_area INNER JOIN agente USING (agente_id) INNER JOIN area_de_visita area USING(area_de_visita_id);"""
+
+        cursor.execute(search_area_de_atuacao)
+        area_de_atuacao = cursor.fetchall()
+
+
+        for usua in usuarios['agentes']:
+            areas_de_atuacao_do_usuario = [ area for area in area_de_atuacao if usua['agente_id'] == area['agente_id']]
+
+            areas_de_atuacao_do_usuario = [ { 'area_de_visita_id': area['area_de_visita_id'], 'cep': area['cep'], 'setor': area['setor'], 'numero_quarteirao': area['numero_quarteirao'], 'estado': area['estado'], 'municipio': area['municipio'], 'bairro': area['bairro'], 'logadouro': area['logadouro'] } for area in areas_de_atuacao_do_usuario ]
+
+            usua['setor_de_atuacao'] = areas_de_atuacao_do_usuario
+        
+
+    except Exception as e:
+        conn.rollback()
         cursor.close()
-        cursor = conn.cursor()
+        return jsonify({"error": str(e)}), 500
+    
+    try:
 
         search_supervisores = """
     SELECT 
-        usuario_id, nome_completo, cpf, rg, data_nascimento, email, 
-        telefone_ddd, telefone_numero, estado, municipio, bairro, 
-        logradouro, numero, registro_do_servidor, cargo, situacao_atual, 
-        data_de_admissao, nivel_de_acesso, agente_id
+        *
     FROM usuario INNER JOIN supervisor USING(usuario_id);
 """
 

@@ -26,6 +26,27 @@ def get_user_by_id(current_user, user_id):
         cursor.execute(search_user, (user_id,))
 
         usuario = cursor.fetchone()
+
+        if(usuario):
+                try:
+
+                    search_area_de_atuacao = """ SELECT agen_area.agente_id, agen_area.area_de_visita_id, area.cep, area.setor, area.numero_quarteirao, area.estado, area.municipio, area.bairro, area.logadouro FROM agente_area_de_visita agen_area INNER JOIN area_de_visita area USING(area_de_visita_id);"""
+
+                    cursor.execute(search_area_de_atuacao)
+                    area_de_atuacao = cursor.fetchall()
+
+                    
+                    area_de_atuacao_do_usuario = [ area for area in area_de_atuacao if area['agente_id'] == usuario['agente_id']]
+
+                    area_de_atuacao_do_usuario = [ { 'area_de_visita_id': area['area_de_visita_id'], 'cep': area['cep'], 'setor': area['setor'], 'numero_quarteirao': area['numero_quarteirao'], 'estado': area['estado'], 'municipio': area['municipio'], 'bairro': area['bairro'], 'logadouro': area['logadouro'] } for area in area_de_atuacao_do_usuario ]
+
+                    usuario['setor_de_atuacao'] = area_de_atuacao_do_usuario
+        
+
+                except Exception as e:
+                    conn.rollback()
+                    cursor.close()
+                    return jsonify({"error": str(e)}), 500
     
 
         if(not usuario):
