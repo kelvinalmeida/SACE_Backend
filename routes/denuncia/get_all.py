@@ -70,7 +70,9 @@ def get_all_denuncias(current_user):
             if deposito:
                 deposito = deposito.copy()  # Faz uma cópia para não alterar o original
                 deposito.pop('denuncia_id', None)  # Remove a chave se existir
-            denunc['deposito'] = deposito
+            
+            # Adiciona o depósito ao dicionário da denúncia
+            # denunc['deposito'] = deposito
 
     except Exception as e:
         conn.rollback()

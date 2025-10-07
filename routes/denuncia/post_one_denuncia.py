@@ -84,16 +84,16 @@ def send_registro_de_campo(current_user):
             }), 400
     
 
-    try:
-        a1 = int(request.form.get('a1'))
-        a2 = int(request.form.get('a2'))
-        b = int(request.form.get('b'))
-        c = int(request.form.get('c'))
-        d1 = int(request.form.get('d1'))
-        d2 = int(request.form.get('d2'))
-        e = int(request.form.get('e'))
-    except (TypeError, ValueError):
-        return jsonify({"error": "Invalid input for a1, a2, b, c, d1, d2, or e. They must be integers."}), 400
+    # try:
+    #     a1 = int(request.form.get('a1'))
+    #     a2 = int(request.form.get('a2'))
+    #     b = int(request.form.get('b'))
+    #     c = int(request.form.get('c'))
+    #     d1 = int(request.form.get('d1'))
+    #     d2 = int(request.form.get('d2'))
+    #     e = int(request.form.get('e'))
+    # except (TypeError, ValueError):
+    #     return jsonify({"error": "Invalid input for a1, a2, b, c, d1, d2, or e. They must be integers."}), 400
     
 
     # Conexão com o banco de dados
@@ -104,41 +104,43 @@ def send_registro_de_campo(current_user):
     
     
 
-    # Inserir Depósito
-    try:
-        cursor = conn.cursor()
-        insir_deposito = """
-            INSERT INTO depositos(a1, a2, b, c, d1, d2, e) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s) 
-            RETURNING deposito_id; 
-        """
+    # # Inserir Depósito
+    # try:
+    #     
+    #     insir_deposito = """
+    #         INSERT INTO depositos(a1, a2, b, c, d1, d2, e) 
+    #         VALUES (%s, %s, %s, %s, %s, %s, %s) 
+    #         RETURNING deposito_id; 
+    #     """
 
-        # 1. Executa a inserção e a requisição do ID
-        # O comando 'execute' retorna None, não o resultado.
-        cursor.execute(insir_deposito, (a1, a2, b, c, d1, d2, e))
+    #     # 1. Executa a inserção e a requisição do ID
+    #     # O comando 'execute' retorna None, não o resultado.
+    #     cursor.execute(insir_deposito, (a1, a2, b, c, d1, d2, e))
 
-        # 2. Usa fetchone() para obter a linha de resultado (que contém o ID)
-        # Como RETURNING retorna uma única linha com uma única coluna (deposito_id),
-        # fetchone() retorna uma tupla ou lista, dependendo do driver.
-        resultado = cursor.fetchone()
+    #     # 2. Usa fetchone() para obter a linha de resultado (que contém o ID)
+    #     # Como RETURNING retorna uma única linha com uma única coluna (deposito_id),
+    #     # fetchone() retorna uma tupla ou lista, dependendo do driver.
+    #     resultado = cursor.fetchone()
 
-        # 4. Extrai o ID
-        if resultado:
-            deposito_id = resultado["deposito_id"]
-        else:
-            conn.rollback()
-            raise Exception("Falha ao obter o ID do depósito após a inserção.")
-    except Exception as e:
-        conn.rollback()
-        return jsonify({"error": str(e)}), 500
+    #     # 4. Extrai o ID
+    #     if resultado:
+    #         deposito_id = resultado["deposito_id"]
+    #     else:
+    #         conn.rollback()
+    #         raise Exception("Falha ao obter o ID do depósito após a inserção.")
+    # except Exception as e:
+    #     conn.rollback()
+    #     return jsonify({"error": str(e)}), 500
     
     #Inserir Registro de Campo
     try:
+        cursor = conn.cursor()
+
         inserir_denuncia = """INSERT INTO denuncia(
-            supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, deposito_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING denuncia_id; """
+            supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING denuncia_id; """
         
-        cursor.execute(inserir_denuncia, (supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, deposito_id))
+        cursor.execute(inserir_denuncia, (supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes))
 
         denuncia_fech = cursor.fetchone()
         denuncia_id = denuncia_fech['denuncia_id']
@@ -193,14 +195,14 @@ def send_registro_de_campo(current_user):
             'data_denuncia': data_denuncia,
             'hora_denuncia': hora_denuncia,
             'observacoes': observacoes,
-            'a1': a1,
-            'a2': a2,
-            'b': b,
-            'c': c,
-            'd1': d1,
-            'd2': d2,
-            'e': e,
-            'deposito_id': deposito_id,
+            # 'a1': a1,
+            # 'a2': a2,
+            # 'b': b,
+            # 'c': c,
+            # 'd1': d1,
+            # 'd2': d2,
+            # 'e': e,
+            # 'deposito_id': deposito_id,
             'files': files
         }
     }), 201
