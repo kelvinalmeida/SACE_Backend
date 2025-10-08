@@ -23,22 +23,9 @@ components:
           type: string
           example: "imagem_anexa.png"
 
-    ArtigoAnexos:
+    ArtigoOutput:
       type: object
-      properties:
-        documento_anexado:
-          type: string
-          nullable: true
-          description: "Nome do arquivo principal do artigo (PDF/DOC)."
-          example: "guia_dengue.pdf"
-        arquivos:
-          type: array
-          description: "Lista de outros arquivos de mídia anexados."
-          items:
-            $ref: '#/components/schemas/ArtigoArquivoAnexo'
-
-    ArtigoCompleto:
-      type: object
+      description: "Representa um artigo retornado pela API."
       properties:
         artigo_id:
           type: integer
@@ -46,46 +33,29 @@ components:
         supervisor_id:
           type: integer
           example: 5
+        link_artigo:
+          type: string
+          nullable: true
+          format: uri
+          example: "https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue"
         titulo:
           type: string
           example: "Guia de Prevenção da Dengue"
         descricao:
           type: string
           example: "Um guia completo sobre como evitar focos do mosquito."
-        conteudo_artigo_digitado:
+        imagem_nome:
           type: string
           nullable: true
-          example: "Elimine água parada dos vasos de plantas..."
-        nome_artigo_documento:
-          type: string
-          nullable: true
-          example: "guia_dengue.pdf"
+          example: "capa_artigo.png"
         supervisor_nome:
           type: string
-          description: "Nome do supervisor que criou o artigo."
+          description: "Nome do supervisor que publicou o artigo."
           example: "Carlos Pereira Costa"
-        arqivos_anexados:
-          $ref: '#/components/schemas/ArtigoAnexos'
-    ArtigoAnexoArquivo:
+
+    ArtigoCreateResponse:
       type: object
-      properties:
-        arquivo_id:
-          type: integer
-          example: 37
-        arquivo_nome:
-          type: string
-          example: "foto_anexa.png"
-    ArtigoAnexoDocumento:
-      type: object
-      properties:
-        artigo_id:
-          type: integer
-          example: 42
-        documento_nome:
-          type: string
-          example: "documento_principal.pdf"
-    ArtigoResponse:
-      type: object
+      description: "Resposta ao criar um novo artigo com sucesso."
       properties:
         message:
           type: string
@@ -95,28 +65,19 @@ components:
           example: 42
         titulo:
           type: string
-          example: "titulo_teste"
+          example: "Guia de Prevenção da Dengue"
         descricao:
           type: string
-          example: "descricao_teste"
-        conteudo_artigo_digitado:
+          example: "Um guia completo sobre como evitar focos do mosquito."
+        link_artigo:
           type: string
           nullable: true
-          example: "conteudo_artigo_digitado_teste"
-        arqivos_anexados:
-          type: object
-          description: "Objeto contendo os detalhes dos arquivos e do documento anexado. As chaves ('arquivo 1', 'documento_anexado') são dinâmicas."
-          additionalProperties:
-            oneOf:
-              - $ref: '#/components/schemas/ArtigoAnexoArquivo'
-              - $ref: '#/components/schemas/ArtigoAnexoDocumento'
-          example:
-            "arquivo 1":
-              arquivo_id: 37
-              arquivo_nome: "Screenshot_2025-07-18_224814.png"
-            "documento_anexado":
-              artigo_id: 42
-              documento_nome: "Aula_11_Internet_Banking.pdf"
+          format: uri
+          example: "https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue"
+        imagem_nome:
+          type: string
+          nullable: true
+          example: "capa_artigo.png"
 
     DenunciaCompleta:
       type: object
@@ -154,13 +115,13 @@ components:
         data_denuncia: { type: string, format: date, example: "2025-10-02" }
         hora_denuncia: { type: string, example: "15:59" }
         observacoes: { type: string, nullable: true, example: "Muitos pneus acumulados com água." }
-        a1: { type: integer, example: 10 }
-        a2: { type: integer, example: 5 }
-        b: { type: integer, example: 3 }
-        c: { type: integer, example: 0 }
-        d1: { type: integer, example: 8 }
-        d2: { type: integer, example: 2 }
-        e: { type: integer, example: 1 }
+        # a1: { type: integer, example: 10 }
+        # a2: { type: integer, example: 5 }
+        # b: { type: integer, example: 3 }
+        # c: { type: integer, example: 0 }
+        # d1: { type: integer, example: 8 }
+        # d2: { type: integer, example: 2 }
+        # e: { type: integer, example: 1 }
         deposito_id: { type: integer, example: 77 }
         files:
           type: object
@@ -912,13 +873,13 @@ paths:
                 data_denuncia: { type: string, format: date, description: "Data da denúncia (opcional, ex: AAAA-MM-DD)", example: "2025-10-02" }
                 hora_denuncia: { type: string, description: "Hora da denúncia (opcional, ex: HH:MM:SS)", example: "15:59:00" }
                 observacoes: { type: string, nullable: true, example: "Muitos pneus acumulados com água." }
-                a1: { type: integer, description: "Contagem depósito A1", example: 10 }
-                a2: { type: integer, description: "Contagem depósito A2", example: 5 }
-                b: { type: integer, description: "Contagem depósito B", example: 3 }
-                c: { type: integer, description: "Contagem depósito C", example: 1 }
-                d1: { type: integer, description: "Contagem depósito D1", example: 8 }
-                d2: { type: integer, description: "Contagem depósito D2", example: 2 }
-                e: { type: integer, description: "Contagem depósito E", example: 1 }
+                # a1: { type: integer, description: "Contagem depósito A1", example: 10 }
+                # a2: { type: integer, description: "Contagem depósito A2", example: 5 }
+                # b: { type: integer, description: "Contagem depósito B", example: 3 }
+                # c: { type: integer, description: "Contagem depósito C", example: 1 }
+                # d1: { type: integer, description: "Contagem depósito D1", example: 8 }
+                # d2: { type: integer, description: "Contagem depósito D2", example: 2 }
+                # e: { type: integer, description: "Contagem depósito E", example: 1 }
                 files:
                   type: array
                   items:
@@ -1003,7 +964,7 @@ paths:
     post:
       summary: Cria um novo artigo
       description: |
-        Registra um novo artigo informativo no sistema. A rota aceita um título, descrição, conteúdo de texto, um documento principal (PDF/DOC) e múltiplos arquivos de mídia (fotos, vídeos).
+        Registra um novo artigo informativo no sistema. A rota aceita um título, descrição, um link externo opcional e uma imagem de capa opcional.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem criar artigos.
       security:
         - bearerAuth: []
@@ -1016,31 +977,26 @@ paths:
               required:
                 - titulo
                 - descricao
+                - link_artigo
               properties:
                 titulo:
                   type: string
                   description: "O título do artigo."
-                  example: "Guia de Prevenção da Dengue"
+                  example: "Como se Prevenir da Dengue"
                 descricao:
                   type: string
                   description: "Uma breve descrição sobre o conteúdo do artigo."
-                  example: "Um guia completo sobre como evitar focos do mosquito."
-                conteudo_artigo_digitado:
+                  example: "Dicas essenciais para o combate ao mosquito Aedes aegypti."
+                link_artigo:
                   type: string
-                  description: "O conteúdo principal do artigo, em formato de texto (opcional)."
+                  format: uri
+                  description: "Link externo para o conteúdo completo do artigo (opcional)."
                   nullable: true
-                  example: "Para evitar a dengue, é crucial eliminar qualquer acúmulo de água parada..."
-                artigo_documento:
+                  example: "https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue"
+                imagem:
                   type: string
                   format: binary
-                  description: "Um documento principal para o artigo, como um PDF ou DOC (opcional)."
-                  nullable: true
-                files:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: "Arquivos de mídia adicionais, como fotos e vídeos (opcional)."
+                  description: "Imagem de capa para o artigo (opcional)."
                   nullable: true
       responses:
         '201':
@@ -1048,21 +1004,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArtigoResponse'
+                $ref: '#/components/schemas/ArtigoCreateResponse'
         '400':
-          description: Requisição inválida (campos obrigatórios 'titulo' ou 'descricao' faltando).
+          description: Requisição inválida (campos obrigatórios faltando).
         '401':
           description: Não autenticado (token JWT ausente ou inválido).
         '403':
-          description: Acesso proibido (usuário não tem permissão de supervisor).
+          description: Acesso proibido (usuário não é um supervisor).
         '500':
-          description: Erro interno do servidor (falha na conexão com o banco, erro ao salvar arquivo, etc.).
-
+          description: Erro interno do servidor.
     get:
       summary: Lista todos os artigos
       description: |
         Retorna uma lista de todos os artigos informativos cadastrados no sistema.
-        Cada artigo inclui detalhes do autor (supervisor) e uma lista de arquivos anexados.
         Requer autenticação.
       security:
         - bearerAuth: []
@@ -1074,7 +1028,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ArtigoCompleto'
+                  $ref: '#/components/schemas/ArtigoOutput'
         '401':
           description: Não autenticado (token ausente ou inválido).
         '500':
@@ -1085,7 +1039,6 @@ paths:
       summary: Busca um artigo por ID
       description: |
         Retorna os detalhes completos de um único artigo, identificado pelo seu ID.
-        As informações incluem dados do autor (supervisor) e todos os arquivos anexados.
         Requer autenticação.
       security:
         - bearerAuth: []
@@ -1096,14 +1049,14 @@ paths:
           description: O ID único do artigo a ser buscado.
           schema:
             type: integer
-            example: 42
+            example: 2
       responses:
         '200':
           description: Detalhes do artigo retornados com sucesso.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArtigoCompleto'
+                $ref: '#/components/schemas/ArtigoOutput'
         '401':
           description: Não autenticado (token ausente ou inválido).
         '404':
@@ -1115,6 +1068,6 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Artigo não encontrado"
+                    example: "Artigo not found"
         '500':
           description: Erro interno do servidor.
