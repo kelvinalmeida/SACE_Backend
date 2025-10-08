@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict ky1Z8gqgSwMQRg7aDKtZ3Pd7dbDcfEm7BC8ZJWZBSJFa7JANWcaIlh4h5b4EA9K
+\restrict dG4Ct3gGBkHJkyfVDQbJ6oROaT9ygs7sjJjkW4qj9TaplIAseRxbFe2CIHJFZ5o
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -138,33 +138,6 @@ ALTER TABLE public.area_de_visita ALTER COLUMN area_de_visita_id ADD GENERATED A
 
 
 --
--- Name: arquivo_artigo; Type: TABLE; Schema: public; Owner: user
---
-
-CREATE TABLE public.arquivo_artigo (
-    arquivo_artigo_id integer NOT NULL,
-    artigo_id integer,
-    arquivo_nome character varying(100) NOT NULL
-);
-
-
-ALTER TABLE public.arquivo_artigo OWNER TO "user";
-
---
--- Name: arquivo_artigo_arquivo_artigo_id_seq; Type: SEQUENCE; Schema: public; Owner: user
---
-
-ALTER TABLE public.arquivo_artigo ALTER COLUMN arquivo_artigo_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.arquivo_artigo_arquivo_artigo_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
---
 -- Name: arquivos_denuncia; Type: TABLE; Schema: public; Owner: user
 --
 
@@ -198,10 +171,10 @@ ALTER TABLE public.arquivos_denuncia ALTER COLUMN arquivo_denuncia_id ADD GENERA
 CREATE TABLE public.artigo (
     artigo_id integer NOT NULL,
     supervisor_id integer,
-    nome_artigo_documento character varying(100),
-    conteudo_artigo_digitado character varying(1000),
+    link_artigo character varying(500),
     titulo character varying(100) NOT NULL,
-    descricao character varying(300) NOT NULL
+    descricao character varying(300) NOT NULL,
+    imagem_nome character varying(300)
 );
 
 
@@ -572,8 +545,6 @@ COPY public.agente (agente_id, usuario_id) FROM stdin;
 15	17
 16	18
 17	20
-18	22
-19	23
 \.
 
 
@@ -608,10 +579,6 @@ COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_
 24	9	4
 25	15	6
 26	16	7
-27	18	1
-28	18	2
-29	19	1
-30	19	2
 \.
 
 
@@ -630,19 +597,6 @@ COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero
 8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Avenida Menino Marcelo
 9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Rua Artur Vital da Silva
 10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Rua Professora Maria Esther da Costa Barros
-\.
-
-
---
--- Data for Name: arquivo_artigo; Type: TABLE DATA; Schema: public; Owner: user
---
-
-COPY public.arquivo_artigo (arquivo_artigo_id, artigo_id, arquivo_nome) FROM stdin;
-1	1	fluxograma_inspecao.png
-2	2	foto_prato_planta.jpg
-3	2	imagem_calha_entupida.jpg
-4	2	foto_garrafas_quintal.png
-5	3	foto_agente_aplicando_larvicida.jpg
 \.
 
 
@@ -666,11 +620,17 @@ COPY public.arquivos_denuncia (arquivo_denuncia_id, arquivo_nome, denuncia_id) F
 -- Data for Name: artigo; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.artigo (artigo_id, supervisor_id, nome_artigo_documento, conteudo_artigo_digitado, titulo, descricao) FROM stdin;
-1	1	protocolo_inspecao_focal_2025.pdf	\N	Protocolo de Inspeção Focal para Agentes de Campo	Documento PDF com o passo a passo detalhado para a realização de inspeções focais em residências, comércios e terrenos baldios.
-2	2	\N	A correta eliminação de criadouros é a principal forma de combate ao Aedes aegypti. Deve-se verificar calhas, garrafas, pneus e pratos de planta semanalmente. O uso de areia nos pratos de planta é uma medida eficaz para evitar o acúmulo de água. Em caso de caixas d'água, a vedação deve ser completa para impedir o acesso do mosquito. A colaboração da comunidade é essencial para o sucesso das ações de controle.	Guia Rápido: Eliminação de Criadouros Comuns	Um guia com dicas práticas para identificar e eliminar os criadouros mais comuns do mosquito Aedes aegypti no ambiente doméstico.
-3	1	\N	O uso de larvicidas deve ser realizado por profissionais capacitados, seguindo estritamente as orientações do Ministério da Saúde. O produto deve ser aplicado em depósitos que não podem ser eliminados mecanicamente, como ralos internos e caixas de inspeção. A dosagem correta é crucial para a eficácia e para evitar a resistência do vetor. O período de reaplicação varia conforme o produto utilizado.	Uso Correto de Larvicidas no Controle Vetorial	Instruções técnicas sobre a aplicação, dosagem e segurança no manuseio de larvicidas utilizados no combate ao Aedes aegypti.
-4	2	material_educativo_dengue.docx	\N	Material de Apoio para Ações Educativas	Documento com orientações e materiais (panfletos, cartazes) para serem utilizados em palestras e ações de conscientização com a comunidade.
+COPY public.artigo (artigo_id, supervisor_id, link_artigo, titulo, descricao, imagem_nome) FROM stdin;
+1	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue	Dengue: O que é, causas e tratamento	Página oficial do Ministério da Saúde com informações completas sobre a Dengue, incluindo sintomas, prevenção e manejo clínico da doença.	infografico-sintomas-dengue.jpg
+2	2	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/z/zika-virus	Zika Vírus: Informações Gerais	Guia do Ministério da Saúde sobre o Zika Vírus, abordando a transmissão, sintomas, diagnóstico e a relação com a microcefalia.	mosquito-aedes-aegypti-zika.png
+3	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/c/chikungunya	Chikungunya: Sintomas e Prevenção	Detalhes sobre a febre Chikungunya, com foco nos sintomas característicos de dores nas articulações, tratamento e formas de prevenção.	articulacoes-afetadas-chikungunya.jpg
+4	4	https://www.paho.org/pt/topicos/dengue	Dengue (OPAS/OMS)	Portal da Organização Pan-Americana da Saúde com dados, estratégias de controle e informações técnicas sobre a dengue nas Américas.	mapa-americas-casos-dengue.png
+5	1	https://www.bio.fiocruz.br/index.php/br/dengue-zika-e-chikungunya-sintomas-e-prevencao	Diferenças entre Dengue, Zika e Chikungunya	Artigo da Fiocruz que ajuda a diferenciar os sintomas das três principais arboviroses transmitidas pelo Aedes aegypti.	tabela-comparativa-dengue-zika-chikungunya.jpg
+6	2	https://www.gov.br/saude/pt-br/assuntos/combate-ao-aedes	Combate ao Aedes aegypti	Página central do Ministério da Saúde com todas as campanhas, materiais e estratégias para a eliminação dos focos do mosquito transmissor.	agente-de-saude-visitando-casa.jpg
+7	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/monitoramento-das-arboviroses	Monitoramento de Arboviroses no Brasil	Painel de dados interativo do Ministério da Saúde com números atualizados de casos de dengue, zika e chikungunya por região.	grafico-monitoramento-arboviroses.png
+8	4	https://agenciabrasil.ebc.com.br/saude/noticia/2024-02/saiba-diferenciar-os-sintomas-de-dengue-zika-e-chikungunya	Saiba diferenciar os sintomas (Agência Brasil)	Reportagem que explica de forma clara e visual as principais diferenças entre os sintomas de dengue, zika e chikungunya.	medico-examinando-paciente.jpg
+9	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/boletins-epidemiologicos	Boletins Epidemiológicos de Arboviroses	Acesso à página com os boletins epidemiológicos oficiais, com análises técnicas da situação das arboviroses no território nacional.	capa-boletim-epidemiologico.png
+10	2	https://www.gov.br/saude/pt-br/assuntos/protocolos-clinicos-e-diretrizes-terapeuticas-pcdt/arquivos/2024/portal-dengue-manejo-adulto-crianca-fluxo-2024.pdf	Protocolo de Manejo Clínico da Dengue (PDF)	Documento técnico oficial (2024) do Ministério da Saúde para profissionais, detalhando o fluxo de atendimento e manejo de pacientes.	fluxograma-atendimento-medico.jpg
 \.
 
 
@@ -992,8 +952,6 @@ COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email,
 19	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	41	911110000	PR	São José dos Pinhais	Centro	Rua XV de Novembro	210	RS-2025-018	Gerente de RH	t	2019-12-05	senhaGerenteRH321	supervisor
 20	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	21	999998888	RJ	Duque de Caxias	Vila São Luís	Rua Genaro Lomba	15	RS-2025-019	Recrutador	t	2025-03-03	senhaRecrutador444	agente
 21	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	11	988887777	SP	Campinas	Cambuí	Rua Coronel Quirino	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	senhaArquiteto555	agente
-22	Mateus dos Santos Ferreira	124967409	4646464564	1999-08-22	mateus.ms@gwail.com	82	987163973	AL	Maceió	santa lucia	Condomínio Residencial Galápagos	26	mat374347	Agente de Endemias	t	2024-08-12	123456789	agente
-23	Mateus dos Santos Ferreira	1249e67409	4646464564	1999-08-22	mateus.ms@dgwail.com	82	987163973	AL	Maceió	santa lucia	Condomínio Residencial Galápagos	26	mat374347	Agente de Endemias	t	2024-08-12	123456789	agente
 \.
 
 
@@ -1008,14 +966,14 @@ SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 30, true);
 -- Name: agente_agente_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_agente_id_seq', 19, true);
+SELECT pg_catalog.setval('public.agente_agente_id_seq', 17, true);
 
 
 --
 -- Name: agente_area_de_visita_agente_area_de_visita_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 30, true);
+SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 26, true);
 
 
 --
@@ -1023,13 +981,6 @@ SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_
 --
 
 SELECT pg_catalog.setval('public.area_de_visita_area_de_visita_id_seq', 10, true);
-
-
---
--- Name: arquivo_artigo_arquivo_artigo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
---
-
-SELECT pg_catalog.setval('public.arquivo_artigo_arquivo_artigo_id_seq', 5, true);
 
 
 --
@@ -1043,7 +994,7 @@ SELECT pg_catalog.setval('public.arquivos_denuncia_arquivo_denuncia_id_seq', 8, 
 -- Name: artigo_artigo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.artigo_artigo_id_seq', 4, true);
+SELECT pg_catalog.setval('public.artigo_artigo_id_seq', 10, true);
 
 
 --
@@ -1106,7 +1057,7 @@ SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 4, true);
 -- Name: usuario_usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 23, true);
+SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 21, true);
 
 
 --
@@ -1139,14 +1090,6 @@ ALTER TABLE ONLY public.agente
 
 ALTER TABLE ONLY public.area_de_visita
     ADD CONSTRAINT area_de_visita_pkey PRIMARY KEY (area_de_visita_id);
-
-
---
--- Name: arquivo_artigo arquivo_artigo_pkey; Type: CONSTRAINT; Schema: public; Owner: user
---
-
-ALTER TABLE ONLY public.arquivo_artigo
-    ADD CONSTRAINT arquivo_artigo_pkey PRIMARY KEY (arquivo_artigo_id);
 
 
 --
@@ -1294,14 +1237,6 @@ ALTER TABLE ONLY public.registro_de_campo
 
 
 --
--- Name: arquivo_artigo fk_artigo; Type: FK CONSTRAINT; Schema: public; Owner: user
---
-
-ALTER TABLE ONLY public.arquivo_artigo
-    ADD CONSTRAINT fk_artigo FOREIGN KEY (artigo_id) REFERENCES public.artigo(artigo_id) ON DELETE CASCADE;
-
-
---
 -- Name: ciclo_area_de_visita fk_ciclos; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -1409,5 +1344,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ky1Z8gqgSwMQRg7aDKtZ3Pd7dbDcfEm7BC8ZJWZBSJFa7JANWcaIlh4h5b4EA9K
+\unrestrict dG4Ct3gGBkHJkyfVDQbJ6oROaT9ygs7sjJjkW4qj9TaplIAseRxbFe2CIHJFZ5o
 

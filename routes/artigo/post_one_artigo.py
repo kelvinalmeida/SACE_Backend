@@ -26,25 +26,19 @@ def send_artigo(current_user):
         return jsonify({"error": "Acesso negado: É necessário ser supervisor para cadastrar artigos."}), 403
     
     # 2. Validação de Campos Obrigatórios
-    check_errors = check_required_filds(['titulo', 'descricao'])
+    check_errors = check_required_filds(['titulo', 'descricao', 'link_artigo'])
     if check_errors:
         return jsonify(check_errors), 400
     
     # 3. Coleta de Dados
     supervisor_id = current_user.get("supervisor_id")
-    conteudo_artigo_digitado = request.form.get('conteudo_artigo_digitado', None)
     titulo = request.form.get('titulo')
     descricao = request.form.get('descricao')
-    arqivos_anexados = {}
+    link_artigo = request.form.get('link_artigo')
+    imagem_artigo = request.files.get('imagem')
     count = 1
-
-    documento = request.files.get('artigo_documento') # Documento DOC/PDF (opcional)
-    
-    # Prepara o nome do documento (None se não houver arquivo)
-    nome_artigo_documento = secure_filename(documento.filename) if documento else None
     
     
-
     # 4. Conexão com o Banco de Dados
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     cursor = None # Inicializamos o cursor fora do try
@@ -57,67 +51,35 @@ def send_artigo(current_user):
 
         # 5. Inserir Artigo Principal (Tabela: artigo)
         inserir_artigo_sql = """
-            INSERT INTO artigo(supervisor_id, nome_artigo_documento, conteudo_artigo_digitado, titulo, descricao)
+            INSERT INTO artigo(supervisor_id, imagem_nome, link_artigo, titulo, descricao)
             VALUES (%s, %s, %s, %s, %s) 
             RETURNING artigo_id;
         """
         
-        cursor.execute(inserir_artigo_sql, (supervisor_id, nome_artigo_documento, conteudo_artigo_digitado, titulo, descricao))
+
+        # Inserir imagem do artigo, se fornecida
+        if imagem_artigo:
+            imagem_nome = secure_filename(imagem_artigo.filename)
+            imagem_artigo.save(f"uploads/artigo_img/{imagem_nome}")
+
+        else:
+            imagem_nome = None
+
+        
+       
+        cursor.execute(inserir_artigo_sql, (supervisor_id, imagem_nome, link_artigo, titulo, descricao))
         artigo_id = cursor.fetchone()['artigo_id']
-
-        if(nome_artigo_documento):
-            documento_anex = {}
-            documento_anex["documento_nome"] = nome_artigo_documento
-            documento_anex["artigo_id"] = artigo_id
-
-            arqivos_anexados["documento_anexado"] = documento_anex
-
-
-        # 6. Salvar e Registrar Documento Principal (Se houver)
-        if documento:
-            documento_filepath = f'uploads/artigo_documentos/artigo_id_{artigo_id}_{nome_artigo_documento}'
-            # Certifique-se de que a pasta existe antes de salvar
-            # (Não implementado aqui, mas é crucial em produção)
-            documento.save(documento_filepath)
-        
-        # 7. Inserir Fotos ou Vídeos (Tabela: arquivo_artigo)
-        arquivos_media = request.files.getlist('files')
-        
-        if arquivos_media:
-            inserir_arquivos_sql = """
-                INSERT INTO arquivo_artigo(artigo_id, arquivo_nome) 
-                VALUES (%s, %s) RETURNING arquivo_artigo_id;
-            """
-            files_ids = {}
-            for file in arquivos_media:
-                if file.filename:
-                    arquivo_nome = secure_filename(file.filename)
-
-                    # Salva o arquivo no sistema de arquivos
-                    file.save(f'uploads/artigo_arquivos/artigo_id_{artigo_id}_{arquivo_nome}')
-                    
-                    
-                    # Registra no banco de dados
-                    cursor.execute(inserir_arquivos_sql, (artigo_id, arquivo_nome))
-                    arquivo_artigo_id = cursor.fetchone()
-
-                    files_ids["arquivo_id"] = arquivo_artigo_id["arquivo_artigo_id"]
-                    files_ids["arquivo_nome"] = arquivo_nome
-
-                    arqivos_anexados[f"arquivo {count}"] = files_ids
-                    count = count + 1
-
             
-        # 8. Commit final (se tudo acima for bem-sucedido)
+        # Commit final (se tudo acima for bem-sucedido)
         conn.commit()
         
         return jsonify({
             "message": "Artigo e arquivos anexados criados com sucesso.",
             "titulo": titulo,
             "descricao": descricao,
-            "conteudo_artigo_digitado": conteudo_artigo_digitado,
+            "link_artigo": link_artigo,
             "artigo_id": artigo_id,
-            "arqivos_anexados": arqivos_anexados
+            "imagem_nome": imagem_nome
         }), 201
 
     except Exception as e:

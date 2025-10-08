@@ -15,43 +15,16 @@ def get_artigo_by_id(current_user, artigo_id):
     try:
         cursor = conn.cursor()
 
-        search_artigos = """SELECT art.artigo_id, art.supervisor_id, art.nome_artigo_documento, art.conteudo_artigo_digitado, art.titulo, art.descricao, usu.nome_completo supervisor_nome FROM artigo art INNER JOIN supervisor sup USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id) WHERE art.artigo_id = %s;"""
+        search_artigos = """SELECT artigo.artigo_id, artigo.supervisor_id, artigo.link_artigo, artigo.titulo, artigo.descricao, artigo.imagem_nome, usu.nome_completo supervisor_nome FROM artigo INNER JOIN supervisor USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id) WHERE artigo_id = %s;"""
 
         cursor.execute(search_artigos, (artigo_id,))
         artigo = cursor.fetchone()
 
+        if artigo is None:
+            return jsonify({"error": "Artigo not found"}), 404
 
-        if not artigo:
-            return jsonify({"error": "Artigo não encontrado"}), 404
-
-        
-        rquivos = {}
-
-        artigo['arqivos_anexados'] = {
-            "documento_anexado": artigo['nome_artigo_documento']
-        }
-
-        # return jsonify(artigo), 200
+        return jsonify(artigo), 200
     
-    except Exception as e:
-        conn.rollback()
-        cursor.close()
-        return jsonify({"error": str(e)}), 500
-
-    try:
-
-        # Buscar documento anexado se ouver
-        search_arquivos = """SELECT arquiv.arquivo_artigo_id, arquiv.arquivo_nome, arquiv.artigo_id FROM arquivo_artigo arquiv;"""
-        
-        cursor.execute(search_arquivos)
-        arquivos = cursor.fetchall()
-
-
-        anexos = [arq for arq in arquivos if arq['artigo_id'] == artigo['artigo_id']]
-        for anexo in anexos:
-            anexo.pop('artigo_id', None)  # Remove a chave se existir
-        artigo['arqivos_anexados']['arquivos'] = anexos
-        
     except Exception as e:
         conn.rollback()
         cursor.close()
@@ -60,4 +33,3 @@ def get_artigo_by_id(current_user, artigo_id):
     finally:
         conn.close()
         cursor.close()
-        return jsonify(artigo), 200
