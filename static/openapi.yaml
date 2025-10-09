@@ -244,7 +244,7 @@ components:
     AreaDeVisitaDetalhes:
       type: object
       properties:
-        area_de_visita_id: { type: integer, example: 101 }
+        area_de_visita_id: { type: integer, example: 2 }
         cep: { type: string, example: "57046-140" }
         setor: { type: string, example: "Setor Serraria 08" }
         numero_quarteirao: { type: integer, example: 15 }
@@ -591,6 +591,50 @@ paths:
           description: Acesso proibido (usuário não é um supervisor).
         '500':
           description: Erro interno do servidor.
+    
+    delete:
+      summary: Deleta múltiplas áreas de visita (em lote)
+      description: |
+        Remove uma ou mais áreas de visita do sistema com base em uma lista de IDs fornecida. A operação é transacional e será revertida se algum dos IDs não for encontrado.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem deletar áreas.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: Um objeto JSON contendo uma lista de IDs das áreas de visita a serem deletadas.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                  example: [2, 3]
+      responses:
+        '200':
+          description: Áreas de visita deletadas com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Areas de visitas com IDs [101, 102] deletadas com sucesso"
+        '400':
+          description: Requisição inválida (o campo 'ids' está faltando ou não é uma lista).
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '404':
+          description: Uma ou mais áreas de visita com os IDs especificados não foram encontradas.
+        '500':
+          description: Erro interno do servidor.
 
   /area_de_visita/{area_de_visita_id}:
     get:
@@ -607,7 +651,7 @@ paths:
           description: O ID da área de visita a ser buscada.
           schema:
             type: integer
-            example: 101
+            example: 2
       responses:
         '200':
           description: Detalhes da área de visita retornados com sucesso.
@@ -616,7 +660,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AreaDeVisitaDetalhes'
               example:
-                area_de_visita_id: 101
+                area_de_visita_id: 2
                 cep: "57046-140"
                 setor: "Setor Serraria 08"
                 numero_quarteirao: 15
@@ -626,6 +670,56 @@ paths:
                 logadouro: "Avenida Menino Marcelo"
         '401':
           description: Não autorizado (token ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '404':
+          description: Área de visita não encontrada com o ID especificado.
+        '500':
+          description: Erro interno do servidor.
+    
+    put:
+      summary: Atualiza uma área de visita por ID
+      description: |
+        Atualiza todas as informações de uma área de visita específica, identificada pelo seu ID.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: area_de_visita_id
+          in: path
+          required: true
+          description: O ID da área de visita a ser atualizada.
+          schema:
+            type: integer
+            example: 2
+      requestBody:
+        required: true
+        description: Um objeto JSON com todos os campos da área de visita a serem atualizados.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaDeVisitaInput'
+      responses:
+        '200':
+          description: Área de visita atualizada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Área de visita atualizada com sucesso"
+                  area_de_visita_id:
+                    type: integer
+                    example: 2
+                  supervisor_id:
+                    type: integer
+                    example: 5
+        '400':
+          description: Requisição inválida (ex 'numero_quarteirao' não é um inteiro).
+        '401':
+          description: Não autenticado (token ausente ou inválido).
         '403':
           description: Acesso proibido (usuário não é um supervisor).
         '404':
