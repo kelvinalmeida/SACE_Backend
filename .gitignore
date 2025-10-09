@@ -46,3 +46,4 @@ uploads/artigo_documentos/*
 !uploads/denuncia_arquivos/.gitkeep
 !uploads/artigo_arquivos/.gitkeep
 !uploads/artigo_documentos/.gitkeep
+!uploads/artigo_img/.gitkeep
