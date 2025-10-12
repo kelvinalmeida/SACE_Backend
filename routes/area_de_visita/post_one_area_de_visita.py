@@ -33,9 +33,9 @@ def criar_area_de_visita(current_user):
         bairro = request.form.get('bairro')
         logadouro = request.form.get('logadouro')
 
-        insert_area = """INSERT INTO area_de_visita (supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING area_de_visita_id;"""
+        insert_area = """INSERT INTO area_de_visita (supervisor_id, cep, setor, numero_quarteirao, estado, status, municipio, bairro, logadouro) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING area_de_visita_id;"""
 
-        cursor.execute(insert_area, (supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro))
+        cursor.execute(insert_area, (supervisor_id, cep, setor, numero_quarteirao, estado, 'Não Visitado', municipio, bairro, logadouro))
         area_de_visita_id = cursor.fetchone()["area_de_visita_id"]
         conn.commit()
 

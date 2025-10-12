@@ -5,8 +5,7 @@ from .bluprint import blu_artigo
 
 
 @blu_artigo.route('/artigo/<int:artigo_id>', methods=['GET'])
-@token_required
-def get_artigo_by_id(current_user, artigo_id):
+def get_artigo_by_id(artigo_id):
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
 
     if conn is None:
@@ -15,7 +14,7 @@ def get_artigo_by_id(current_user, artigo_id):
     try:
         cursor = conn.cursor()
 
-        search_artigos = """SELECT artigo.artigo_id, artigo.supervisor_id, artigo.link_artigo, artigo.titulo, artigo.descricao, artigo.imagem_nome, usu.nome_completo supervisor_nome FROM artigo INNER JOIN supervisor USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id) WHERE artigo_id = %s;"""
+        search_artigos = """SELECT artigo.artigo_id, artigo.supervisor_id, artigo.link_artigo, artigo.titulo, artigo.descricao, artigo.data_criacao, artigo.imagem_nome, usu.nome_completo supervisor_nome FROM artigo INNER JOIN supervisor USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id) WHERE artigo_id = %s;"""
 
         cursor.execute(search_artigos, (artigo_id,))
         artigo = cursor.fetchone()

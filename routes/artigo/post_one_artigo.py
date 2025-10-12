@@ -3,6 +3,7 @@ from db import create_connection
 from routes.login.token_required import token_required
 import json
 from werkzeug.utils import secure_filename
+from datetime import datetime # Importação adicionada para a data
 # from .bluprint import blu_artigo # Assumindo que você definirá o Blueprint em um arquivo de módulo
 # Importamos o Blueprint a partir do próprio arquivo, ou você pode ajustá-lo
 from .bluprint import blu_artigo
@@ -26,6 +27,7 @@ def send_artigo(current_user):
         return jsonify({"error": "Acesso negado: É necessário ser supervisor para cadastrar artigos."}), 403
     
     # 2. Validação de Campos Obrigatórios
+    # REMOVIDO: 'data_criacao'
     check_errors = check_required_filds(['titulo', 'descricao', 'link_artigo'])
     if check_errors:
         return jsonify(check_errors), 400
@@ -35,6 +37,10 @@ def send_artigo(current_user):
     titulo = request.form.get('titulo')
     descricao = request.form.get('descricao')
     link_artigo = request.form.get('link_artigo')
+    
+    # NOVO: Gera a data de criação atual no formato 'YYYY-MM-DD'
+    data_criacao = datetime.now().strftime('%Y-%m-%d')
+    
     imagem_artigo = request.files.get('imagem')
     count = 1
     
@@ -50,24 +56,24 @@ def send_artigo(current_user):
         cursor = conn.cursor()
 
         # 5. Inserir Artigo Principal (Tabela: artigo)
+        # SQL: Inclui a coluna 'data_criacao' no INSERT
         inserir_artigo_sql = """
-            INSERT INTO artigo(supervisor_id, imagem_nome, link_artigo, titulo, descricao)
-            VALUES (%s, %s, %s, %s, %s) 
+            INSERT INTO artigo(supervisor_id, imagem_nome, link_artigo, titulo, descricao, data_criacao)
+            VALUES (%s, %s, %s, %s, %s, %s) 
             RETURNING artigo_id;
         """
         
-
         # Inserir imagem do artigo, se fornecida
         if imagem_artigo:
             imagem_nome = secure_filename(imagem_artigo.filename)
+            # Salvar a imagem aqui (garanta que a pasta 'uploads/artigo_img/' exista)
             imagem_artigo.save(f"uploads/artigo_img/{imagem_nome}")
-
         else:
             imagem_nome = None
 
         
-       
-        cursor.execute(inserir_artigo_sql, (supervisor_id, imagem_nome, link_artigo, titulo, descricao))
+        # Executa a inserção com a data gerada pelo Python
+        cursor.execute(inserir_artigo_sql, (supervisor_id, imagem_nome, link_artigo, titulo, descricao, data_criacao))
         artigo_id = cursor.fetchone()['artigo_id']
             
         # Commit final (se tudo acima for bem-sucedido)
@@ -79,16 +85,14 @@ def send_artigo(current_user):
             "descricao": descricao,
             "link_artigo": link_artigo,
             "artigo_id": artigo_id,
-            "imagem_nome": imagem_nome
+            "imagem_nome": imagem_nome,
+            "data_criacao": data_criacao # Retorna a data gerada para confirmação
         }), 201
 
     except Exception as e:
         # 9. Rollback e Tratamento de Erro
-        # Garante que, se algo falhar (DB ou salvamento de arquivo), 
-        # a transação do DB seja revertida.
         if conn:
             conn.rollback()
-        # logging.error é útil aqui
         return jsonify({"error": f"Erro ao processar o artigo: {str(e)}"}), 500
     
     finally:
