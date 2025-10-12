@@ -39,6 +39,7 @@ from routes.artigo.bluprint import blu_artigo
 from routes.artigo import post_one_artigo
 from routes.artigo import get_all
 from routes.artigo import by_id
+from routes.artigo import download_img
 
 
 app = Flask(__name__)

@@ -1151,8 +1151,7 @@ paths:
       description: |
         Retorna uma lista de todos os artigos informativos cadastrados no sistema.
         Não Requer autenticação.
-      security:
-        - bearerAuth: []
+      security: []
       responses:
         '200':
           description: Uma lista de artigos foi retornada com sucesso.
@@ -1173,8 +1172,7 @@ paths:
       description: |
         Retorna os detalhes completos de um único artigo, identificado pelo seu ID.
         Não Requer autenticação.
-      security:
-        - bearerAuth: []
+      security: []
       parameters:
         - name: artigo_id
           in: path
@@ -1202,5 +1200,50 @@ paths:
                   error:
                     type: string
                     example: "Artigo not found"
+        '500':
+          description: Erro interno do servidor.
+          
+  /artigo/img/{artigo_id}:
+    get:
+      summary: Busca a imagem de capa de um artigo por ID
+      description: |
+        Retorna o arquivo de imagem associado a um artigo específico, identificado pelo seu ID. 
+        A resposta não é um JSON, mas sim o próprio arquivo de imagem (e.g., PNG, JPG).
+        Esta rota é pública e não requer autenticação.
+      security: []
+      parameters:
+        - name: artigo_id
+          in: path
+          required: true
+          description: O ID do artigo cuja imagem será buscada.
+          schema:
+            type: integer
+            example: 42
+      responses:
+        '200':
+          description: Imagem do artigo retornada com sucesso.
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/gif:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Artigo ou imagem não encontrados no banco de dados ou no servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Imagem do Artigo não encontrada ou não cadastrada"
         '500':
           description: Erro interno do servidor.
