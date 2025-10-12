@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict dG4Ct3gGBkHJkyfVDQbJ6oROaT9ygs7sjJjkW4qj9TaplIAseRxbFe2CIHJFZ5o
+\restrict Mbi0DrnzXYd1XMJigBKLMdlO4DXbLmC3jpHafW6Hxec6bjCrXpjxGRnvLCaSR2z
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -117,6 +117,7 @@ CREATE TABLE public.area_de_visita (
     estado character varying(2),
     municipio character varying(100),
     bairro character varying(100),
+    status character varying(50) NOT NULL,
     logadouro character varying(100)
 );
 
@@ -173,6 +174,7 @@ CREATE TABLE public.artigo (
     supervisor_id integer,
     link_artigo character varying(500),
     titulo character varying(100) NOT NULL,
+    data_criacao date,
     descricao character varying(300) NOT NULL,
     imagem_nome character varying(300)
 );
@@ -258,10 +260,12 @@ CREATE TABLE public.denuncia (
     denuncia_id integer NOT NULL,
     supervisor_id integer,
     deposito_id integer,
+    agente_responsavel_id integer,
     rua_avenida character varying(100) NOT NULL,
     numero smallint NOT NULL,
     bairro character varying(50) NOT NULL,
     tipo_imovel character varying(100) NOT NULL,
+    status character varying(50) NOT NULL,
     endereco_complemento character varying(200),
     data_denuncia date,
     hora_denuncia time without time zone,
@@ -369,7 +373,8 @@ CREATE TABLE public.registro_de_campo (
     observacao character varying(200),
     area_de_visita_id integer,
     agente_id integer,
-    deposito_id integer
+    deposito_id integer,
+    ciclo_id integer
 );
 
 
@@ -586,17 +591,17 @@ COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_
 -- Data for Name: area_de_visita; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro) FROM stdin;
-1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Avenida Álvaro Otacílio
-2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Avenida Doutor Antônio Gomes de Barros
-3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Rua Jangadeiros Alagoanos
-4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Avenida Fernandes Lima
-5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Avenida Brigadeiro Eduardo Gomes de Brito
-6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Rua Cleto Campelo
-7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Avenida Cachoeira do Meirim
-8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Avenida Menino Marcelo
-9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Rua Artur Vital da Silva
-10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Rua Professora Maria Esther da Costa Barros
+COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, status, logadouro) FROM stdin;
+1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Visitado	Avenida Álvaro Otacílio
+2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Visitado	Avenida Doutor Antônio Gomes de Barros
+3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Visitado	Rua Jangadeiros Alagoanos
+4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Visitado	Avenida Fernandes Lima
+5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Visitado	Avenida Brigadeiro Eduardo Gomes de Brito
+6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Não Visitado	Rua Cleto Campelo
+7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Visitado	Avenida Cachoeira do Meirim
+8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Não Visitado	Avenida Menino Marcelo
+9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Visitado	Rua Artur Vital da Silva
+10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Visitado	Rua Professora Maria Esther da Costa Barros
 \.
 
 
@@ -620,17 +625,17 @@ COPY public.arquivos_denuncia (arquivo_denuncia_id, arquivo_nome, denuncia_id) F
 -- Data for Name: artigo; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.artigo (artigo_id, supervisor_id, link_artigo, titulo, descricao, imagem_nome) FROM stdin;
-1	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue	Dengue: O que é, causas e tratamento	Página oficial do Ministério da Saúde com informações completas sobre a Dengue, incluindo sintomas, prevenção e manejo clínico da doença.	infografico-sintomas-dengue.jpg
-2	2	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/z/zika-virus	Zika Vírus: Informações Gerais	Guia do Ministério da Saúde sobre o Zika Vírus, abordando a transmissão, sintomas, diagnóstico e a relação com a microcefalia.	mosquito-aedes-aegypti-zika.png
-3	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/c/chikungunya	Chikungunya: Sintomas e Prevenção	Detalhes sobre a febre Chikungunya, com foco nos sintomas característicos de dores nas articulações, tratamento e formas de prevenção.	articulacoes-afetadas-chikungunya.jpg
-4	4	https://www.paho.org/pt/topicos/dengue	Dengue (OPAS/OMS)	Portal da Organização Pan-Americana da Saúde com dados, estratégias de controle e informações técnicas sobre a dengue nas Américas.	mapa-americas-casos-dengue.png
-5	1	https://www.bio.fiocruz.br/index.php/br/dengue-zika-e-chikungunya-sintomas-e-prevencao	Diferenças entre Dengue, Zika e Chikungunya	Artigo da Fiocruz que ajuda a diferenciar os sintomas das três principais arboviroses transmitidas pelo Aedes aegypti.	tabela-comparativa-dengue-zika-chikungunya.jpg
-6	2	https://www.gov.br/saude/pt-br/assuntos/combate-ao-aedes	Combate ao Aedes aegypti	Página central do Ministério da Saúde com todas as campanhas, materiais e estratégias para a eliminação dos focos do mosquito transmissor.	agente-de-saude-visitando-casa.jpg
-7	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/monitoramento-das-arboviroses	Monitoramento de Arboviroses no Brasil	Painel de dados interativo do Ministério da Saúde com números atualizados de casos de dengue, zika e chikungunya por região.	grafico-monitoramento-arboviroses.png
-8	4	https://agenciabrasil.ebc.com.br/saude/noticia/2024-02/saiba-diferenciar-os-sintomas-de-dengue-zika-e-chikungunya	Saiba diferenciar os sintomas (Agência Brasil)	Reportagem que explica de forma clara e visual as principais diferenças entre os sintomas de dengue, zika e chikungunya.	medico-examinando-paciente.jpg
-9	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/boletins-epidemiologicos	Boletins Epidemiológicos de Arboviroses	Acesso à página com os boletins epidemiológicos oficiais, com análises técnicas da situação das arboviroses no território nacional.	capa-boletim-epidemiologico.png
-10	2	https://www.gov.br/saude/pt-br/assuntos/protocolos-clinicos-e-diretrizes-terapeuticas-pcdt/arquivos/2024/portal-dengue-manejo-adulto-crianca-fluxo-2024.pdf	Protocolo de Manejo Clínico da Dengue (PDF)	Documento técnico oficial (2024) do Ministério da Saúde para profissionais, detalhando o fluxo de atendimento e manejo de pacientes.	fluxograma-atendimento-medico.jpg
+COPY public.artigo (artigo_id, supervisor_id, link_artigo, titulo, data_criacao, descricao, imagem_nome) FROM stdin;
+1	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue	Dengue: O que é, causas e tratamento	2025-02-15	Página oficial do Ministério da Saúde com informações completas sobre a Dengue, incluindo sintomas, prevenção e manejo clínico da doença.	infografico-sintomas-dengue.jpg
+2	2	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/z/zika-virus	Zika Vírus: Informações Gerais	2025-02-28	Guia do Ministério da Saúde sobre o Zika Vírus, abordando a transmissão, sintomas, diagnóstico e a relação com a microcefalia.	mosquito-aedes-aegypti-zika.png
+3	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/c/chikungunya	Chikungunya: Sintomas e Prevenção	2025-03-10	Detalhes sobre a febre Chikungunya, com foco nos sintomas característicos de dores nas articulações, tratamento e formas de prevenção.	articulacoes-afetadas-chikungunya.jpg
+4	4	https://www.paho.org/pt/topicos/dengue	Dengue (OPAS/OMS)	2025-04-01	Portal da Organização Pan-Americana da Saúde com dados, estratégias de controle e informações técnicas sobre a dengue nas Américas.	mapa-americas-casos-dengue.png
+5	1	https://www.bio.fiocruz.br/index.php/br/dengue-zika-e-chikungunya-sintomas-e-prevencao	Diferenças entre Dengue, Zika e Chikungunya	2025-05-20	Artigo da Fiocruz que ajuda a diferenciar os sintomas das três principais arboviroses transmitidas pelo Aedes aegypti.	tabela-comparativa-dengue-zika-chikungunya.jpg
+6	2	https://www.gov.br/saude/pt-br/assuntos/combate-ao-aedes	Combate ao Aedes aegypti	2025-06-18	Página central do Ministério da Saúde com todas as campanhas, materiais e estratégias para a eliminação dos focos do mosquito transmissor.	agente-de-saude-visitando-casa.jpg
+7	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/monitoramento-das-arboviroses	Monitoramento de Arboviroses no Brasil	2025-07-25	Painel de dados interativo do Ministério da Saúde com números atualizados de casos de dengue, zika e chikungunya por região.	grafico-monitoramento-arboviroses.png
+8	4	https://agenciabrasil.ebc.com.br/saude/noticia/2024-02/saiba-diferenciar-os-sintomas-de-dengue-zika-e-chikungunya	Saiba diferenciar os sintomas (Agência Brasil)	2025-08-14	Reportagem que explica de forma clara e visual as principais diferenças entre os sintomas de dengue, zika e chikungunya.	medico-examinando-paciente.jpg
+9	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/boletins-epidemiologicos	Boletins Epidemiológicos de Arboviroses	2025-09-30	Acesso à página com os boletins epidemiológicos oficiais, com análises técnicas da situação das arboviroses no território nacional.	capa-boletim-epidemiologico.png
+10	2	https://www.gov.br/saude/pt-br/assuntos/protocolos-clinicos-e-diretrizes-terapeuticas-pcdt/arquivos/2024/portal-dengue-manejo-adulto-crianca-fluxo-2024.pdf	Protocolo de Manejo Clínico da Dengue (PDF)	2025-10-05	Documento técnico oficial (2024) do Ministério da Saúde para profissionais, detalhando o fluxo de atendimento e manejo de pacientes.	fluxograma-atendimento-medico.jpg
 \.
 
 
@@ -707,12 +712,12 @@ COPY public.ciclo_area_de_visita (ciclo_area_de_visita_id, ciclo_id, area_de_vis
 --
 
 COPY public.ciclos (ciclo_id, supervisor_id, ano_de_criacao, encerramento, ativo) FROM stdin;
-1	1	2024-11-10	2025-01-10	f
-2	2	2025-01-15	2025-03-15	f
-3	3	2025-03-16	2025-05-16	f
-4	1	2025-05-17	2025-07-17	f
-5	2	2025-07-18	2025-09-18	f
-6	3	2025-09-19	\N	t
+1	1	2023-01-10	2023-06-10	f
+2	2	2023-06-15	2023-12-15	f
+3	3	2024-01-16	2024-06-16	f
+4	1	2024-06-18	2024-12-18	f
+5	2	2025-01-18	2025-06-18	f
+6	3	2025-06-19	\N	t
 \.
 
 
@@ -720,12 +725,12 @@ COPY public.ciclos (ciclo_id, supervisor_id, ano_de_criacao, encerramento, ativo
 -- Data for Name: denuncia; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.denuncia (denuncia_id, supervisor_id, deposito_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes) FROM stdin;
-1	1	1	Rua Engenheiro Mário de Gusmão	980	Ponta Verde	Condomínio	Bloco A, perto da área da piscina	2025-09-18	10:30:00	Vários vasos de planta com água parada na área comum.
-2	2	2	Avenida Doutor Júlio Marques Luz	1210	Jatiúca	Terreno Baldio	Ao lado de uma oficina mecânica.	2025-09-18	14:00:00	Acúmulo de lixo e pneus velhos com água da chuva.
-3	3	3	Rua Professor Guedes de Miranda	455	Farol	Residência	Casa de esquina com muro branco e portão azul.	2025-09-19	09:15:00	Caixa d'água destampada no quintal, visível da rua.
-4	1	4	Rua Desportista Humberto Guimarães	789	Ponta Verde	Comércio	Restaurante	2025-09-19	16:45:00	Garrafas e baldes acumulados no pátio traseiro do estabelecimento.
-5	2	5	Rua Buarque de Macedo	550	Centro	Imóvel abandonado	Prédio antigo com janelas quebradas.	2025-09-20	08:00:00	Calhas entupidas e muito lixo no interior do imóvel.
+COPY public.denuncia (denuncia_id, supervisor_id, deposito_id, agente_responsavel_id, rua_avenida, numero, bairro, tipo_imovel, status, endereco_complemento, data_denuncia, hora_denuncia, observacoes) FROM stdin;
+1	1	1	2	Rua Engenheiro Mário de Gusmão	980	Ponta Verde	Condomínio	Concluída	Bloco A, perto da área da piscina	2025-09-18	10:30:00	Vários vasos de planta com água parada na área comum.
+2	2	2	\N	Avenida Doutor Júlio Marques Luz	1210	Jatiúca	Terreno Baldio	Em Análise	Ao lado de uma oficina mecânica.	2025-09-18	14:00:00	Acúmulo de lixo e pneus velhos com água da chuva.
+3	3	3	4	Rua Professor Guedes de Miranda	455	Farol	Residência	Concluída	Casa de esquina com muro branco e portão azul.	2025-09-19	09:15:00	Caixa d'água destampada no quintal, visível da rua.
+4	1	4	\N	Rua Desportista Humberto Guimarães	789	Ponta Verde	Comércio	Pendente	Restaurante	2025-09-19	16:45:00	Garrafas e baldes acumulados no pátio traseiro do estabelecimento.
+5	2	5	1	Rua Buarque de Macedo	550	Centro	Imóvel abandonado	Concluída	Prédio antigo com janelas quebradas.	2025-09-20	08:00:00	Calhas entupidas e muito lixo no interior do imóvel.
 \.
 
 
@@ -838,51 +843,52 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 -- Data for Name: registro_de_campo; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id) FROM stdin;
-1	123	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1
-2	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	11
-3	901	Ímpar	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em piscina abandonada, tratada.	1	1	21
-4	222	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Tratamento focal realizado.	1	11	31
-5	580	Par	Urbana	Residência	Tratado	\N	Dengue	t	f	t	t	f	A004	4	Amostra coletada e local tratado.	1	1	41
-6	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	7	2
-7	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	12
-8	112	Par	Urbana	Outros	Visitado	Igreja	Dengue	f	t	f	f	f	\N	\N	Verificado bebedouros e calhas.	2	7	22
-9	345	Ímpar	Urbana	Outros	Visitado	Cemitério	Zica	f	t	f	t	f	\N	\N	Verificação de vasos e jazigos.	2	12	32
-10	128	Par	Urbana	Comércio	Visitado	Galpão	Dengue	f	t	f	f	f	\N	\N	Inspecionado.	2	3	42
-11	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	4	3
-12	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	13
-13	433	Ímpar	Urbana	Residência	Visitado	Apto 505	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	4	23
-14	981	Ímpar	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	t	f	\N	\N	Pneus armazenados corretamente.	3	13	33
-15	77	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tentativa de visita sem sucesso.	3	4	43
-16	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	5	4
-17	40	Par	Urbana	Residência	Visitado	\N	Zica	t	f	f	t	f	A002	3	Amostra coletada de balde no quintal.	4	14	14
-18	1800	Par	Urbana	Comércio	Tratado	Supermercado	Zica	f	t	t	t	f	\N	\N	Tratamento em área de carga/descarga.	4	9	24
-19	1730	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	14	34
-20	300	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Orientações verbais fornecidas.	4	5	44
-21	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	7	5
-22	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	15
-23	21	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	t	f	f	f	f	A003	1	Coleta de amostra positiva.	5	1	25
-24	501	Ímpar	Urbana	Residência	Fechado	Apto 501	Dengue	f	f	f	f	f	\N	\N	Morador não atendeu.	5	1	35
-25	1420	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	15	45
-26	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A001	2	Coleta de amostra em ralo.	6	8	6
-27	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	16
-28	777	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	15	26
-29	48	Par	Urbana	Comércio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	6	8	36
-30	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	9	7
-31	2048	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Caixa d'água destampada, tratada.	7	15	17
-32	1234	Par	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	16	27
-33	679	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Denúncia procedente. Local tratado.	7	9	37
-34	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	11	8
-35	56	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	16	28
-36	1111	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum verificada.	8	11	38
-37	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	12	9
-38	55	Ímpar	Urbana	Residência	Recusado	Portão alto	Zica	f	f	f	f	f	\N	\N	Proprietário se recusou a abrir.	9	1	19
-39	821	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água.	9	12	29
-40	30	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	1	39
-41	1500	Par	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda.	10	13	10
-42	876	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	20
-43	10	Par	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	30
-44	499	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Sem água parada no momento.	10	16	40
+COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id, ciclo_id) FROM stdin;
+1	123	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1	1
+2	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Atendendo denúncia. Foco eliminado.	1	11	2	1
+3	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	7	3	1
+4	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	4	1
+5	86	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	4	5	1
+6	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel para alugar, sem acesso.	3	13	6	1
+7	789	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	5	7	1
+8	40	Par	Urbana	Residência	Visitado	\N	Dengue	t	f	f	t	f	A001	2	Amostra coletada de balde no quintal.	4	14	8	1
+9	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	7	9	1
+10	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	15	10	1
+11	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	t	f	f	t	f	A002	1	Coleta de amostra em ralo.	6	8	11	1
+12	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	12	1
+13	33	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	f	f	\N	\N	Tratamento em caixa de gordura.	7	9	13	1
+14	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	11	14	1
+15	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	12	15	1
+16	123	Ímpar	Urbana	Residência	Visitado	Casa A	Dengue	f	f	f	f	f	\N	\N	Revisita. Local limpo, sem novos focos.	1	1	16	2
+17	135	Ímpar	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Visita para verificar suspeita de zika na vizinhança.	1	11	17	2
+18	45	Ímpar	Urbana	Comércio	Tratado	Loja 02	Dengue	f	f	t	t	f	\N	\N	Foco encontrado nos fundos da loja.	2	7	18	2
+19	88	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Segunda inspeção, tudo ok.	2	12	19	2
+20	86	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador presente. Nenhuma irregularidade.	3	4	20	2
+21	712	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Imóvel permanece sem acesso.	3	13	21	2
+22	789	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	t	f	f	f	\N	\N	Terreno permanece limpo após ação anterior.	4	5	22	2
+23	40	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Revisita de rotina, sem focos.	4	14	23	2
+24	1010	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Morador permitiu entrada desta vez. Tudo ok.	5	7	24	2
+25	651	Ímpar	Urbana	Terreno Baldio	Visitado	Murado	Chikungunya	f	f	f	f	f	\N	\N	Área permanece sem novos focos.	5	15	25	2
+26	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	f	f	f	f	f	\N	\N	Visita de rotina, sem necessidade de nova amostra.	6	8	26	2
+27	199	Ímpar	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Morador em viagem, não foi possível visitar.	6	16	27	2
+28	33	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Revisita, local limpo.	7	9	28	2
+29	542	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Novo foco em garrafa no quintal. Tratado.	8	11	29	2
+30	99	Ímpar	Urbana	Outros	Visitado	Escola	Zica	f	t	f	f	f	\N	\N	Inspeção de rotina nas férias. Tudo ok.	9	12	30	2
+31	123	Ímpar	Urbana	Residência	Visitado	Casa A	Dengue	f	f	f	f	f	\N	\N	Terceira visita de rotina. Sem alterações.	1	1	31	3
+32	135	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Retorno para inspeção padrão. Encontrado novo acúmulo de água. Tratado.	1	11	32	3
+33	45	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Revisita. Local permanece limpo.	2	7	33	3
+34	88	Par	Urbana	Comércio	Visitado	Oficina	Dengue	f	t	f	f	f	\N	\N	Terceira inspeção. Sem irregularidades.	2	12	34	3
+35	86	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente novamente.	3	4	35	3
+36	712	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Imóvel agora com morador. Tratamento preventivo em ralo.	3	13	36	3
+37	789	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	t	f	t	f	\N	\N	Inspecionado. Encontrado lixo descartado irregularmente.	4	5	37	3
+38	40	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tudo ok na terceira visita. Foco Chikungunya na área.	4	14	38	3
+39	1010	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador voltou a recusar a visita.	5	7	39	3
+40	651	Ímpar	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	t	f	\N	\N	Novo foco de lixo com água. Tratado.	5	15	40	3
+41	250	Par	Urbana	Residência	Visitado	Apto 301	Zica	f	f	f	f	f	\N	\N	Tudo ok.	6	8	41	3
+42	199	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Morador presente. Visita realizada, sem focos.	6	16	42	3
+43	33	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Inspeção de rotina. Sem alterações.	7	9	43	3
+44	542	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Revisita. Local permanece limpo.	8	11	44	3
+45	99	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Início do período letivo, tratamento preventivo realizado.	9	12	45	3
 \.
 
 
@@ -1043,7 +1049,7 @@ SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_ar
 -- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 44, true);
+SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 45, true);
 
 
 --
@@ -1213,6 +1219,14 @@ ALTER TABLE ONLY public.registro_de_campo
 
 
 --
+-- Name: denuncia fk_agente_responsavel_id; Type: FK CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.denuncia
+    ADD CONSTRAINT fk_agente_responsavel_id FOREIGN KEY (agente_responsavel_id) REFERENCES public.agente(agente_id) ON DELETE SET NULL;
+
+
+--
 -- Name: agente_area_de_visita fk_area_de_visita; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -1234,6 +1248,14 @@ ALTER TABLE ONLY public.ciclo_area_de_visita
 
 ALTER TABLE ONLY public.registro_de_campo
     ADD CONSTRAINT fk_area_de_visita FOREIGN KEY (area_de_visita_id) REFERENCES public.area_de_visita(area_de_visita_id) ON DELETE SET NULL;
+
+
+--
+-- Name: registro_de_campo fk_ciclo; Type: FK CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.registro_de_campo
+    ADD CONSTRAINT fk_ciclo FOREIGN KEY (ciclo_id) REFERENCES public.ciclos(ciclo_id) ON DELETE CASCADE;
 
 
 --
@@ -1344,5 +1366,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict dG4Ct3gGBkHJkyfVDQbJ6oROaT9ygs7sjJjkW4qj9TaplIAseRxbFe2CIHJFZ5o
+\unrestrict Mbi0DrnzXYd1XMJigBKLMdlO4DXbLmC3jpHafW6Hxec6bjCrXpjxGRnvLCaSR2z
 

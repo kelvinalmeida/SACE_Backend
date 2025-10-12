@@ -42,10 +42,11 @@ def update_area_de_visita(current_user, area_de_visita_id):
         municipio = request.json.get('municipio')
         bairro = request.json.get('bairro')
         logadouro = request.json.get('logadouro')
+        status = request.json.get('status')
 
-        insert_area = """UPDATE area_de_visita SET supervisor_id = %s, cep = %s, setor = %s, numero_quarteirao = %s, estado = %s, municipio = %s, bairro = %s, logadouro = %s WHERE area_de_visita_id = %s RETURNING area_de_visita_id;"""
+        insert_area = """UPDATE area_de_visita SET supervisor_id = %s, cep = %s, setor = %s, numero_quarteirao = %s, estado = %s, municipio = %s, bairro = %s, logadouro = %s, status = %s WHERE area_de_visita_id = %s RETURNING area_de_visita_id;"""
 
-        cursor.execute(insert_area, (supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro, area_de_visita_id))
+        cursor.execute(insert_area, (supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro, status, area_de_visita_id))
 
         area_de_visita_id = cursor.fetchone()
         

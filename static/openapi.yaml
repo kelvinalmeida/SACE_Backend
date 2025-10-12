@@ -33,6 +33,9 @@ components:
         supervisor_id:
           type: integer
           example: 5
+        data_criacao:
+          type: string
+          example: "Sat, 11 Oct 2025 00:00:00 GMT"
         link_artigo:
           type: string
           nullable: true
@@ -96,6 +99,7 @@ components:
         nome_completo: { type: string, description: "Nome do supervisor que registrou a denúncia", example: "Carlos Pereira Costa" }
         cpf: { type: string, example: "34567890123" }
         email: { type: string, format: email, example: "carlos.costa@example.com" }
+        agente_responsavel_id: { type: integer, nullable: true, example: 2 }
         # deposito:
         #   $ref: '#/components/schemas/Deposito'
         arquivos:
@@ -115,6 +119,7 @@ components:
         data_denuncia: { type: string, format: date, example: "2025-10-02" }
         hora_denuncia: { type: string, example: "15:59" }
         observacoes: { type: string, nullable: true, example: "Muitos pneus acumulados com água." }
+        agente_responsavel_id: { type: integer, nullable: true, example: 2 }
         # a1: { type: integer, example: 10 }
         # a2: { type: integer, example: 5 }
         # b: { type: integer, example: 3 }
@@ -241,17 +246,51 @@ components:
         bairro: { type: string, example: "Serraria" }
         logadouro: { type: string, example: "Avenida Menino Marcelo" }
         
+    AgenteResumido:
+      type: object
+      description: "Representação resumida de um agente."
+      properties:
+        agente_id:
+          type: integer
+          example: 1
+        nome:
+          type: string
+          example: "João da Silva"
+        situacao_atual:
+          type: boolean 
+          example: true 
     AreaDeVisitaDetalhes:
       type: object
       properties:
-        area_de_visita_id: { type: integer, example: 2 }
-        cep: { type: string, example: "57046-140" }
-        setor: { type: string, example: "Setor Serraria 08" }
-        numero_quarteirao: { type: integer, example: 15 }
-        estado: { type: string, example: "AL" }
-        municipio: { type: string, example: "Maceió" }
-        bairro: { type: string, example: "Serraria" }
-        logadouro: { type: string, example: "Avenida Menino Marcelo" }
+        area_de_visita_id:
+          type: integer
+          example: 1
+        bairro:
+          type: string
+          example: "Ponta Verde"
+        cep:
+          type: string
+          example: "57035-180"
+        estado:
+          type: string
+          example: "AL"
+        logadouro:
+          type: string
+          example: "Avenida Álvaro Otacílio"
+        municipio:
+          type: string
+          example: "Maceió"
+        numero_quarteirao:
+          type: integer
+          example: 15
+        setor:
+          type: string
+          example: "Setor Ponta Verde 01"
+        agentes:
+          type: array
+          description: "Lista de agentes associados a esta área de visita."
+          items:
+            $ref: '#/components/schemas/AgenteResumido'
     Deposito:
       type: object
       properties:
@@ -401,7 +440,6 @@ paths:
             schema:
               type: object
               required:
-                - rua
                 - imovel_numero
                 - imovel_lado
                 - imovel_categoria_da_localidade
@@ -951,13 +989,13 @@ paths:
                 - numero
                 - bairro
                 - tipo_imovel
-                - a1
-                - a2
-                - b
-                - c
-                - d1
-                - d2
-                - e
+                # - a1
+                # - a2
+                # - b
+                # - c
+                # - d1
+                # - d2
+                # - e
               properties:
                 rua_avenida: { type: string, example: "Avenida da Paz" }
                 numero: { type: integer, example: 1000 }
@@ -967,6 +1005,7 @@ paths:
                 data_denuncia: { type: string, format: date, description: "Data da denúncia (opcional, ex: AAAA-MM-DD)", example: "2025-10-02" }
                 hora_denuncia: { type: string, description: "Hora da denúncia (opcional, ex: HH:MM:SS)", example: "15:59:00" }
                 observacoes: { type: string, nullable: true, example: "Muitos pneus acumulados com água." }
+                agente_responsavel_id: { type: integer, nullable: true, example: "2" }
                 # a1: { type: integer, description: "Contagem depósito A1", example: 10 }
                 # a2: { type: integer, description: "Contagem depósito A2", example: 5 }
                 # b: { type: integer, description: "Contagem depósito B", example: 3 }
@@ -1111,7 +1150,7 @@ paths:
       summary: Lista todos os artigos
       description: |
         Retorna uma lista de todos os artigos informativos cadastrados no sistema.
-        Requer autenticação.
+        Não Requer autenticação.
       security:
         - bearerAuth: []
       responses:
@@ -1133,7 +1172,7 @@ paths:
       summary: Busca um artigo por ID
       description: |
         Retorna os detalhes completos de um único artigo, identificado pelo seu ID.
-        Requer autenticação.
+        Não Requer autenticação.
       security:
         - bearerAuth: []
       parameters:

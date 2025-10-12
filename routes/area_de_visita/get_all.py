@@ -19,17 +19,51 @@ def listar_areas_de_visita(current_user):
 
         print("supervisor_id:", supervisor_id)
 
-        search_areas = """SELECT area_de_visita_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro FROM area_de_visita;"""
+        search_areas = """SELECT area_de_visita_id, cep, setor, numero_quarteirao, estado, municipio, status, bairro, logadouro FROM area_de_visita;"""
 
         cursor.execute(search_areas)
         areas = cursor.fetchall()
 
+        
+    except Exception as e:
+        if conn:
+            conn.close()
+        
+    
+    try:
+        search_agentes = """SELECT * FROM agente_area_de_visita INNER JOIN agente USING(agente_id) INNER JOIN usuario USING(usuario_Id);"""
+
+        cursor.execute(search_agentes)
+        agentes = cursor.fetchall()
+
+        # Mapear agentes para suas respectivas áreas
+        area_to_agentes = {}
+        for agente in agentes:
+            area_id = agente['area_de_visita_id']
+            if area_id not in area_to_agentes:
+                area_to_agentes[area_id] = []
+            area_to_agentes[area_id].append({
+                "agente_id": agente['agente_id'],
+                "nome": agente['nome_completo'],
+                "situacao_atual": agente['situacao_atual']
+            })
+
+        # Adicionar agentes às áreas correspondentes
+        for area in areas:
+            area_id = area['area_de_visita_id']
+            area['agentes'] = area_to_agentes.get(area_id, [])
+
+
         return jsonify(areas), 200
+    
     except Exception as e:
         if conn:
             conn.close()
         return jsonify({"error": str(e)}), 500
+    
+
     finally:
         if conn:
             conn.close()
             conn.close()
+        

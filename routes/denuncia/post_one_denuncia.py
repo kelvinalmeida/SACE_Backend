@@ -57,6 +57,8 @@ def send_registro_de_campo(current_user):
     tipo_imovel = request.form.get('tipo_imovel')
     endereco_complemento = request.form.get('endereco_complemento')
     observacoes = request.form.get('observacoes')
+    status = 'Em Análise'
+    agente_responsavel_id = request.form.get('agente_responsavel_id', None)
 
     data_denuncia = request.form.get('data_denuncia')
     hora_denuncia = request.form.get('hora_denuncia')
@@ -137,10 +139,10 @@ def send_registro_de_campo(current_user):
         cursor = conn.cursor()
 
         inserir_denuncia = """INSERT INTO denuncia(
-            supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING denuncia_id; """
+            supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, status, agente_responsavel_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING denuncia_id; """
         
-        cursor.execute(inserir_denuncia, (supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes))
+        cursor.execute(inserir_denuncia, (supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, status, agente_responsavel_id))
 
         denuncia_fech = cursor.fetchone()
         denuncia_id = denuncia_fech['denuncia_id']
@@ -195,6 +197,8 @@ def send_registro_de_campo(current_user):
             'data_denuncia': data_denuncia,
             'hora_denuncia': hora_denuncia,
             'observacoes': observacoes,
+            'status': status,
+            'agente_responsavel_id': agente_responsavel_id,
             # 'a1': a1,
             # 'a2': a2,
             # 'b': b,

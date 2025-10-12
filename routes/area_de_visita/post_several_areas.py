@@ -40,8 +40,8 @@ def criar_varias_areas_de_visita(current_user):
         
         # SQL base para inserção
         insert_area_sql = """
-            INSERT INTO area_de_visita (supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, logadouro) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s) 
+            INSERT INTO area_de_visita (supervisor_id, cep, setor, numero_quarteirao, estado, status, municipio, bairro, logadouro) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) 
             RETURNING area_de_visita_id;
         """
         
@@ -67,6 +67,7 @@ def criar_varias_areas_de_visita(current_user):
                 area['setor'],
                 numero_quarteirao,
                 area['estado'],
+                'Não Visitado',  # status padrão
                 area['municipio'],
                 area['bairro'],
                 area['logadouro']
