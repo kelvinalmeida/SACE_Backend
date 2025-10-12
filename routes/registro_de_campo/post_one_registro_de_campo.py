@@ -119,14 +119,25 @@ def send_registro_de_campo(current_user):
         conn.rollback()
         return jsonify({"error": str(e)}), 500
     
+    try:
+        search_ciclo_atual = """SELECT ciclo_id FROM ciclos WHERE ativo = true;"""
+
+        cursor.execute(search_ciclo_atual)
+        ciclo_atual = cursor.fetchone()['ciclo_id']
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    
     #Inserir Registro de Campo
     try:
         cursor = conn.cursor()
         inserir_registro_de_campo = """INSERT INTO registro_de_campo(
-            imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING registro_de_campo_id; """
+            imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id, ciclo_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING registro_de_campo_id; """
         
-        cursor.execute(inserir_registro_de_campo, (imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id))
+        cursor.execute(inserir_registro_de_campo, (imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id, ciclo_atual))
 
         registro_de_campo_id = cursor.fetchone()
         registro_de_campo_id = registro_de_campo_id['registro_de_campo_id']
@@ -254,7 +265,9 @@ def send_registro_de_campo(current_user):
             'd2': d2,
             'e': e,
             'deposito_id': deposito_id,
-            'files': files
+            'files': files,
+            'ciclo_id': ciclo_atual,
+            'registro_de_campo_id': registro_de_campo_id
         }
     })
 
