@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict Nkb3VK83JkpZGzmPgxfiu5yVUy4adEJcJoKtUr2AefwavV6yA4eVhQz2DagU02y
+\restrict EgQgnerZqSEaBHIpudIEmHqGfa8glKY8kQUQcf5WJrN8Cjq2tzkOyLIy16PM7le
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -232,7 +232,8 @@ CREATE TABLE public.ciclos (
     supervisor_id integer,
     ano_de_criacao date NOT NULL,
     encerramento date,
-    ativo boolean NOT NULL
+    ativo boolean NOT NULL,
+    ciclo smallint NOT NULL
 );
 
 
@@ -506,7 +507,7 @@ COPY public.adulticida (adulticida_id, registro_de_campo_id, tipo, quantidade) F
 9	121	Adulticida de Borrifação Residual (Piretróide)	25
 10	134	Adulticida de Borrifação Residual (Piretróide)	20
 11	138	Adulticida de Borrifação Residual (Piretróide)	30
-12	164	Adulticida de Borrifação Residual (Piretróide)	15
+12	160	Adulticida de Borrifação Residual (Piretróide)	15
 \.
 
 
@@ -693,13 +694,11 @@ COPY public.ciclo_area_de_visita (ciclo_area_de_visita_id, ciclo_id, area_de_vis
 -- Data for Name: ciclos; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.ciclos (ciclo_id, supervisor_id, ano_de_criacao, encerramento, ativo) FROM stdin;
-1	1	2023-01-10	2023-06-10	f
-2	2	2023-06-15	2023-12-15	f
-3	3	2024-01-16	2024-06-16	f
-4	1	2024-06-18	2024-12-18	f
-5	2	2025-01-18	2025-06-18	f
-6	3	2025-06-19	\N	t
+COPY public.ciclos (ciclo_id, supervisor_id, ano_de_criacao, encerramento, ativo, ciclo) FROM stdin;
+1	3	2024-01-16	2024-06-16	f	1
+2	1	2024-06-18	2024-12-18	f	2
+3	2	2025-01-18	2025-06-18	f	1
+4	3	2025-06-19	\N	t	2
 \.
 
 
@@ -786,7 +785,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 63	0	0	0	0	0	0	0
 64	0	0	0	0	0	0	0
 65	0	0	0	0	0	0	0
-66	0	0	0	0	0	0	0
+66	0	0	0	0	1	0	0
 67	0	1	0	0	0	0	0
 68	0	0	0	0	0	0	0
 69	0	0	0	0	0	0	0
@@ -817,7 +816,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 94	0	0	0	0	0	0	0
 95	0	0	0	0	0	0	0
 96	0	0	0	0	0	0	0
-97	0	0	0	0	0	0	0
+97	0	0	0	0	1	0	0
 98	0	0	0	0	0	0	0
 99	0	0	0	0	0	0	0
 100	0	0	0	0	0	0	0
@@ -826,7 +825,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 103	0	0	0	0	0	0	0
 104	0	0	0	0	0	0	0
 105	0	0	0	0	0	0	0
-106	0	0	0	0	0	0	0
+106	0	0	1	0	0	0	0
 107	0	0	0	0	0	0	0
 108	0	0	1	0	0	1	0
 109	0	0	0	0	0	0	0
@@ -834,7 +833,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 111	0	0	0	0	0	0	0
 112	0	0	0	0	0	0	0
 113	0	0	0	1	0	0	0
-114	0	0	0	0	0	0	0
+114	0	0	1	0	0	0	0
 115	0	0	0	0	0	0	0
 116	0	0	0	0	0	0	0
 117	0	0	0	0	0	0	0
@@ -850,7 +849,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 127	0	0	0	0	0	0	0
 128	0	0	0	0	0	0	0
 129	0	0	0	0	0	0	0
-130	0	0	0	0	0	0	0
+130	0	0	1	0	0	0	0
 131	0	0	0	0	0	0	0
 132	0	0	0	0	0	0	0
 133	0	0	0	0	0	0	0
@@ -865,11 +864,11 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 142	0	0	0	0	0	0	0
 143	0	0	0	0	0	0	0
 144	0	0	0	0	0	0	0
-145	0	0	0	0	0	0	0
+145	0	0	1	0	0	0	0
 146	0	0	0	0	0	0	0
 147	0	0	0	0	0	0	0
 148	0	0	0	0	0	0	0
-149	0	0	0	0	0	0	0
+149	0	1	0	0	0	0	0
 150	0	0	0	0	0	0	0
 151	0	0	0	0	0	0	0
 152	0	0	0	0	0	0	0
@@ -997,7 +996,7 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 26	121	Bti (Bacillus thuringiensis israelensis)	Tablete	2
 27	134	Pyriproxyfen	Granulado	4
 28	138	Spinosad	Tablete	1
-29	164	Pyriproxyfen	Granulado	2
+29	160	Pyriproxyfen	Granulado	2
 \.
 
 
@@ -1008,87 +1007,87 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id, ciclo_id) FROM stdin;
 1	101	Ímpar	Urbana	Residência	Tratado	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1	1
 2	102	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	1	11	2	1
-3	103	Ímpar	Urbana	Comércio	Fechado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Estabelecimento fechado no momento da visita.	1	1	3	1
-4	104	Par	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	f	f	\N	\N	Água acumulada em calha.	1	11	4	1
+3	103	Ímpar	Urbana	Comércio	Fechado	Loja 3	\N	f	f	f	f	f	\N	\N	Estabelecimento fechado.	1	1	3	1
+4	104	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador orientado.	1	11	4	1
 5	201	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	2	2	5	1
 6	202	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Caixa d'água destampada.	2	3	6	1
-7	203	Ímpar	Urbana	Residência	Recusado	\N	Zica	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	2	7	7	1
-8	204	Par	Urbana	Comércio	Tratado	Oficina	Chikungunya	f	t	t	t	f	\N	\N	Foco em pneu encontrado e tratado.	2	12	8	1
-9	301	Ímpar	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador ausente no momento da visita.	3	4	9	1
+7	203	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	2	7	7	1
+8	204	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Local inspecionado, sem larvas.	2	12	8	1
+9	301	Ímpar	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Morador ausente.	3	4	9	1
 10	302	Par	Urbana	Residência	Tratado	Apto 101	Dengue	t	f	t	t	f	A001	2	Amostra coletada de ralo e local tratado.	3	13	10	1
 11	303	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Sem focos.	3	4	11	1
 12	304	Par	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	f	f	\N	\N	Pneus armazenados corretamente.	3	13	12	1
 13	401	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Limpeza e tratamento de focos em pneus.	4	5	13	1
 14	402	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco encontrado.	4	9	14	1
-15	403	Ímpar	Urbana	Comércio	Visitado	Supermercado	Zica	f	t	f	f	f	\N	\N	Inspeção em área de carga/descarga, ok.	4	14	15	1
-16	404	Par	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em garrafa no quintal.	4	5	16	1
+15	403	Ímpar	Urbana	Comércio	Fechado	Supermercado	\N	f	f	f	f	f	\N	\N	Fechado para balanço.	4	14	15	1
+16	404	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	5	16	1
 17	501	Ímpar	Urbana	Residência	Visitado	\N	Dengue	t	f	f	t	f	A002	1	Coleta de amostra positiva.	5	1	17	1
 18	502	Par	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Tratamento com larvicida granulado.	5	7	18	1
-19	503	Ímpar	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	15	19	1
-20	504	Par	Urbana	Outros	Tratado	Posto de Saúde	Zica	f	t	t	t	f	\N	\N	Tratamento periódico de rotina.	5	15	20	1
+19	503	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Morador não permitiu a entrada.	5	15	19	1
+20	504	Par	Urbana	Outros	Visitado	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Inspeção de rotina, sem focos.	5	15	20	1
 21	601	Ímpar	Urbana	Residência	Visitado	Apto 202	Zica	f	f	f	f	f	\N	\N	Sem focos.	6	8	21	1
-22	602	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Nenhum problema encontrado.	6	16	22	1
+22	602	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	6	16	22	1
 23	603	Ímpar	Urbana	Residência	Tratado	Casa com piscina	Dengue	f	f	t	t	f	\N	\N	Piscina tratada com larvicida.	6	15	23	1
-24	604	Par	Urbana	Comércio	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	24	1
+24	604	Par	Urbana	Comércio	Fechado	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	24	1
 25	701	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Sem focos na área externa.	7	9	25	1
 26	702	Par	Urbana	Residência	Tratado	Casa dos Fundos	Chikungunya	f	f	t	t	f	\N	\N	Foco em balde, tratado.	7	16	26	1
-27	703	Ímpar	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	15	27	1
+27	703	Ímpar	Urbana	Comércio	Fechado	Clínica	\N	f	f	f	f	f	\N	\N	Fechado, horário de almoço.	7	15	27	1
 28	704	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Morador orientado sobre prevenção.	7	16	28	1
 29	801	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ambiente limpo e sem depósitos.	8	11	29	1
-30	802	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	16	30	1
+30	802	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Cachorro bravo, morador ausente.	8	16	30	1
 31	803	Ímpar	Urbana	Residência	Tratado	Cond. Fechado	Chikungunya	f	f	t	t	f	\N	\N	Foco em área comum do condomínio.	8	11	31	1
 32	804	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	16	32	1
-33	901	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Tratamento em calhas e ralos do pátio.	9	1	33	1
-34	902	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Nenhum foco.	9	12	34	1
+33	901	Ímpar	Urbana	Outros	Visitado	Escola	Dengue	f	t	f	f	f	\N	\N	Ok.	9	1	33	1
+34	902	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	9	12	34	1
 35	903	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	t	f	\N	\N	Encontrado lixo com água, eliminado mecanicamente.	9	1	35	1
-36	904	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	12	36	1
+36	904	Par	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Morador informou que não recebe visitas.	9	12	36	1
 37	1001	Ímpar	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	t	f	\N	\N	Foco em bromélia na varanda, eliminado.	10	13	37	1
-38	1002	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	38	1
-39	1003	Ímpar	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	39	1
-40	1004	Par	Urbana	Terreno Baldio	Tratado	\N	Zica	f	f	t	f	f	\N	\N	Água parada em poça, tratada.	10	16	40	1
-41	101	Ímpar	Urbana	Residência	Visitado	Casa A	Dengue	f	f	f	f	f	\N	\N	Revisita. Local limpo, sem novos focos.	1	1	41	2
-42	102	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Novo foco encontrado em garrafa no quintal.	1	11	42	2
-43	103	Ímpar	Urbana	Comércio	Fechado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Estabelecimento permanece fechado.	1	1	43	2
+38	1002	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	38	1
+39	1003	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	39	1
+40	1004	Par	Urbana	Terreno Baldio	Fechado	\N	\N	f	f	f	f	f	\N	\N	Portão trancado.	10	16	40	1
+41	101	Ímpar	Urbana	Residência	Visitado	Casa A	Dengue	f	f	f	f	f	\N	\N	Revisita. Local limpo.	1	1	41	2
+42	102	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Novo foco em garrafa no quintal.	1	11	42	2
+43	103	Ímpar	Urbana	Comércio	Visitado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Estabelecimento aberto, tudo ok.	1	1	43	2
 44	104	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Calha limpa, sem água acumulada.	1	11	44	2
 45	201	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Segunda visita, tudo ok.	2	2	45	2
-46	202	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Caixa d'água agora está tampada. Sem focos.	2	3	46	2
+46	202	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Caixa d'água agora está tampada.	2	3	46	2
 47	203	Ímpar	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Morador permitiu entrada. Sem focos.	2	7	47	2
 48	204	Par	Urbana	Comércio	Visitado	Oficina	Dengue	f	t	f	f	f	\N	\N	Inspeção de rotina, ok.	2	12	48	2
-49	301	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador encontrado. Casa inspecionada, sem focos.	3	4	49	2
+49	301	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador encontrado. Casa inspecionada.	3	4	49	2
 50	302	Par	Urbana	Residência	Visitado	Apto 101	Zica	f	f	f	f	f	\N	\N	Revisita, sem necessidade de nova amostra.	3	13	50	2
 51	303	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Pequeno foco em vaso de planta. Tratado.	3	4	51	2
 52	304	Par	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	f	f	\N	\N	Pneus permanecem secos e cobertos.	3	13	52	2
 53	401	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	t	f	f	f	\N	\N	Terreno permanece limpo.	4	5	53	2
 54	402	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Tudo ok.	4	9	54	2
 55	403	Ímpar	Urbana	Comércio	Visitado	Supermercado	Dengue	f	t	f	f	f	\N	\N	Sem alterações.	4	14	55	2
-56	404	Par	Urbana	Residência	Fechado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador em viagem.	4	5	56	2
+56	404	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Morador em viagem.	4	5	56	2
 57	501	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Revisita de acompanhamento, sem larvas.	5	1	57	2
 58	502	Par	Urbana	Terreno Baldio	Visitado	Murado	Dengue	f	f	f	f	f	\N	\N	Sem novos focos.	5	7	58	2
-59	503	Ímpar	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Morador continua recusando a visita.	5	15	59	2
+59	503	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Morador continua recusando a visita.	5	15	59	2
 60	504	Par	Urbana	Outros	Visitado	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Inspeção de rotina, tudo ok.	5	15	60	2
 61	601	Ímpar	Urbana	Residência	Visitado	Apto 202	Zica	f	f	f	f	f	\N	\N	Ok.	6	8	61	2
 62	602	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Sem alterações.	6	16	62	2
-63	603	Ímpar	Urbana	Residência	Visitado	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Piscina limpa e tratada pelo morador.	6	15	63	2
-64	604	Par	Urbana	Comércio	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	64	2
+63	603	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Piscina com água parada. Tratada.	6	15	63	2
+64	604	Par	Urbana	Comércio	Fechado	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	64	2
 65	701	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Revisita, local limpo.	7	9	65	2
 66	702	Par	Urbana	Residência	Visitado	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Sem novos focos.	7	16	66	2
 67	703	Ímpar	Urbana	Comércio	Tratado	Clínica	Dengue	f	f	t	t	f	\N	\N	Foco em ralo externo. Tratado.	7	15	67	2
 68	704	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	7	16	68	2
-69	801	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	11	69	2
-70	802	Par	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Ninguém em casa.	8	16	70	2
+69	801	Ímpar	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	8	11	69	2
+70	802	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	8	16	70	2
 71	803	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Área comum permanece limpa.	8	11	71	2
 72	804	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Lixo acumulado no quintal com água.	8	16	72	2
 73	901	Ímpar	Urbana	Outros	Visitado	Escola	Dengue	f	t	f	f	f	\N	\N	Inspeção de rotina, sem focos.	9	1	73	2
 74	902	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	9	12	74	2
 75	903	Ímpar	Urbana	Terreno Baldio	Tratado	Aberto	Chikungunya	f	f	t	t	f	\N	\N	Novo acúmulo de lixo com água.	9	1	75	2
-76	904	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa persistente.	9	12	76	2
+76	904	Par	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa persistente.	9	12	76	2
 77	1001	Ímpar	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Sem novos focos.	10	13	77	2
 78	1002	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Morador encontrado. Casa inspecionada.	10	16	78	2
-79	1003	Ímpar	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	79	2
-80	1004	Par	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Local permanece limpo.	10	16	80	2
+79	1003	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	79	2
+80	1004	Par	Urbana	Terreno Baldio	Fechado	\N	\N	f	f	f	f	f	\N	\N	Acesso bloqueado.	10	16	80	2
 81	101	Ímpar	Urbana	Residência	Visitado	Casa A	Dengue	f	f	f	f	f	\N	\N	Terceira visita de rotina. Sem alterações.	1	1	81	3
 82	102	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Revisita. Local permanece limpo.	1	11	82	3
-83	103	Ímpar	Urbana	Comércio	Visitado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Estabelecimento reabriu. Inspecionado, ok.	1	1	83	3
+83	103	Ímpar	Urbana	Comércio	Visitado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Estabelecimento aberto. Inspecionado, ok.	1	1	83	3
 84	104	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Tudo certo.	1	11	84	3
 85	201	Ímpar	Urbana	Comércio	Tratado	Loja 02	Dengue	f	f	t	t	f	\N	\N	Pequeno foco em ralo dos fundos.	2	2	85	3
 86	202	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	2	3	86	3
@@ -1100,18 +1099,18 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 92	304	Par	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	f	f	\N	\N	Tudo certo.	3	13	92	3
 93	401	Ímpar	Urbana	Terreno Baldio	Tratado	\N	Zica	f	t	t	t	f	\N	\N	Novo descarte irregular de lixo.	4	5	93	3
 94	402	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	4	9	94	3
-95	403	Ímpar	Urbana	Comércio	Visitado	Supermercado	Dengue	f	t	f	f	f	\N	\N	Ok.	4	14	95	3
+95	403	Ímpar	Urbana	Comércio	Tratado	Supermercado	Dengue	f	t	t	t	f	\N	\N	Foco na área dos carrinhos.	4	14	95	3
 96	404	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador presente, tudo ok.	4	5	96	3
-97	501	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	5	1	97	3
+97	501	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Foco em pneu velho no quintal.	5	1	97	3
 98	502	Par	Urbana	Terreno Baldio	Visitado	Murado	Dengue	f	f	f	f	f	\N	\N	Ok.	5	7	98	3
-99	503	Ímpar	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	5	15	99	3
+99	503	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	99	3
 100	504	Par	Urbana	Outros	Visitado	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Ok.	5	15	100	3
 101	601	Ímpar	Urbana	Residência	Tratado	Apto 202	Zica	f	f	t	t	f	\N	\N	Foco em vaso de planta na sacada.	6	8	101	3
 102	602	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	6	16	102	3
 103	603	Ímpar	Urbana	Residência	Visitado	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Ok.	6	15	103	3
-104	604	Par	Urbana	Comércio	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	104	3
+104	604	Par	Urbana	Comércio	Fechado	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	104	3
 105	701	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Ok.	7	9	105	3
-106	702	Par	Urbana	Residência	Visitado	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Ok.	7	16	106	3
+106	702	Par	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em tambor de água.	7	16	106	3
 107	703	Ímpar	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	15	107	3
 108	704	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	f	f	\N	\N	Pequeno foco em brinquedo no quintal.	7	16	108	3
 109	801	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	11	109	3
@@ -1119,133 +1118,53 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 111	803	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Ok.	8	11	111	3
 112	804	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	16	112	3
 113	901	Ímpar	Urbana	Outros	Tratado	Escola	Dengue	f	t	t	t	f	\N	\N	Início do período letivo, tratamento preventivo.	9	1	113	3
-114	902	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	9	12	114	3
+114	902	Par	Urbana	Residência	Tratado	\N	Zica	f	f	t	t	f	\N	\N	Foco em ralo.	9	12	114	3
 115	903	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	f	f	\N	\N	Terreno permanece limpo.	9	1	115	3
-116	904	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	9	12	116	3
+116	904	Par	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	116	3
 117	1001	Ímpar	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Ok.	10	13	117	3
-118	1002	Par	Urbana	Residência	Fechado	\N	Dengue	f	f	f	f	f	\N	\N	Ninguém atendeu novamente.	10	16	118	3
-119	1003	Ímpar	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	119	3
+118	1002	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu novamente.	10	16	118	3
+119	1003	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	119	3
 120	1004	Par	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	10	16	120	3
 121	101	Ímpar	Urbana	Residência	Tratado	Casa A	Zica	f	f	t	t	f	\N	\N	Visita de Zica, foco encontrado na calha.	1	1	121	4
 122	102	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Local limpo.	1	11	122	4
 123	103	Ímpar	Urbana	Comércio	Visitado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	1	1	123	4
-124	104	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	1	11	124	4
+124	104	Par	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco encontrado em balde esquecido no quintal.	1	11	124	4
 125	201	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Ok.	2	2	125	4
 126	202	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	2	3	126	4
-127	203	Ímpar	Urbana	Residência	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Morador não estava em casa na 4a visita.	2	7	127	4
+127	203	Ímpar	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Morador não estava em casa na 4a visita.	2	7	127	4
 128	204	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Ok.	2	12	128	4
 129	301	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita de rotina, ok.	3	4	129	4
-130	302	Par	Urbana	Residência	Visitado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Ok.	3	13	130	4
+130	302	Par	Urbana	Residência	Tratado	Apto 101	Dengue	f	f	t	t	f	\N	\N	Foco recorrente em ralo. Tratado.	3	13	130	4
 131	303	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	3	4	131	4
 132	304	Par	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	f	f	\N	\N	Ok.	3	13	132	4
 133	401	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	t	f	f	f	\N	\N	Terreno limpo.	4	5	133	4
 134	402	Par	Urbana	Residência	Tratado	\N	Zica	f	f	t	t	f	\N	\N	Foco em pneu de enfeite no jardim.	4	9	134	4
 135	403	Ímpar	Urbana	Comércio	Visitado	Supermercado	Dengue	f	t	f	f	f	\N	\N	Ok.	4	14	135	4
 136	404	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	5	136	4
-137	501	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	5	1	137	4
+137	501	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Água acumulada em laje. Tratado.	5	1	137	4
 138	502	Par	Urbana	Terreno Baldio	Tratado	Murado	Dengue	f	f	t	f	f	\N	\N	Novo foco de lixo.	5	7	138	4
-139	503	Ímpar	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	5	15	139	4
+139	503	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	139	4
 140	504	Par	Urbana	Outros	Visitado	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Ok.	5	15	140	4
 141	601	Ímpar	Urbana	Residência	Visitado	Apto 202	Zica	f	f	f	f	f	\N	\N	Ok.	6	8	141	4
 142	602	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	6	16	142	4
 143	603	Ímpar	Urbana	Residência	Visitado	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Piscina ok.	6	15	143	4
-144	604	Par	Urbana	Comércio	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	144	4
-145	701	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Tudo ok.	7	9	145	4
+144	604	Par	Urbana	Comércio	Fechado	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	144	4
+145	701	Ímpar	Urbana	Comércio	Tratado	Restaurante	Chikungunya	f	t	t	t	f	\N	\N	Foco em tambor nos fundos.	7	9	145	4
 146	702	Par	Urbana	Residência	Visitado	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Tudo ok.	7	16	146	4
 147	703	Ímpar	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	7	15	147	4
-148	704	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	7	16	148	4
-149	801	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	8	11	149	4
+148	704	Par	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Foco em caixa d'água no telhado.	7	16	148	4
+149	801	Ímpar	Urbana	Residência	Tratado	\N	Dengue	f	f	t	t	f	\N	\N	Foco em ralo.	8	11	149	4
 150	802	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Morador presente, tudo certo.	8	16	150	4
 151	803	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Tudo ok.	8	11	151	4
 152	804	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	8	16	152	4
 153	901	Ímpar	Urbana	Outros	Visitado	Escola	Dengue	f	t	f	f	f	\N	\N	Tudo ok.	9	1	153	4
-154	902	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Tudo ok.	9	12	154	4
-155	903	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	f	f	\N	\N	Permanece limpo.	9	1	155	4
-156	904	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	9	12	156	4
+154	902	Par	Urbana	Residência	Fechado	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	9	12	154	4
+155	903	Ímpar	Urbana	Terreno Baldio	Tratado	Aberto	Chikungunya	f	f	t	t	f	\N	\N	Foco em entulho.	9	1	155	4
+156	904	Par	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	156	4
 157	1001	Ímpar	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Tudo ok.	10	13	157	4
 158	1002	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Morador atendeu. Ok.	10	16	158	4
-159	1003	Ímpar	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	159	4
-160	1004	Par	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Tudo ok.	10	16	160	4
-161	101	Ímpar	Urbana	Residência	Visitado	Casa A	Dengue	f	f	f	f	f	\N	\N	Revisita, local limpo.	1	1	161	5
-162	102	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	1	11	162	5
-163	103	Ímpar	Urbana	Comércio	Visitado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Ok.	1	1	163	5
-164	104	Par	Urbana	Residência	Tratado	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em balde.	1	11	164	5
-165	201	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Ok.	2	2	165	5
-166	202	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	2	3	166	5
-167	203	Ímpar	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	2	7	167	5
-168	204	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Ok.	2	12	168	5
-169	301	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	3	4	169	5
-170	302	Par	Urbana	Residência	Visitado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Ok.	3	13	170	5
-171	303	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	3	4	171	5
-172	304	Par	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	f	f	\N	\N	Ok.	3	13	172	5
-173	401	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	t	f	f	f	\N	\N	Ok.	4	5	173	5
-174	402	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	4	9	174	5
-175	403	Ímpar	Urbana	Comércio	Visitado	Supermercado	Dengue	f	t	f	f	f	\N	\N	Ok.	4	14	175	5
-176	404	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	5	176	5
-177	501	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	5	1	177	5
-178	502	Par	Urbana	Terreno Baldio	Visitado	Murado	Dengue	f	f	f	f	f	\N	\N	Ok.	5	7	178	5
-179	503	Ímpar	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	5	15	179	5
-180	504	Par	Urbana	Outros	Visitado	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Ok.	5	15	180	5
-181	601	Ímpar	Urbana	Residência	Visitado	Apto 202	Zica	f	f	f	f	f	\N	\N	Ok.	6	8	181	5
-182	602	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	6	16	182	5
-183	603	Ímpar	Urbana	Residência	Visitado	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Ok.	6	15	183	5
-184	604	Par	Urbana	Comércio	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	184	5
-185	701	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Ok.	7	9	185	5
-186	702	Par	Urbana	Residência	Visitado	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Ok.	7	16	186	5
-187	703	Ímpar	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Ok.	7	15	187	5
-188	704	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	7	16	188	5
-189	801	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	11	189	5
-190	802	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	8	16	190	5
-191	803	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Ok.	8	11	191	5
-192	804	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	16	192	5
-193	901	Ímpar	Urbana	Outros	Visitado	Escola	Dengue	f	t	f	f	f	\N	\N	Ok.	9	1	193	5
-194	902	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	9	12	194	5
-195	903	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	f	f	\N	\N	Ok.	9	1	195	5
-196	904	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	9	12	196	5
-197	1001	Ímpar	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Ok.	10	13	197	5
-198	1002	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	10	16	198	5
-199	1003	Ímpar	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	199	5
-200	1004	Par	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Ok.	10	16	200	5
-201	101	Ímpar	Urbana	Residência	Visitado	Casa A	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	1	201	6
-202	102	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	11	202	6
-203	103	Ímpar	Urbana	Comércio	Visitado	Loja 3	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	1	203	6
-204	104	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	11	204	6
-205	201	Ímpar	Urbana	Comércio	Visitado	Loja 02	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	2	205	6
-206	202	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	3	206	6
-207	203	Ímpar	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	7	207	6
-208	204	Par	Urbana	Comércio	Visitado	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	2	12	208	6
-209	301	Ímpar	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	3	4	209	6
-210	302	Par	Urbana	Residência	Visitado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	210	6
-211	303	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	3	4	211	6
-212	304	Par	Urbana	Comércio	Visitado	Borracharia	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	212	6
-213	401	Ímpar	Urbana	Terreno Baldio	Visitado	\N	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	213	6
-214	402	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	9	214	6
-215	403	Ímpar	Urbana	Comércio	Visitado	Supermercado	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	4	14	215	6
-216	404	Par	Urbana	Residência	Visitado	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	216	6
-217	501	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	5	1	217	6
-218	502	Par	Urbana	Terreno Baldio	Visitado	Murado	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	5	7	218	6
-219	503	Ímpar	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	5	15	219	6
-220	504	Par	Urbana	Outros	Visitado	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	5	15	220	6
-221	601	Ímpar	Urbana	Residência	Visitado	Apto 202	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	6	8	221	6
-222	602	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	6	16	222	6
-223	603	Ímpar	Urbana	Residência	Visitado	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	6	15	223	6
-224	604	Par	Urbana	Comércio	Fechado	\N	Zica	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	224	6
-225	701	Ímpar	Urbana	Comércio	Visitado	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	7	9	225	6
-226	702	Par	Urbana	Residência	Visitado	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	226	6
-227	703	Ímpar	Urbana	Comércio	Visitado	Clínica	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	15	227	6
-228	704	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	228	6
-229	801	Ímpar	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	11	229	6
-230	802	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	230	6
-231	803	Ímpar	Urbana	Residência	Visitado	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	11	231	6
-232	804	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	232	6
-233	901	Ímpar	Urbana	Outros	Visitado	Escola	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	9	1	233	6
-234	902	Par	Urbana	Residência	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	9	12	234	6
-235	903	Ímpar	Urbana	Terreno Baldio	Visitado	Aberto	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	9	1	235	6
-236	904	Par	Urbana	Residência	Recusado	\N	Dengue	f	f	f	f	f	\N	\N	Recusa.	9	12	236	6
-237	1001	Ímpar	Urbana	Residência	Visitado	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	10	13	237	6
-238	1002	Par	Urbana	Residência	Visitado	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	10	16	238	6
-239	1003	Ímpar	Urbana	Residência	Recusado	Apto 101	Dengue	f	f	f	f	f	\N	\N	Recusa.	10	13	239	6
-240	1004	Par	Urbana	Terreno Baldio	Visitado	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	10	16	240	6
+159	1003	Ímpar	Urbana	Residência	Recusado	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	159	4
+160	1004	Par	Urbana	Terreno Baldio	Tratado	\N	Zica	f	f	t	t	f	\N	\N	Água parada em lona. Tratado.	10	16	160	4
 \.
 
 
@@ -1287,15 +1206,15 @@ COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, registro_d
 31	134	pneu_enfeite_jardim.jpg
 32	138	novo_foco_lixo_terreno_502.jpg
 33	139	recusa_ciclo4.jpg
-34	164	foco_balde_ciclo5.jpg
-35	179	recusa_ciclo5.jpg
-36	184	comercio_fechado_ciclo5.jpg
-37	196	recusa_ciclo5.jpg
-38	199	recusa_ciclo5.jpg
-39	219	recusa_final_ciclo6.jpg
-40	224	comercio_fechado_ciclo6.jpg
-41	236	recusa_final_ciclo6.jpg
-42	239	recusa_final_ciclo6.jpg
+34	145	foco_balde_ciclo5.jpg
+35	144	recusa_ciclo5.jpg
+36	155	comercio_fechado_ciclo5.jpg
+37	142	recusa_ciclo5.jpg
+38	133	recusa_ciclo5.jpg
+39	143	recusa_final_ciclo6.jpg
+40	142	comercio_fechado_ciclo6.jpg
+41	111	recusa_final_ciclo6.jpg
+42	123	recusa_final_ciclo6.jpg
 \.
 
 
@@ -1393,7 +1312,7 @@ SELECT pg_catalog.setval('public.ciclo_area_de_visita_ciclo_area_de_visita_id_se
 -- Name: ciclos_ciclo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 6, true);
+SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 4, true);
 
 
 --
@@ -1428,7 +1347,7 @@ SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_ar
 -- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 240, true);
+SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 160, true);
 
 
 --
@@ -1729,5 +1648,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Nkb3VK83JkpZGzmPgxfiu5yVUy4adEJcJoKtUr2AefwavV6yA4eVhQz2DagU02y
+\unrestrict EgQgnerZqSEaBHIpudIEmHqGfa8glKY8kQUQcf5WJrN8Cjq2tzkOyLIy16PM7le
 

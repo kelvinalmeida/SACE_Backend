@@ -11,14 +11,29 @@ def get_registro_de_campo(current_user):
 
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
-
+    
     try:
         cursor = conn.cursor()
 
-        # Query para buscar todos os usuários agentes relacionando ao registro de campo
-        search_registros_de_campo = """SELECT reg_camp.registro_de_campo_id, reg_camp.imovel_numero, reg_camp.imovel_lado, reg_camp.imovel_categoria_da_localidade, reg_camp.imovel_tipo, reg_camp.imovel_status, reg_camp.imovel_complemento, reg_camp.formulario_tipo, reg_camp.li, reg_camp.pe, reg_camp.t, reg_camp.df, reg_camp.pve, reg_camp.numero_da_amostra, reg_camp.quantiade_tubitos, reg_camp.observacao, reg_camp.area_de_visita_id, reg_camp.agente_id, reg_camp.deposito_id, usu.nome_completo agente_nome FROM registro_de_campo reg_camp INNER JOIN agente USING(agente_id) INNER JOIN usuario usu USING(usuario_id);"""
+        # Buscar o ciclo ativo
+        search_ciclo_ativo = """SELECT ciclo_id, ano_de_criacao, ciclo FROM ciclos WHERE ativo = true;"""
+        cursor.execute(search_ciclo_ativo)
 
-        cursor.execute(search_registros_de_campo)
+        ciclo_ativo = cursor.fetchone()
+
+        ciclo_id = ciclo_ativo['ciclo_id']
+
+    except Exception as e:
+        conn.rollback()
+        cursor.close()
+        return jsonify({"error": str(e)}), 500
+    
+
+    try:
+        # Query para buscar todos os usuários agentes relacionando ao registro de campo
+        search_registros_de_campo = """SELECT reg_camp.registro_de_campo_id, reg_camp.imovel_numero, reg_camp.imovel_lado, reg_camp.imovel_categoria_da_localidade, reg_camp.imovel_tipo, reg_camp.imovel_status, reg_camp.imovel_complemento, reg_camp.formulario_tipo, reg_camp.li, reg_camp.pe, reg_camp.t, reg_camp.df, reg_camp.pve, reg_camp.numero_da_amostra, reg_camp.quantiade_tubitos, reg_camp.observacao, reg_camp.area_de_visita_id, reg_camp.agente_id, reg_camp.deposito_id, reg_camp.ciclo_id, usu.nome_completo agente_nome FROM registro_de_campo reg_camp INNER JOIN agente USING(agente_id) INNER JOIN usuario usu USING(usuario_id) WHERE reg_camp.ciclo_id = %s;"""
+
+        cursor.execute(search_registros_de_campo, (ciclo_id,))
         registro_de_campo = cursor.fetchall()
 
     except Exception as e:
@@ -27,19 +42,6 @@ def get_registro_de_campo(current_user):
         return jsonify({"error": str(e)}), 500
     
 
-    try:
-        # Buscar o ciclo ativo
-        search_ciclo_ativo = """SELECT ciclo_id FROM ciclos WHERE ativo = true;"""
-        cursor.execute(search_ciclo_ativo)
-
-        ciclo_ativo = cursor.fetchone()
-
-        ciclo_id = ciclo_ativo['ciclo_id']
-    except Exception as e:
-        conn.rollback()
-        cursor.close()
-        return jsonify({"error": str(e)}), 500
-    
     # relacionar registro de campo a sua area de visita
     try:
         cursor.close()
@@ -48,9 +50,9 @@ def get_registro_de_campo(current_user):
         # Buscar áreas de visita
         search_areas_de_visita = """SELECT area_de_visita.area_de_visita_id, area_de_visita.cep, area_de_visita.setor, area_de_visita.numero_quarteirao, area_de_visita.logadouro, area_de_visita.bairro, area_de_visita.municipio, area_de_visita.estado
                             FROM registro_de_campo reg_campo
-                            LEFT JOIN area_de_visita USING(area_de_visita_id) WHERE ciclo_id = %s;"""
+                            LEFT JOIN area_de_visita USING(area_de_visita_id);"""
         
-        cursor.execute(search_areas_de_visita, (ciclo_id,))
+        cursor.execute(search_areas_de_visita)
         areas_de_visita = cursor.fetchall()
 
         area_de_visita_id = None
@@ -62,6 +64,21 @@ def get_registro_de_campo(current_user):
                 area_de_visita_id = area_de_visita['area_de_visita_id']
                 area_de_visita.pop('area_de_visita_id', None)  # Remove a chave se existir
             reg['area_de_visita'] = area_de_visita
+        
+
+        # colocando o ciclo em cada registro de campo
+        for reg in registro_de_campo:
+
+            # return jsonify(reg), 200
+            ciclo_id = reg['ciclo_id']
+
+            # buscar ciclo do registro de campo
+            search_ciclo = """SELECT ciclo_id, EXTRACT(YEAR FROM ano_de_criacao)::INTEGER AS ano, ciclo FROM ciclos WHERE ciclo_id = %s;"""
+            cursor.execute(search_ciclo, (ciclo_id,))
+            ciclo_area_de_visita = cursor.fetchone()
+
+            reg['ciclo'] = ciclo_area_de_visita
+            
     except Exception as e:
         conn.rollback()
         cursor.close()
@@ -90,24 +107,7 @@ def get_registro_de_campo(current_user):
         conn.rollback()
         cursor.close()
         return jsonify({"error": str(e)}), 500
-    
-    try:
-        cursor.close()
-        cursor = conn.cursor()
 
-        # buscar ciclo da área de visita
-        search_ciclo_area_de_visita = """SELECT ciclo_id ciclo, ano_de_criacao FROM ciclos INNER JOIN ciclo_area_de_visita USING(ciclo_id) INNER JOIN area_de_visita USING(area_de_visita_id) WHERE ativo = true AND area_de_visita_id = %s;"""
-        cursor.execute(search_ciclo_area_de_visita, (area_de_visita_id,))
-        ciclo_area_de_visita = cursor.fetchone()
-
-        for reg in registro_de_campo:
-            reg['ciclo'] = ciclo_area_de_visita
-
-    except Exception as e:
-        conn.rollback()
-        cursor.close()
-        return jsonify({"error": str(e)}), 500
-    
  
     try:
         cursor.close()

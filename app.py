@@ -2,9 +2,13 @@ from flask import Flask
 from flask_cors import CORS
 from config import Config
 from routes.login.login import login
-from routes.tela_inicial.tela_inicial import tela_inicial
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
+
+
+# graficos
+from routes.graficos.bluprint import graficos
+from routes.graficos import focos_positovos
 
 
 # registro_de_campo
@@ -63,11 +67,11 @@ app.register_blueprint(swaggerui_blueprint)
 
 app.register_blueprint(login)
 app.register_blueprint(usuario)
-app.register_blueprint(tela_inicial)
 app.register_blueprint(registro_de_campo)
 app.register_blueprint(area_para_visita)
 app.register_blueprint(denuncia)
 app.register_blueprint(blu_artigo)
+app.register_blueprint(graficos)
 
 print(app.url_map)
 

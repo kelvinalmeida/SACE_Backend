@@ -504,8 +504,8 @@ paths:
           description: Erro interno do servidor.
     
     get:
-      summary: Lista todos os registros de campo
-      description: Retorna uma lista completa de todos os registros de campo. Requer autenticação.
+      summary: Lista todos os registros de campo do ciclo atual (ativo)
+      description: Retorna uma lista completa de todos os registros de campo do ciclo atual (ativo). Requer autenticação.
       security:
         - bearerAuth: []
       responses:
