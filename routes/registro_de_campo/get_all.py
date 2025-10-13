@@ -27,6 +27,19 @@ def get_registro_de_campo(current_user):
         return jsonify({"error": str(e)}), 500
     
 
+    try:
+        # Buscar o ciclo ativo
+        search_ciclo_ativo = """SELECT ciclo_id FROM ciclos WHERE ativo = true;"""
+        cursor.execute(search_ciclo_ativo)
+
+        ciclo_ativo = cursor.fetchone()
+
+        ciclo_id = ciclo_ativo['ciclo_id']
+    except Exception as e:
+        conn.rollback()
+        cursor.close()
+        return jsonify({"error": str(e)}), 500
+    
     # relacionar registro de campo a sua area de visita
     try:
         cursor.close()
@@ -35,9 +48,9 @@ def get_registro_de_campo(current_user):
         # Buscar áreas de visita
         search_areas_de_visita = """SELECT area_de_visita.area_de_visita_id, area_de_visita.cep, area_de_visita.setor, area_de_visita.numero_quarteirao, area_de_visita.logadouro, area_de_visita.bairro, area_de_visita.municipio, area_de_visita.estado
                             FROM registro_de_campo reg_campo
-                            LEFT JOIN area_de_visita USING(area_de_visita_id);"""
+                            LEFT JOIN area_de_visita USING(area_de_visita_id) WHERE ciclo_id = %s;"""
         
-        cursor.execute(search_areas_de_visita)
+        cursor.execute(search_areas_de_visita, (ciclo_id,))
         areas_de_visita = cursor.fetchall()
 
         area_de_visita_id = None
