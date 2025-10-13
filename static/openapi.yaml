@@ -347,7 +347,7 @@ components:
         imovel_tipo: { type: string, example: "Residencial" }
         imovel_status: { type: string, example: "Trabalhado" }
         imovel_complemento: { type: string, nullable: true, example: "Apto 101" }
-        formulario_tipo: { type: string, nullable: true, example: "F1" }
+        formulario_tipo: { type: string, nullable: true, example: "Dengue" }
         li: { type: boolean, example: true }
         pe: { type: boolean, example: false }
         t: { type: boolean, example: true }
@@ -460,7 +460,7 @@ paths:
                 imovel_tipo: { type: string, example: "Residencial" }
                 imovel_status: { type: string, example: "Trabalhado" }
                 imovel_complemento: { type: string, description: "Ex: Apto 101, Bloco C", nullable: true }
-                formulario_tipo: { type: string, example: "F1", nullable: true }
+                formulario_tipo: { type: string, example: "Dengue", nullable: true }
                 li: { type: boolean, description: "Flag booleana para LI." }
                 pe: { type: boolean, description: "Flag booleana para PE." }
                 t: { type: boolean, description: "Flag booleana para T." }
