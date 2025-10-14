@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 
 @graficos.route('/grafico/focos_positivos/<int:ano>/<int:ciclo>', methods=['GET'])
 @token_required
-def get_user_by_id(current_user, ano, ciclo):
+def get_focos_positivos(current_user, ano, ciclo):
 
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     if conn is None:
@@ -29,10 +29,7 @@ def get_user_by_id(current_user, ano, ciclo):
 
 
         ciclo_procurado = [c for c in ciclos if c['ano'] == ano and c['ciclo'] == ciclo]
-        
-        # ciclo_ano_anterior_correto = None
 
-        
 
         if(ciclo == 1):
             ano_anterior = ano - 1
@@ -77,14 +74,57 @@ def get_user_by_id(current_user, ano, ciclo):
         focos_positivos = cursor.fetchone()
         focos_positivos = focos_positivos['focos_positivos'] if focos_positivos else 0
 
+        porcentagem_str = "0%"
+        crescimento_str = "estável"
+        has_changed = True
+
+        # Case 1: Previous cycle had zero foci
+        if focos_positivos_ciclo_anterior == 0:
+            if focos_positivos > 0:
+                # Increase from 0 to a positive number
+                porcentagem_str = "100% (Novo) ↑"
+                crescimento_str = "aumentou"
+            else:
+                # 0 in current and 0 in previous
+                porcentagem_str = "0%"
+                crescimento_str = "estável"
+                has_changed = False
+
+        # Case 2: Previous cycle had positive foci
+        elif focos_positivos_ciclo_anterior > 0:
+            if focos_positivos > focos_positivos_ciclo_anterior:
+                # Increase
+                percentage = round(((focos_positivos / focos_positivos_ciclo_anterior) - 1) * 100, 2)
+                porcentagem_str = f"{percentage}% ↑"
+                crescimento_str = "aumentou"
+            elif focos_positivos < focos_positivos_ciclo_anterior:
+                # Decrease
+                # The calculation should be 1 - (New/Old) to get the correct decrease percentage.
+                percentage = round((1 - (focos_positivos / focos_positivos_ciclo_anterior)) * 100, 2)
+                porcentagem_str = f"{percentage}% ↓"
+                crescimento_str = "diminuiu"
+            else:
+                # Stable
+                porcentagem_str = "0%"
+                crescimento_str = "estável"
+                has_changed = False
+
+        # Note: The case where current is 0 and previous is > 0 is handled 
+        # by the 'Decrease' block above (percentage will be 100% decrease).
+        # If you want a specific message for 100% decrease:
+        # elif focos_positivos == 0 and focos_positivos_ciclo_anterior > 0:
+        #     porcentagem_str = "100% ↓"
+        #     crescimento_str = "diminuiu"
+
+
+        # --- Return Statement ---
+
         return jsonify({
             "focos_positivos": focos_positivos,
             "Dados do ultimo ciclo": focos_positivos_ciclo_anterior,
-            "porcentagem": round(focos_positivos / focos_positivos_ciclo_anterior - 1, 2)  if focos_positivos > focos_positivos_ciclo_anterior else focos_positivos_ciclo_anterior / focos_positivos,
-            "crescimento": "aumentou" if focos_positivos > focos_positivos_ciclo_anterior else "dimonuiu"
-            
+            "porcentagem": porcentagem_str,
+            "crescimento": crescimento_str
         }), 200
-    
         
     except Exception as e:
         logging.error(f"Database query failed: {e}")
