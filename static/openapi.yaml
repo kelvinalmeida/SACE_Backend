@@ -345,7 +345,7 @@ components:
         imovel_lado: { type: string, example: "Par" }
         imovel_categoria_da_localidade: { type: string, example: "Urbana" }
         imovel_tipo: { type: string, example: "Residencial" }
-        imovel_status: { type: string, example: "Trabalhado" }
+        imovel_status: { type: string, example: "inspecionado" }
         imovel_complemento: { type: string, nullable: true, example: "Apto 101" }
         formulario_tipo: { type: string, nullable: true, example: "Dengue" }
         li: { type: boolean, example: true }
@@ -458,7 +458,7 @@ paths:
                 imovel_lado: { type: string, description: "Lado da rua (Par/Ímpar).", example: "Ímpar" }
                 imovel_categoria_da_localidade: { type: string, example: "Urbana" }
                 imovel_tipo: { type: string, example: "Residencial" }
-                imovel_status: { type: string, example: "Trabalhado" }
+                imovel_status: { type: string, example: "inspecionado" }
                 imovel_complemento: { type: string, description: "Ex: Apto 101, Bloco C", nullable: true }
                 formulario_tipo: { type: string, example: "Dengue", nullable: true }
                 li: { type: boolean, description: "Flag booleana para LI." }

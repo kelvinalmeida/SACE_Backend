@@ -29,13 +29,14 @@ def get_depositos_identificados(current_user, ano, ciclo):
 
 
         ciclo_procurado = [c for c in ciclos if c['ano'] == ano and c['ciclo'] == ciclo]
-
+        
         ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
 
-        depositos_ids_ciclo_procurado = """SELECT deposito_id FROM registro_de_campo WHERE imovel_status = 'Tratado' AND ciclo_id = %s;"""
+        depositos_ids_ciclo_procurado = """SELECT deposito_id FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s;"""
 
-        cursor.execute(depositos_ids_ciclo_procurado, (ciclo_id,))
-        depositos_ids_ciclo_procurado = cursor.fetchall()
+        cursor.execute(depositos_ids_ciclo_procurado, (ciclo_id,)) 
+        depositos_ids_ciclo_procurado = cursor.fetchall() if ciclo_id else []
+        # return  jsonify(depositos_ids_ciclo_procurado)
         
         
         # return jsonify(depositos_ids_ciclo_procurado)
@@ -56,10 +57,12 @@ def get_depositos_identificados(current_user, ano, ciclo):
             
        
         if ciclo_id_ano_anterior:
-            depositos_ids_ciclo_anterior = """SELECT deposito_id FROM registro_de_campo WHERE imovel_status = 'Tratado' AND ciclo_id = %s;"""
+            depositos_ids_ciclo_anterior = """SELECT deposito_id FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s;"""
 
             cursor.execute(depositos_ids_ciclo_anterior, (ciclo_id_ano_anterior,))
             depositos_ids_ciclo_anterior = cursor.fetchall()
+
+            
          
         else:
             depositos_ids_ciclo_anterior = 0
@@ -117,7 +120,7 @@ def get_depositos_identificados(current_user, ano, ciclo):
             # Cannot calculate percentage change from zero, but it's an increase
             quantidade_depositos["porcentagem"] = "100% (Novo)"
             quantidade_depositos["crescimento"] = "aumentou"
-        elif dados_do_ultimo_ciclo == 0 and depositos_identificados == 0:
+        elif (dados_do_ultimo_ciclo == 0 and depositos_identificados == 0) or (dados_do_ultimo_ciclo ==  depositos_identificados) :
             quantidade_depositos["porcentagem"] = "0%"
             quantidade_depositos["crescimento"] = "estável"
         elif dados_do_ultimo_ciclo > 0:

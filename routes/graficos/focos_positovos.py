@@ -30,7 +30,7 @@ def get_focos_positivos(current_user, ano, ciclo):
 
         ciclo_procurado = [c for c in ciclos if c['ano'] == ano and c['ciclo'] == ciclo]
 
-
+        
         if(ciclo == 1):
             ano_anterior = ano - 1
             
@@ -47,7 +47,7 @@ def get_focos_positivos(current_user, ano, ciclo):
             
        
         if ciclo_id_ano_anterior:
-            search_ano_anterior = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE imovel_status = 'Tratado' AND ciclo_id = %s GROUP BY imovel_status;"""
+            search_ano_anterior = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s GROUP BY imovel_status;"""
 
             cursor.execute(search_ano_anterior, (ciclo_id_ano_anterior,))
             focos_positivos_ciclo_anterior = cursor.fetchone()
@@ -57,7 +57,7 @@ def get_focos_positivos(current_user, ano, ciclo):
         else:
             focos_positivos_ciclo_anterior = 0
                 
-
+        
         ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
     except Exception as e:
         conn.rollback()
@@ -66,17 +66,18 @@ def get_focos_positivos(current_user, ano, ciclo):
     try:
 
         
-        search = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE imovel_status = 'Tratado' AND ciclo_id = %s GROUP BY imovel_status;"""
+        search = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s GROUP BY imovel_status;"""
 
 
         cursor.execute(search, (ciclo_id,))
 
         focos_positivos = cursor.fetchone()
         focos_positivos = focos_positivos['focos_positivos'] if focos_positivos else 0
-
+        
         porcentagem_str = "0%"
         crescimento_str = "estável"
         has_changed = True
+
 
         # Case 1: Previous cycle had zero foci
         if focos_positivos_ciclo_anterior == 0:
