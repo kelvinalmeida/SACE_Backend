@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO)
 def get_img(artigo_id):
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     cursor = None # Inicializa o cursor fora do try
-    
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
 
@@ -33,15 +32,16 @@ def get_img(artigo_id):
         # O diretório base onde as imagens estão salvas
         directory = os.path.join(current_app.root_path, 'uploads', 'artigo_img')
         
+        # return jsonify(imagem_name)
         # 3. Retornar o arquivo usando send_from_directory
         # Esta função busca o arquivo no diretório especificado e o envia para o cliente.
         return send_from_directory(directory, imagem_name)
 
-    except FileNotFoundError:
-        # Erro específico se o arquivo existir no DB mas não no disco
-        return jsonify({"error": f"Arquivo '{imagem_name}' não encontrado no servidor."}), 404
+    # except FileNotFoundError:
+    #     # Erro específico se o arquivo existir no DB mas não no disco
         
     except Exception as e:
+        return jsonify({"error": f"Arquivo '{imagem_name}' não encontrado no servidor."}), 404
         # Erro genérico (DB ou outro)
         logging.error(f"Erro ao buscar imagem: {e}")
         return jsonify({"error": f"Erro interno do servidor: {str(e)}"}), 500
