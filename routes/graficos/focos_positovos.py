@@ -47,18 +47,20 @@ def get_focos_positivos(current_user, ano, ciclo):
             
        
         if ciclo_id_ano_anterior:
-            search_ano_anterior = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s GROUP BY imovel_status;"""
+            search_ano_anterior = """SELECT registro_de_campo_id FROM registro_de_campo WHERE t = True OR li = True OR df = True AND ciclo_id = %s;"""
 
             cursor.execute(search_ano_anterior, (ciclo_id_ano_anterior,))
-            focos_positivos_ciclo_anterior = cursor.fetchone()
-            focos_positivos_ciclo_anterior = focos_positivos_ciclo_anterior['focos_positivos'] if focos_positivos_ciclo_anterior else 0
-            
+            focos_positivos_ciclo_anterior = cursor.fetchall()
+            focos_positivos_ciclo_anterior = len(focos_positivos_ciclo_anterior) if focos_positivos_ciclo_anterior else 0
+            # return jsonify(focos_positivos_ciclo_anterior)
             
         else:
             focos_positivos_ciclo_anterior = 0
                 
         
         ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
+
+        # return f"{ciclo_id}"
     except Exception as e:
         conn.rollback()
         return jsonify({"error": str(e)}), 500
@@ -66,14 +68,14 @@ def get_focos_positivos(current_user, ano, ciclo):
     try:
 
         
-        search = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s GROUP BY imovel_status;"""
+        search = """SELECT registro_de_campo_id FROM registro_de_campo WHERE t = True OR li = True OR df = True AND ciclo_id = %s;"""
 
 
         cursor.execute(search, (ciclo_id,))
 
-        focos_positivos = cursor.fetchone()
-        focos_positivos = focos_positivos['focos_positivos'] if focos_positivos else 0
-        
+        focos_positivos = cursor.fetchall()
+        focos_positivos = len(focos_positivos) if ciclo_id else 0
+        # return jsonify(focos_positivos)
         porcentagem_str = "0%"
         crescimento_str = "estável"
         has_changed = True

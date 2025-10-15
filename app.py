@@ -10,6 +10,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from routes.graficos.bluprint import graficos
 from routes.graficos import focos_positovos
 from routes.graficos import depositos_identificados
+from routes.graficos import imoveis_trabalhados
 
 
 # registro_de_campo

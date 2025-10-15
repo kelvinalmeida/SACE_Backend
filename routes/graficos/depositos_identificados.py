@@ -32,7 +32,9 @@ def get_depositos_identificados(current_user, ano, ciclo):
         
         ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
 
-        depositos_ids_ciclo_procurado = """SELECT deposito_id FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s;"""
+        depositos_ids_ciclo_procurado = """SELECT deposito_id
+                                            FROM registro_de_campo
+                                            WHERE (T = True OR LI = True OR DF = True) AND ciclo_id = %s;"""
 
         cursor.execute(depositos_ids_ciclo_procurado, (ciclo_id,)) 
         depositos_ids_ciclo_procurado = cursor.fetchall() if ciclo_id else []
@@ -47,6 +49,8 @@ def get_depositos_identificados(current_user, ano, ciclo):
             ciclo_anterior = [c for c in ciclos if c['ano'] == ano_anterior]
 
             ciclo_id_ano_anterior = ciclo_anterior[-1]['ciclo_id'] if ciclo_anterior else None
+
+            # return jsonify(ciclo_id_ano_anterior)
         else:
             ano_anterior = ano
             ciclo_anterior = ciclo - 1
@@ -57,10 +61,14 @@ def get_depositos_identificados(current_user, ano, ciclo):
             
        
         if ciclo_id_ano_anterior:
-            depositos_ids_ciclo_anterior = """SELECT deposito_id FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s;"""
+            depositos_ids_ciclo_anterior = """SELECT deposito_id
+                                            FROM registro_de_campo
+                                            WHERE (T = True OR LI = True OR DF = True) AND ciclo_id = %s;"""
 
             cursor.execute(depositos_ids_ciclo_anterior, (ciclo_id_ano_anterior,))
             depositos_ids_ciclo_anterior = cursor.fetchall()
+
+            # return jsonify(depositos_ids_ciclo_anterior)
 
             
          
@@ -86,7 +94,7 @@ def get_depositos_identificados(current_user, ano, ciclo):
 
         if depositos_ids_ciclo_procurado:
             for deposito_id_ciclo_procurado in depositos_ids_ciclo_procurado:
-                print(deposito_id_ciclo_procurado['deposito_id'])
+                # print(deposito_id_ciclo_procurado['deposito_id'])
                 deposito = all_deposits.get(deposito_id_ciclo_procurado['deposito_id'], 0)
                 
                 # return jsonify(deposito)
@@ -112,7 +120,6 @@ def get_depositos_identificados(current_user, ano, ciclo):
         
         depositos_identificados = quantidade_depositos["depositos identificados"]
         dados_do_ultimo_ciclo = quantidade_depositos["Dados do ultimo ciclo: "]
-        
         
         dados_do_ultimo_ciclo = quantidade_depositos["Dados do ultimo ciclo: "]
 
