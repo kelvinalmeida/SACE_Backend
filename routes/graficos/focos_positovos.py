@@ -47,7 +47,7 @@ def get_focos_positivos(current_user, ano, ciclo):
             
        
         if ciclo_id_ano_anterior:
-            search_ano_anterior = """SELECT registro_de_campo_id FROM registro_de_campo WHERE t = True OR li = True OR df = True AND ciclo_id = %s;"""
+            search_ano_anterior = """SELECT registro_de_campo_id FROM registro_de_campo WHERE (t = True OR li = True OR df = True) AND ciclo_id = %s;"""
 
             cursor.execute(search_ano_anterior, (ciclo_id_ano_anterior,))
             focos_positivos_ciclo_anterior = cursor.fetchall()
@@ -68,7 +68,7 @@ def get_focos_positivos(current_user, ano, ciclo):
     try:
 
         
-        search = """SELECT registro_de_campo_id FROM registro_de_campo WHERE t = True OR li = True OR df = True AND ciclo_id = %s;"""
+        search = """SELECT registro_de_campo_id FROM registro_de_campo WHERE (t = True OR li = True OR df = True) AND ciclo_id = %s;"""
 
 
         cursor.execute(search, (ciclo_id,))
