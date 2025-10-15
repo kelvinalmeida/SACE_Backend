@@ -11,6 +11,7 @@ from routes.graficos.bluprint import graficos
 from routes.graficos import focos_positovos
 from routes.graficos import depositos_identificados
 from routes.graficos import imoveis_trabalhados
+from routes.graficos import depositos_tratados
 
 
 # registro_de_campo

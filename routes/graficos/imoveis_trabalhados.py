@@ -1,137 +1,79 @@
-# from flask import request, jsonify, current_app
-# from db import create_connection
-# from routes.login.token_required import token_required
-# from .bluprint import graficos
-# import logging
+from flask import request, jsonify, current_app
+from db import create_connection
+from routes.login.token_required import token_required
+from .bluprint import graficos
+import logging
 
-# # Importando a exceção específica para tratar possíveis erros de transação
-# # from psycopg2 import errors
+# Importando a exceção específica para tratar possíveis erros de transação
+# from psycopg2 import errors
 
-# # Configuração básica de log para exibir erros
-# logging.basicConfig(level=logging.INFO)
+# Configuração básica de log para exibir erros
+logging.basicConfig(level=logging.INFO)
 
-# @graficos.route('/grafico/imoveis_trabalhados/<int:ano>/<int:ciclo>', methods=['GET'])
-# @token_required
-# def get_imoveis_trabalhados(current_user, ano, ciclo):
+@graficos.route('/grafico/imoveis_trabalhados/<int:ano>/<int:ciclo>', methods=['GET'])
+@token_required
+def get_imoveis_trabalhados(current_user, ano, ciclo):
 
-#     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
-#     if conn is None:
-#         return jsonify({"error": "Database connection failed"}), 500
+    conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
+    if conn is None:
+        return jsonify({"error": "Database connection failed"}), 500
     
-#     # Buscar ciclo_id do ciclo e ano fornecido
-#     try:
-#         cursor = conn.cursor()
+    # Buscar ciclo_id do ciclo e ano fornecido
+    try:
+        cursor = conn.cursor()
 
-#         search_ciclo_atual = """SELECT ciclo_id, EXTRACT(YEAR FROM ano_de_criacao)::INTEGER AS ano, ciclo FROM ciclos;"""
+        search_ciclo_atual = """SELECT ciclo_id, EXTRACT(YEAR FROM ano_de_criacao)::INTEGER AS ano, ciclo FROM ciclos;"""
 
-#         cursor.execute(search_ciclo_atual)
-#         ciclos = cursor.fetchall()
+        cursor.execute(search_ciclo_atual)
+        ciclos = cursor.fetchall()
 
 
-#         ciclo_procurado = [c for c in ciclos if c['ano'] == ano and c['ciclo'] == ciclo]
+        ciclo_procurado = [c for c in ciclos if c['ano'] == ano and c['ciclo'] == ciclo]
 
-        
-#         if(ciclo == 1):
-#             ano_anterior = ano - 1
-            
-#             ciclos_do_ano_anterior = [c for c in ciclos if c['ano'] == ano_anterior]
-
-#             ciclo_id_ano_anterior = ciclos_do_ano_anterior[-1]['ciclo_id'] if ciclos_do_ano_anterior else None
-#         else:
-#             ano_anterior = ano
-#             ciclo_anterior = ciclo - 1
-
-#             ciclos_do_ano_anterior = [c for c in ciclos if c['ano'] == ano_anterior and c['ciclo'] == ciclo_anterior]
-
-#             ciclo_id_ano_anterior = ciclos_do_ano_anterior[0]['ciclo_id'] if ciclos_do_ano_anterior else None
-            
-       
-#         if ciclo_id_ano_anterior:
-#             search_ano_anterior = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s GROUP BY imovel_status;"""
-
-#             cursor.execute(search_ano_anterior, (ciclo_id_ano_anterior,))
-#             focos_positivos_ciclo_anterior = cursor.fetchone()
-#             focos_positivos_ciclo_anterior = focos_positivos_ciclo_anterior['focos_positivos'] if focos_positivos_ciclo_anterior else 0
-            
-            
-#         else:
-#             focos_positivos_ciclo_anterior = 0
                 
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    try:
+
+        ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
         
-#         ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
-#     except Exception as e:
-#         conn.rollback()
-#         return jsonify({"error": str(e)}), 500
-
-#     try:
-
-        
-#         search = """SELECT imovel_status, COUNT(imovel_status) focos_positivos FROM registro_de_campo WHERE T = True OR LI = True OR DF = True AND ciclo_id = %s GROUP BY imovel_status;"""
+        search = """SELECT imovel_status, COUNT(imovel_status) quantidade FROM registro_de_campo WHERE ciclo_id = %s GROUP BY imovel_status;"""
 
 
-#         cursor.execute(search, (ciclo_id,))
+        cursor.execute(search, (ciclo_id,))
 
-#         focos_positivos = cursor.fetchone()
-#         focos_positivos = focos_positivos['focos_positivos'] if focos_positivos else 0
-        
-#         porcentagem_str = "0%"
-#         crescimento_str = "estável"
-#         has_changed = True
+        registros_status_ciclo_precurado = cursor.fetchall()
+        registros_status_ciclo_precurado = registros_status_ciclo_precurado if registros_status_ciclo_precurado else {}
 
+        # return jsonify(registros_status_ciclo_precurado)
 
-#         # Case 1: Previous cycle had zero foci
-#         if focos_positivos_ciclo_anterior == 0:
-#             if focos_positivos > 0:
-#                 # Increase from 0 to a positive number
-#                 porcentagem_str = "100% (Novo) ↑"
-#                 crescimento_str = "aumentou"
-#             else:
-#                 # 0 in current and 0 in previous
-#                 porcentagem_str = "0%"
-#                 crescimento_str = "estável"
-#                 has_changed = False
+        imoveis_trabalhados = {}
+        imoveis_trabalhados['inspecionados'] = 0
+        imoveis_trabalhados['bloqueados'] = 0
+        imoveis_trabalhados['fechados'] = 0
+        imoveis_trabalhados['recusados'] = 0
 
-#         # Case 2: Previous cycle had positive foci
-#         elif focos_positivos_ciclo_anterior > 0:
-#             if focos_positivos > focos_positivos_ciclo_anterior:
-#                 # Increase
-#                 percentage = round(((focos_positivos / focos_positivos_ciclo_anterior) - 1) * 100, 2)
-#                 porcentagem_str = f"{percentage}% ↑"
-#                 crescimento_str = "aumentou"
-#             elif focos_positivos < focos_positivos_ciclo_anterior:
-#                 # Decrease
-#                 # The calculation should be 1 - (New/Old) to get the correct decrease percentage.
-#                 percentage = round((1 - (focos_positivos / focos_positivos_ciclo_anterior)) * 100, 2)
-#                 porcentagem_str = f"{percentage}% ↓"
-#                 crescimento_str = "diminuiu"
-#             else:
-#                 # Stable
-#                 porcentagem_str = "0%"
-#                 crescimento_str = "estável"
-#                 has_changed = False
+        for status in registros_status_ciclo_precurado:
 
-#         # Note: The case where current is 0 and previous is > 0 is handled 
-#         # by the 'Decrease' block above (percentage will be 100% decrease).
-#         # If you want a specific message for 100% decrease:
-#         # elif focos_positivos == 0 and focos_positivos_ciclo_anterior > 0:
-#         #     porcentagem_str = "100% ↓"
-#         #     crescimento_str = "diminuiu"
+            if status["imovel_status"] == 'inspecionado':
+                imoveis_trabalhados['inspecionados'] = status["quantidade"]
+            elif status["imovel_status"] == 'bloqueado':
+                imoveis_trabalhados['bloqueados'] = status["quantidade"]
+            elif status["imovel_status"] == 'fechado':
+                imoveis_trabalhados['fechados'] = status["quantidade"]
+            elif status["imovel_status"] == 'recusado':
+                imoveis_trabalhados['recusados'] = status["quantidade"]
+
+        return jsonify(imoveis_trabalhados), 200
 
 
-#         # --- Return Statement ---
-
-#         return jsonify({
-#             "focos_positivos": focos_positivos,
-#             "Dados do ultimo ciclo": focos_positivos_ciclo_anterior,
-#             "porcentagem": porcentagem_str,
-#             "crescimento": crescimento_str
-#         }), 200
-        
-#     except Exception as e:
-#         logging.error(f"Database query failed: {e}")
-#         return jsonify({"error": "Database query failed"}), 500
-#     finally:
-#         cursor.close()
-#         conn.close()
+    except Exception as e:
+        logging.error(f"Database query failed: {e}")
+        return jsonify({"error": "Database query failed"}), 500
+    finally:
+        cursor.close()
+        conn.close()
     
     
