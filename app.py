@@ -6,6 +6,11 @@ from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 
 
+# ciclos
+from routes.ciclo.bluprint import ciclos
+from routes.ciclo import get_anos_and_ciclos
+
+
 # graficos
 from routes.graficos.bluprint import graficos
 from routes.graficos import focos_positovos
@@ -76,6 +81,7 @@ app.register_blueprint(area_para_visita)
 app.register_blueprint(denuncia)
 app.register_blueprint(blu_artigo)
 app.register_blueprint(graficos)
+app.register_blueprint(ciclos)
 
 print(app.url_map)
 
