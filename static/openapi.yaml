@@ -13,6 +13,52 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+
+    GraficoAtividadesRealizadas:
+      type: object
+      properties:
+        LI:
+          type: integer
+          description: "Total de Levantamentos de Índice (LI) realizados."
+          example: 10
+        PE:
+          type: integer
+          description: "Total de Pontos Estratégicos (PE) verificados."
+          example: 5
+        T:
+          type: integer
+          description: "Total de Tratamentos Focais (T) realizados."
+          example: 25
+        DF:
+          type: integer
+          description: "Total de Delimitações de Foco (DF) realizadas."
+          example: 8
+        PVE:
+          type: integer
+          description: "Total de Pesquisas Vetoriais Especiais (PVE) realizadas."
+          example: 2
+
+    GraficoCasosConfirmados:
+      type: object
+      properties:
+        casos_positivos:
+          type: integer
+          description: "Número de imóveis com casos confirmados no ciclo solicitado."
+          example: 15
+        "Dados do ultimo ciclo":
+          type: integer
+          description: "Número de imóveis com casos confirmados no ciclo imediatamente anterior."
+          example: 10
+        porcentagem:
+          type: string
+          description: "A variação percentual em relação ao ciclo anterior."
+          example: "50.0% ↑"
+        crescimento:
+          type: string
+          description: "Indica se o número de casos aumentou, diminuiu ou permaneceu estável."
+          enum: [aumentou, diminuiu, estável, "Novo"]
+          example: "aumentou"
+
     AnosCiclosResponse:
       type: object
       description: "Um objeto onde cada chave é um ano e o valor é uma lista dos ciclos disponíveis para aquele ano."
@@ -1533,6 +1579,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GraficoTaxaDeReincidencia'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/casos_comfirmados/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o gráfico de casos confirmados
+      description: |
+        Retorna o número de imóveis com casos confirmados em um ciclo específico e compara com o ciclo anterior, calculando a variação percentual.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoCasosConfirmados'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+  
+  /grafico/atividades_realizadas/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o gráfico de atividades realizadas
+      description: |
+        Retorna a contagem total de cada tipo de atividade (LI, PE, T, DF, PVE) realizada em um ciclo específico.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoAtividadesRealizadas'
         '401':
           description: Não autenticado (token ausente ou inválido).
         '500':
