@@ -18,6 +18,8 @@ from routes.graficos import depositos_identificados
 from routes.graficos import imoveis_trabalhados
 from routes.graficos import depositos_tratados
 from routes.graficos import taxa_de_reincidencia
+from routes.graficos import casos_comfirmados
+from routes.graficos import atividades_realizadas
 
 
 # registro_de_campo

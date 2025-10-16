@@ -1,0 +1,77 @@
+from flask import request, jsonify, current_app
+from db import create_connection
+from routes.login.token_required import token_required
+from .bluprint import graficos
+import logging
+
+# Importando a exceção específica para tratar possíveis erros de transação
+# from psycopg2 import errors
+
+# Configuração básica de log para exibir erros
+logging.basicConfig(level=logging.INFO)
+
+@graficos.route('/grafico/atividades_realizadas/<int:ano>/<int:ciclo>', methods=['GET'])
+@token_required
+def get_atividades_realizadas(current_user, ano, ciclo):
+
+    conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
+    if conn is None:
+        return jsonify({"error": "Database connection failed"}), 500
+    
+    # Buscar ciclo_id do ciclo e ano fornecido
+    try:
+        cursor = conn.cursor()
+
+        search_ciclo_atual = """SELECT ciclo_id, EXTRACT(YEAR FROM ano_de_criacao)::INTEGER AS ano, ciclo FROM ciclos;"""
+
+        cursor.execute(search_ciclo_atual)
+        ciclos = cursor.fetchall()
+
+
+        ciclo_procurado = [c for c in ciclos if c['ano'] == ano and c['ciclo'] == ciclo]
+
+                
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    try:
+        ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
+        
+        search = """SELECT SUM(CASE WHEN li = True THEN 1 ELSE 0 END) AS LI,
+                        SUM(CASE WHEN pe = True THEN 1 ELSE 0 END) AS PE,
+                        SUM(CASE WHEN t = True THEN 1 ELSE 0 END) AS T,
+                        SUM(CASE WHEN df = True THEN 1 ELSE 0 END) AS DF,
+                        SUM(CASE WHEN pve = True THEN 1 ELSE 0 END) AS PVE
+                    FROM
+                        registro_de_campo
+                    WHERE
+                        ciclo_id = %s;"""
+
+
+        cursor.execute(search, (ciclo_id,))
+
+        total_de_atividades_realizadas = cursor.fetchone()
+
+        # return jsonify(total_de_atividades_realizadas)
+
+        atividade_realizadas = {}
+        atividade_realizadas['LI'] = total_de_atividades_realizadas['li'] if total_de_atividades_realizadas['li'] else 0
+        atividade_realizadas['PE'] = total_de_atividades_realizadas['pe'] if total_de_atividades_realizadas['pe'] else 0
+        atividade_realizadas['T'] = total_de_atividades_realizadas['t'] if total_de_atividades_realizadas['t'] else 0
+        atividade_realizadas['DF'] = total_de_atividades_realizadas['df'] if total_de_atividades_realizadas['df'] else 0
+        atividade_realizadas['PVE'] = total_de_atividades_realizadas['pve'] if total_de_atividades_realizadas['pve'] else 0
+
+
+
+        return jsonify(atividade_realizadas), 200
+
+
+    except Exception as e:
+        logging.error(f"Database query failed: {e}")
+        return jsonify({"error": "Database query failed"}), 500
+    finally:
+        cursor.close()
+        conn.close()
+    
+    
