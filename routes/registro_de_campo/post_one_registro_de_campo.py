@@ -119,6 +119,8 @@ def send_registro_de_campo(current_user):
         conn.rollback()
         return jsonify({"error": str(e)}), 500
     
+
+    # Buscar ciclo atual
     try:
         search_ciclo_atual = """SELECT ciclo_id FROM ciclos WHERE ativo = true;"""
 

@@ -13,6 +13,101 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+    AnosCiclosResponse:
+      type: object
+      description: "Um objeto onde cada chave é um ano e o valor é uma lista dos ciclos disponíveis para aquele ano."
+      additionalProperties:
+        type: array
+        items:
+          type: integer
+      example:
+        "2024": [1, 2, 3, 4]
+        "2025": [1, 2]
+
+    GraficoDepositosIdentificados:
+      type: object
+      properties:
+        depositos identificados:
+          type: integer
+          description: "Número total de depósitos (A1, A2, B, C, D1, D2, E) identificados no ciclo solicitado."
+          example: 152
+        "Dados do ultimo ciclo: ":
+          type: integer
+          description: "Número total de depósitos identificados no ciclo imediatamente anterior."
+          example: 120
+        porcentagem:
+          type: string
+          description: "A variação percentual em relação ao ciclo anterior."
+          example: "26.67% ↑"
+        crescimento:
+          type: string
+          description: "Indica se o número de depósitos aumentou, diminuiu ou permaneceu estável."
+          enum: [aumentou, diminuiu, estável, "Novo"]
+          example: "aumentou"
+
+    GraficoDepositosTratados:
+      type: object
+      properties:
+        larvicidas:
+          type: integer
+          description: "Número total de tratamentos com larvicida no ciclo solicitado."
+          example: 45
+        adulticidas:
+          type: integer
+          description: "Número total de tratamentos com adulticida no ciclo solicitado."
+          example: 12
+    
+    GraficoFocosPositivos:
+      type: object
+      properties:
+        focos_positivos:
+          type: integer
+          description: "Número de imóveis com focos positivos (T, LI ou DF) no ciclo solicitado."
+          example: 22
+        "Dados do ultimo ciclo":
+          type: integer
+          description: "Número de imóveis com focos positivos no ciclo imediatamente anterior."
+          example: 18
+        porcentagem:
+          type: string
+          description: "A variação percentual em relação ao ciclo anterior."
+          example: "22.22% ↑"
+        crescimento:
+          type: string
+          description: "Indica se o número de focos aumentou, diminuiu ou permaneceu estável."
+          enum: [aumentou, diminuiu, estável, "Novo"]
+          example: "aumentou"
+
+    GraficoImoveisTrabalhados:
+      type: object
+      properties:
+        inspecionados:
+          type: integer
+          description: "Número de imóveis com status 'inspecionado'."
+          example: 150
+        bloqueados:
+          type: integer
+          description: "Número de imóveis com status 'bloqueado'."
+          example: 5
+        fechados:
+          type: integer
+          description: "Número de imóveis com status 'fechado'."
+          example: 20
+        recusados:
+          type: integer
+          description: "Número de imóveis com status 'recusado'."
+          example: 10
+          
+    GraficoTaxaDeReincidencia:
+      type: object
+      description: "Um objeto onde cada chave é o nome de um bairro e o valor é o número de imóveis reincidentes com focos positivos naquele bairro."
+      additionalProperties:
+        type: integer
+      example:
+        "Ponta Verde": 5
+        "Jatiúca": 2
+        "Farol": 8
+
     ArtigoArquivoAnexo:
       type: object
       properties:
@@ -345,7 +440,7 @@ components:
         imovel_lado: { type: string, example: "Par" }
         imovel_categoria_da_localidade: { type: string, example: "Urbana" }
         imovel_tipo: { type: string, example: "Residencial" }
-        imovel_status: { type: string, example: "Trabalhado" }
+        imovel_status: { type: string, example: "inspecionado" }
         imovel_complemento: { type: string, nullable: true, example: "Apto 101" }
         formulario_tipo: { type: string, nullable: true, example: "Dengue" }
         li: { type: boolean, example: true }
@@ -458,7 +553,7 @@ paths:
                 imovel_lado: { type: string, description: "Lado da rua (Par/Ímpar).", example: "Ímpar" }
                 imovel_categoria_da_localidade: { type: string, example: "Urbana" }
                 imovel_tipo: { type: string, example: "Residencial" }
-                imovel_status: { type: string, example: "Trabalhado" }
+                imovel_status: { type: string, example: "inspecionado" }
                 imovel_complemento: { type: string, description: "Ex: Apto 101, Bloco C", nullable: true }
                 formulario_tipo: { type: string, example: "Dengue", nullable: true }
                 li: { type: boolean, description: "Flag booleana para LI." }
@@ -504,8 +599,8 @@ paths:
           description: Erro interno do servidor.
     
     get:
-      summary: Lista todos os registros de campo
-      description: Retorna uma lista completa de todos os registros de campo. Requer autenticação.
+      summary: Lista todos os registros de campo do ciclo atual (ativo)
+      description: Retorna uma lista completa de todos os registros de campo do ciclo atual (ativo). Requer autenticação.
       security:
         - bearerAuth: []
       responses:
@@ -1245,5 +1340,200 @@ paths:
                   error:
                     type: string
                     example: "Imagem do Artigo não encontrada ou não cadastrada"
+        '500':
+          description: Erro interno do servidor.
+  
+  /anos_ciclos:
+    get:
+      summary: Lista todos os anos e seus respectivos ciclos
+      description: |
+        Retorna um objeto com todos os anos que possuem ciclos cadastrados, e para cada ano, uma lista dos números dos ciclos existentes.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Objeto de anos e ciclos retornado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnosCiclosResponse'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/depositos_identificados/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o gráfico de depósitos identificados
+      description: |
+        Retorna o número total de depósitos identificados em um ciclo específico e compara com o ciclo anterior, calculando a variação percentual.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoDepositosIdentificados'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/depositos_tratados/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o gráfico de depósitos tratados
+      description: |
+        Retorna o número total de tratamentos com larvicidas e adulticidas realizados em um ciclo específico.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoDepositosTratados'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+  
+  /grafico/focos_positivos/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o gráfico de focos positivos
+      description: |
+        Retorna o número de imóveis com focos positivos em um ciclo específico e compara com o ciclo anterior, calculando a variação percentual.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoFocosPositivos'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/imoveis_trabalhados/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o gráfico de imóveis trabalhados
+      description: |
+        Retorna um resumo da quantidade de imóveis por status (inspecionado, bloqueado, fechado, recusado) para um ciclo específico.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoImoveisTrabalhados'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/taxa_de_reincidencia/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o gráfico de taxa de reincidência
+      description: |
+        Retorna o número de imóveis reincidentes com focos positivos (comparado ao ciclo anterior), agrupados por bairro, para um ciclo específico.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados de reincidência por bairro retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoTaxaDeReincidencia'
+        '401':
+          description: Não autenticado (token ausente ou inválido).
         '500':
           description: Erro interno do servidor.
