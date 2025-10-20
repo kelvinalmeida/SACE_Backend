@@ -14,6 +14,132 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    # Schema para um ponto de dados no gráfico de Casos Confirmados
+    GraficoPontoCasosConfirmados:
+      type: object
+      properties:
+        ano: { type: integer, example: 2025 }
+        ciclo: { type: integer, example: 1 }
+        casos_confirmados: { type: integer, example: 15 }
+
+    # Schema para o resumo do ciclo atual de Casos Confirmados
+    GraficoResumoCasosConfirmados:
+      type: object
+      properties:
+        casos_confirmados:
+          type: integer
+          description: "Número de imóveis com casos confirmados no ciclo solicitado."
+          example: 15
+        dados_do_ultimo_ciclo:
+          type: integer
+          description: "Número de imóveis com casos confirmados no ciclo imediatamente anterior."
+          example: 10
+        porcentagem:
+          type: string
+          description: "A variação percentual em relação ao ciclo anterior."
+          example: "50.0% ↑"
+        crescimento:
+          type: string
+          description: "Indica se o número de casos aumentou, diminuiu ou permaneceu estável."
+          enum: [aumentou, diminuiu, estável, "Novo"]
+          example: "aumentou"
+
+    # Schema principal da resposta para a rota de Casos Confirmados
+    GraficoCasosConfirmadosResponse:
+      type: object
+      properties:
+        dados_grafico:
+          type: array
+          description: "Lista de dados históricos para construir o gráfico."
+          items:
+            $ref: '#/components/schemas/GraficoPontoCasosConfirmados'
+        resumo_ciclo_atual:
+          $ref: '#/components/schemas/GraficoResumoCasosConfirmados'
+
+    # Schema para um ponto de dados no gráfico de focos Positovos
+    GraficoPontoFocosPositicos:
+      type: object
+      properties:
+        ano: { type: integer, example: 2025 }
+        ciclo: { type: integer, example: 1 }
+        focos_positovos: { type: integer, example: 15 }
+
+    # Schema para o resumo do ciclo atual de focos Positovos
+    GraficoResumoFocosPositicos:
+      type: object
+      properties:
+        focos_positovos:
+          type: integer
+          description: "Número de imóveis com focos Positovos no ciclo solicitado."
+          example: 15
+        dados_do_ultimo_ciclo:
+          type: integer
+          description: "Número de imóveis com focos Positovos no ciclo imediatamente anterior."
+          example: 10
+        porcentagem:
+          type: string
+          description: "A variação percentual em relação ao ciclo anterior."
+          example: "50.0% ↑"
+        crescimento:
+          type: string
+          description: "Indica se o número de focos aumentou, diminuiu ou permaneceu estável."
+          enum: [aumentou, diminuiu, estável, "Novo"]
+          example: "aumentou"
+
+    # Schema principal da resposta para a rota de focos Positovos
+    GraficoFocosPositicosResponse:
+      type: object
+      properties:
+        dados_grafico:
+          type: array
+          description: "Lista de dados históricos para construir o gráfico."
+          items:
+            $ref: '#/components/schemas/GraficoPontoFocosPositicos'
+        resumo_ciclo_atual:
+          $ref: '#/components/schemas/GraficoResumoFocosPositicos'
+
+    # Schema para um ponto de dados no gráfico de Depósitos Identificados
+    GraficoPontoDepositosIdentificados:
+      type: object
+      properties:
+        ano: { type: integer, example: 2025 }
+        ciclo: { type: integer, example: 1 }
+        depositos_identificados: { type: integer, example: 152 }
+        
+    # Schema para o resumo do ciclo atual de Depósitos Identificados
+    GraficoResumoDepositosIdentificados:
+      type: object
+      properties:
+        depositos_identificados:
+          type: integer
+          description: "Número total de depósitos identificados no ciclo solicitado."
+          example: 152
+        dados_do_ultimo_ciclo:
+          type: integer
+          description: "Número total de depósitos identificados no ciclo imediatamente anterior."
+          example: 120
+        porcentagem:
+          type: string
+          description: "A variação percentual em relação ao ciclo anterior."
+          example: "26.67% ↑"
+        crescimento:
+          type: string
+          description: "Indica se o número de depósitos aumentou, diminuiu ou permaneceu estável."
+          enum: [aumentou, diminuiu, estável, "Novo"]
+          example: "aumentou"
+
+    # Schema principal da resposta para a rota de Depósitos Identificados
+    GraficoDepositosIdentificadosResponse:
+      type: object
+      properties:
+        dados_grafico:
+          type: array
+          description: "Lista de dados históricos para construir o gráfico."
+          items:
+            $ref: '#/components/schemas/GraficoPontoDepositosIdentificados'
+        resumo_ciclo_atual:
+          $ref: '#/components/schemas/GraficoResumoDepositosIdentificados'
+
     GraficoAtividadesRealizadas:
       type: object
       properties:
@@ -38,27 +164,6 @@ components:
           description: "Total de Pesquisas Vetoriais Especiais (PVE) realizadas."
           example: 2
 
-    GraficoCasosConfirmados:
-      type: object
-      properties:
-        casos_positivos:
-          type: integer
-          description: "Número de imóveis com casos confirmados no ciclo solicitado."
-          example: 15
-        "Dados do ultimo ciclo":
-          type: integer
-          description: "Número de imóveis com casos confirmados no ciclo imediatamente anterior."
-          example: 10
-        porcentagem:
-          type: string
-          description: "A variação percentual em relação ao ciclo anterior."
-          example: "50.0% ↑"
-        crescimento:
-          type: string
-          description: "Indica se o número de casos aumentou, diminuiu ou permaneceu estável."
-          enum: [aumentou, diminuiu, estável, "Novo"]
-          example: "aumentou"
-
     AnosCiclosResponse:
       type: object
       description: "Um objeto onde cada chave é um ano e o valor é uma lista dos ciclos disponíveis para aquele ano."
@@ -69,27 +174,6 @@ components:
       example:
         "2024": [1, 2, 3, 4]
         "2025": [1, 2]
-
-    GraficoDepositosIdentificados:
-      type: object
-      properties:
-        depositos identificados:
-          type: integer
-          description: "Número total de depósitos (A1, A2, B, C, D1, D2, E) identificados no ciclo solicitado."
-          example: 152
-        "Dados do ultimo ciclo: ":
-          type: integer
-          description: "Número total de depósitos identificados no ciclo imediatamente anterior."
-          example: 120
-        porcentagem:
-          type: string
-          description: "A variação percentual em relação ao ciclo anterior."
-          example: "26.67% ↑"
-        crescimento:
-          type: string
-          description: "Indica se o número de depósitos aumentou, diminuiu ou permaneceu estável."
-          enum: [aumentou, diminuiu, estável, "Novo"]
-          example: "aumentou"
 
     GraficoDepositosTratados:
       type: object
@@ -103,27 +187,6 @@ components:
           description: "Número total de tratamentos com adulticida no ciclo solicitado."
           example: 12
     
-    GraficoFocosPositivos:
-      type: object
-      properties:
-        focos_positivos:
-          type: integer
-          description: "Número de imóveis com focos positivos (T, LI ou DF) no ciclo solicitado."
-          example: 22
-        "Dados do ultimo ciclo":
-          type: integer
-          description: "Número de imóveis com focos positivos no ciclo imediatamente anterior."
-          example: 18
-        porcentagem:
-          type: string
-          description: "A variação percentual em relação ao ciclo anterior."
-          example: "22.22% ↑"
-        crescimento:
-          type: string
-          description: "Indica se o número de focos aumentou, diminuiu ou permaneceu estável."
-          enum: [aumentou, diminuiu, estável, "Novo"]
-          example: "aumentou"
-
     GraficoImoveisTrabalhados:
       type: object
       properties:
@@ -1411,24 +1474,23 @@ paths:
 
   /grafico/depositos_identificados/{ano}/{ciclo}:
     get:
-      summary: Obtém dados para o gráfico de depósitos identificados
+      summary: Obtém dados históricos para o gráfico de depósitos identificados
       description: |
-        Retorna o número total de depósitos identificados em um ciclo específico e compara com o ciclo anterior, calculando a variação percentual.
-        Requer autenticação.
-      security:
-        - bearerAuth: []
+        Retorna uma série histórica de dados com o total de depósitos identificados por ciclo, até o ano e ciclo especificados. Também inclui um resumo comparativo com o ciclo anterior.
+        Esta rota é pública.
+      security: []
       parameters:
         - name: ano
           in: path
           required: true
-          description: O ano do ciclo a ser consultado.
+          description: O ano do ciclo final da consulta.
           schema:
             type: integer
             example: 2025
         - name: ciclo
           in: path
           required: true
-          description: O número do ciclo a ser consultado.
+          description: O número do ciclo final da consulta.
           schema:
             type: integer
             example: 2
@@ -1438,9 +1500,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GraficoDepositosIdentificados'
-        '401':
-          description: Não autenticado (token ausente ou inválido).
+                $ref: '#/components/schemas/GraficoDepositosIdentificadosResponse'
         '500':
           description: Erro interno do servidor.
 
@@ -1450,8 +1510,7 @@ paths:
       description: |
         Retorna o número total de tratamentos com larvicidas e adulticidas realizados em um ciclo específico.
         Requer autenticação.
-      security:
-        - bearerAuth: []
+      security: []
       parameters:
         - name: ano
           in: path
@@ -1481,24 +1540,23 @@ paths:
   
   /grafico/focos_positivos/{ano}/{ciclo}:
     get:
-      summary: Obtém dados para o gráfico de focos positivos
+      summary: Obtém dados históricos para o gráfico de focos positivos
       description: |
-        Retorna o número de imóveis com focos positivos em um ciclo específico e compara com o ciclo anterior, calculando a variação percentual.
-        Requer autenticação.
-      security:
-        - bearerAuth: []
+        Retorna uma série histórica de dados com o total de focos positivos por ciclo, até o ano e ciclo especificados. Também inclui um resumo comparativo com o ciclo anterior.
+        Esta rota é pública.
+      security: []
       parameters:
         - name: ano
           in: path
           required: true
-          description: O ano do ciclo a ser consultado.
+          description: O ano do ciclo final da consulta.
           schema:
             type: integer
             example: 2025
         - name: ciclo
           in: path
           required: true
-          description: O número do ciclo a ser consultado.
+          description: O número do ciclo final da consulta.
           schema:
             type: integer
             example: 2
@@ -1508,9 +1566,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GraficoFocosPositivos'
-        '401':
-          description: Não autenticado (token ausente ou inválido).
+                $ref: '#/components/schemas/GraficoFocosPositicosResponse'
         '500':
           description: Erro interno do servidor.
 
@@ -1520,8 +1576,7 @@ paths:
       description: |
         Retorna um resumo da quantidade de imóveis por status (inspecionado, bloqueado, fechado, recusado) para um ciclo específico.
         Requer autenticação.
-      security:
-        - bearerAuth: []
+      security: []
       parameters:
         - name: ano
           in: path
@@ -1555,8 +1610,7 @@ paths:
       description: |
         Retorna o número de imóveis reincidentes com focos positivos (comparado ao ciclo anterior), agrupados por bairro, para um ciclo específico.
         Requer autenticação.
-      security:
-        - bearerAuth: []
+      security: []
       parameters:
         - name: ano
           in: path
@@ -1584,26 +1638,25 @@ paths:
         '500':
           description: Erro interno do servidor.
 
-  /grafico/casos_comfirmados/{ano}/{ciclo}:
+  /grafico/casos_confirmados/{ano}/{ciclo}:
     get:
-      summary: Obtém dados para o gráfico de casos confirmados
+      summary: Obtém dados históricos para o gráfico de casos confirmados
       description: |
-        Retorna o número de imóveis com casos confirmados em um ciclo específico e compara com o ciclo anterior, calculando a variação percentual.
-        Requer autenticação.
-      security:
-        - bearerAuth: []
+        Retorna uma série histórica de dados com o total de casos confirmados por ciclo, até o ano e ciclo especificados. Também inclui um resumo comparativo com o ciclo anterior.
+        Esta rota é pública.
+      security: []
       parameters:
         - name: ano
           in: path
           required: true
-          description: O ano do ciclo a ser consultado.
+          description: O ano do ciclo final da consulta.
           schema:
             type: integer
             example: 2025
         - name: ciclo
           in: path
           required: true
-          description: O número do ciclo a ser consultado.
+          description: O número do ciclo final da consulta.
           schema:
             type: integer
             example: 2
@@ -1613,9 +1666,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GraficoCasosConfirmados'
-        '401':
-          description: Não autenticado (token ausente ou inválido).
+                $ref: '#/components/schemas/GraficoCasosConfirmadosResponse'
         '500':
           description: Erro interno do servidor.
   
@@ -1625,8 +1676,7 @@ paths:
       description: |
         Retorna a contagem total de cada tipo de atividade (LI, PE, T, DF, PVE) realizada em um ciclo específico.
         Requer autenticação.
-      security:
-        - bearerAuth: []
+      security: []
       parameters:
         - name: ano
           in: path

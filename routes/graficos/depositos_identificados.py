@@ -1,157 +1,109 @@
-from flask import request, jsonify, current_app
+from flask import jsonify, current_app
 from db import create_connection
-from routes.login.token_required import token_required
+# from routes.login.token_required import token_required # Mantenha se for usar autenticação
 from .bluprint import graficos
 import logging
-
-# Importando a exceção específica para tratar possíveis erros de transação
-# from psycopg2 import errors
 
 # Configuração básica de log para exibir erros
 logging.basicConfig(level=logging.INFO)
 
 @graficos.route('/grafico/depositos_identificados/<int:ano>/<int:ciclo>', methods=['GET'])
 def get_depositos_identificados(ano, ciclo):
+    """
+    Endpoint para obter dados históricos de depósitos identificados para um gráfico.
 
+    Esta rota busca o somatório de todos os tipos de depósitos (a1, a2, b, c, d1, d2, e)
+    para cada ciclo, desde o início até o ano e ciclo especificados.
+    """
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     if conn is None:
-        return jsonify({"error": "Database connection failed"}), 500
-    
-    # Buscar ciclo_id do ciclo e ano fornecido
+        return jsonify({"error": "Falha na conexão com o banco de dados"}), 500
+
+    cursor = None
     try:
         cursor = conn.cursor()
 
-        all_cicles = """SELECT ciclo_id, EXTRACT(YEAR FROM ano_de_criacao)::INTEGER AS ano, ciclo FROM ciclos;"""
+        # Query SQL otimizada para buscar e somar os depósitos de todos os ciclos
+        query_grafico = """
+            SELECT
+                EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER AS ano,
+                c.ciclo,
+                COALESCE(SUM(d.a1 + d.a2 + d.b + d.c + d.d1 + d.d2 + d.e), 0)::INTEGER AS depositos_identificados
+            FROM
+                ciclos c
+            LEFT JOIN
+                registro_de_campo rc ON c.ciclo_id = rc.ciclo_id AND (rc.t = True OR rc.li = True OR rc.df = True)
+            LEFT JOIN
+                depositos d ON rc.deposito_id = d.deposito_id
+            WHERE
+                EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER < %s OR
+                (EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s AND c.ciclo <= %s)
+            GROUP BY
+                c.ciclo_id, ano, c.ciclo
+            ORDER BY
+                ano, c.ciclo;
+        """
+        cursor.execute(query_grafico, (ano, ano, ciclo))
+        dados_grafico = cursor.fetchall()
 
-        cursor.execute(all_cicles)
-        ciclos = cursor.fetchall()
+        # Se não houver dados, retorna uma estrutura vazia
+        if not dados_grafico:
+            return jsonify({
+                "dados_grafico": [],
+                "resumo_ciclo_atual": {
+                    "depositos_identificados": 0,
+                    "dados_do_ultimo_ciclo": 0,
+                    "porcentagem": "0%",
+                    "crescimento": "estável"
+                }
+            }), 200
 
+        # Lógica para calcular o resumo com base nos dois últimos ciclos da lista retornada
+        depositos_atual = 0
+        depositos_anterior = 0
 
-        ciclo_procurado = [c for c in ciclos if c['ano'] == ano and c['ciclo'] == ciclo]
+        if len(dados_grafico) > 0:
+            depositos_atual = int(dados_grafico[-1]['depositos_identificados'])
+        if len(dados_grafico) > 1:
+            depositos_anterior = int(dados_grafico[-2]['depositos_identificados'])
         
-        ciclo_id = ciclo_procurado[0]['ciclo_id'] if ciclo_procurado else None
+        # Reutilização da lógica para cálculo de porcentagem
+        porcentagem_str = "0%"
+        crescimento_str = "estável"
 
-        depositos_ids_ciclo_procurado = """SELECT deposito_id
-                                            FROM registro_de_campo
-                                            WHERE (T = True OR LI = True OR DF = True) AND ciclo_id = %s;"""
+        if depositos_anterior == 0:
+            if depositos_atual > 0:
+                porcentagem_str = "100% (Novo) ↑"
+                crescimento_str = "aumentou"
+        elif depositos_anterior > 0:
+            if depositos_atual > depositos_anterior:
+                percentage = round(((depositos_atual / depositos_anterior) - 1) * 100, 2)
+                porcentagem_str = f"{percentage}% ↑"
+                crescimento_str = "aumentou"
+            elif depositos_atual < depositos_anterior:
+                percentage = round((1 - (depositos_atual / depositos_anterior)) * 100, 2)
+                porcentagem_str = f"{percentage}% ↓"
+                crescimento_str = "diminuiu"
 
-        cursor.execute(depositos_ids_ciclo_procurado, (ciclo_id,)) 
-        depositos_ids_ciclo_procurado = cursor.fetchall() if ciclo_id else []
-        # return  jsonify(depositos_ids_ciclo_procurado)
+        # Monta o objeto de resumo
+        resumo = {
+            "depositos_identificados": depositos_atual,
+            "dados_do_ultimo_ciclo": depositos_anterior,
+            "porcentagem": porcentagem_str,
+            "crescimento": crescimento_str
+        }
         
-        
-        # return jsonify(depositos_ids_ciclo_procurado)
-
-        if(ciclo == 1):
-            ano_anterior = ano - 1
-            
-            ciclo_anterior = [c for c in ciclos if c['ano'] == ano_anterior]
-
-            ciclo_id_ano_anterior = ciclo_anterior[-1]['ciclo_id'] if ciclo_anterior else None
-
-            # return jsonify(ciclo_id_ano_anterior)
-        else:
-            ano_anterior = ano
-            ciclo_anterior = ciclo - 1
-
-            ciclo_anterior = [c for c in ciclos if c['ano'] == ano_anterior and c['ciclo'] == ciclo_anterior]
-
-            ciclo_id_ano_anterior = ciclo_anterior[0]['ciclo_id'] if ciclo_anterior else None
-            
-       
-        if ciclo_id_ano_anterior:
-            depositos_ids_ciclo_anterior = """SELECT deposito_id
-                                            FROM registro_de_campo
-                                            WHERE (T = True OR LI = True OR DF = True) AND ciclo_id = %s;"""
-
-            cursor.execute(depositos_ids_ciclo_anterior, (ciclo_id_ano_anterior,))
-            depositos_ids_ciclo_anterior = cursor.fetchall()
-
-            # return jsonify(depositos_ids_ciclo_anterior)
-
-            
-         
-        else:
-            depositos_ids_ciclo_anterior = 0
-
+        # Retorna a resposta final com os dados para o gráfico e o resumo
+        return jsonify({
+            "dados_grafico": dados_grafico,
+            "resumo_ciclo_atual": resumo
+        }), 200
 
     except Exception as e:
-        conn.rollback()
-        return jsonify({"error": str(e)}), 500
-    
-
-    # Contando os depositos do ciclo atual    
-    try:
-        all_deposits = """SELECT * FROM depositos;"""
-        cursor.execute(all_deposits)
-        all_deposits = cursor.fetchall()
-
-        all_deposits = {deposito['deposito_id']: deposito for deposito in all_deposits }
-        quantidade_depositos = {}
-        quantidade_depositos["depositos identificados"] = 0
-
-
-        if depositos_ids_ciclo_procurado:
-            for deposito_id_ciclo_procurado in depositos_ids_ciclo_procurado:
-                # print(deposito_id_ciclo_procurado['deposito_id'])
-                deposito = all_deposits.get(deposito_id_ciclo_procurado['deposito_id'], 0)
-                
-                # return jsonify(deposito)
-                quantidade_depositos["depositos identificados"] = quantidade_depositos["depositos identificados"] + deposito['a1'] + deposito["a2"] + deposito["b"] + deposito["c"] + deposito["d1"] + deposito["d2"] + deposito["e"]
-
-        # return jsonify(quantidade_depositos)
-
-    except Exception as e:
-        conn.rollback()
-        return jsonify({"error": str(e)}), 500
-    
-    # Contando os depositos do ciclo anterior   
-    try:
-        quantidade_depositos["Dados do ultimo ciclo: "] = 0
-
-
-        if depositos_ids_ciclo_anterior:
-            for deposito_id_ciclo_anterior in depositos_ids_ciclo_anterior:
-                deposito = all_deposits.get(deposito_id_ciclo_anterior['deposito_id'], 0)
-                
-                # return jsonify(deposito)
-                quantidade_depositos["Dados do ultimo ciclo: "] = quantidade_depositos["Dados do ultimo ciclo: "] + deposito['a1'] + deposito["a2"] + deposito["b"] + deposito["c"] + deposito["d1"] + deposito["d2"] + deposito["e"]
-        
-        depositos_identificados = quantidade_depositos["depositos identificados"]
-        dados_do_ultimo_ciclo = quantidade_depositos["Dados do ultimo ciclo: "]
-        
-        dados_do_ultimo_ciclo = quantidade_depositos["Dados do ultimo ciclo: "]
-
-        if dados_do_ultimo_ciclo == 0 and depositos_identificados > 0:
-            # Cannot calculate percentage change from zero, but it's an increase
-            quantidade_depositos["porcentagem"] = "100% (Novo)"
-            quantidade_depositos["crescimento"] = "aumentou"
-        elif (dados_do_ultimo_ciclo == 0 and depositos_identificados == 0) or (dados_do_ultimo_ciclo ==  depositos_identificados) :
-            quantidade_depositos["porcentagem"] = "0%"
-            quantidade_depositos["crescimento"] = "estável"
-        elif dados_do_ultimo_ciclo > 0:
-            if depositos_identificados > dados_do_ultimo_ciclo:
-                porcentagem = round(((depositos_identificados / dados_do_ultimo_ciclo) - 1) * 100, 2)
-                quantidade_depositos["porcentagem"] = f"{porcentagem}% ↑"
-                quantidade_depositos["crescimento"] = "aumentou"
-            else:
-                porcentagem = round((1 - (depositos_identificados / dados_do_ultimo_ciclo)) * 100, 2)
-                quantidade_depositos["porcentagem"] = f"{porcentagem}% ↓"
-                quantidade_depositos["crescimento"] = "diminuiu"
-        else:
-            # Handle case where current is zero and previous was > 0
-            porcentagem = round((1 - (0 / dados_do_ultimo_ciclo)) * 100, 2) # Should be 100% decrease
-            quantidade_depositos["porcentagem"] = f"{porcentagem}% ↓"
-            quantidade_depositos["crescimento"] = "diminuiu"
-
-        return jsonify(quantidade_depositos)
-    
-
-    except Exception as e:
-        logging.error(f"Database query failed: {e}")
-        return jsonify({"error": "Database query failed"}), 500
+        logging.error(f"Falha na consulta ao banco de dados: {e}")
+        return jsonify({"error": "Falha na consulta ao banco de dados", "details": str(e)}), 500
     finally:
-        cursor.close()
-        conn.close()
-    
-    
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
