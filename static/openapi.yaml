@@ -14,6 +14,33 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    GraficoPorBairroResponse:
+      type: object
+      description: "Estrutura de dados padrão para gráficos de barras ou linhas, agrupados por bairro ao longo dos ciclos de um ano."
+      properties:
+        labels:
+          type: array
+          description: "Os rótulos do eixo X, geralmente representando os ciclos."
+          items:
+            type: string
+          example: ["Ciclo 1", "Ciclo 2", "Ciclo 3", "Ciclo 4"]
+        datasets:
+          type: array
+          description: "Conjunto de dados para o gráfico, onde cada item representa um bairro."
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+                description: "O nome do bairro."
+                example: "Ponta Verde"
+              data:
+                type: array
+                description: "Os valores para cada ciclo correspondente aos labels."
+                items:
+                  type: integer
+                example: [10, 15, 8, 12]
+
     # Schema para um ponto de dados no gráfico de Casos Confirmados
     GraficoPontoCasosConfirmados:
       type: object
@@ -1701,5 +1728,80 @@ paths:
                 $ref: '#/components/schemas/GraficoAtividadesRealizadas'
         '401':
           description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/acoes_bloqueio/{ano}:
+    get:
+      summary: Obtém dados para o gráfico de Ações de Bloqueio
+      description: |
+        Retorna a quantidade de imóveis com status 'bloqueado' para cada bairro, agrupados por ciclo, dentro de um ano específico. Os dados são formatados para uso direto em bibliotecas de gráficos.
+        Esta rota é pública.
+      security: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoPorBairroResponse'
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/casos_por_ciclo/{ano}:
+    get:
+      summary: Obtém dados para o gráfico de Casos por Ciclo
+      description: |
+        Retorna a quantidade de casos confirmados para cada bairro, agrupados por ciclo, dentro de um ano específico. Os dados são formatados para uso direto em bibliotecas de gráficos.
+        Esta rota é pública.
+      security: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoPorBairroResponse'
+        '500':
+          description: Erro interno do servidor.
+
+  /grafico/depositos_por_ciclo/{ano}:
+    get:
+      summary: Obtém dados para o gráfico de Depósitos por Ciclo
+      description: |
+        Retorna a quantidade total de depósitos (soma de todos os tipos) para cada bairro, agrupados por ciclo, dentro de um ano específico. Os dados são formatados para uso direto em bibliotecas de gráficos.
+        Esta rota é pública.
+      security: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano a ser consultado.
+          schema:
+            type: integer
+            example: 2025
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoPorBairroResponse'
         '500':
           description: Erro interno do servidor.
