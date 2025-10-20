@@ -46,13 +46,15 @@ def get_imoveis_trabalhados(ano, ciclo):
         registros_status_ciclo_precurado = cursor.fetchall()
         registros_status_ciclo_precurado = registros_status_ciclo_precurado if registros_status_ciclo_precurado else {}
 
-        # return jsonify(registros_status_ciclo_precurado)
 
         imoveis_trabalhados = {}
         imoveis_trabalhados['inspecionados'] = 0
         imoveis_trabalhados['bloqueados'] = 0
         imoveis_trabalhados['fechados'] = 0
         imoveis_trabalhados['recusados'] = 0
+        imoveis_trabalhados['nao_inspecionado'] = 0
+        imoveis_trabalhados['total'] = sum([sta['quantidade'] for sta in registros_status_ciclo_precurado])
+        # return jsonify(registros_status_ciclo_precurado)
 
         for status in registros_status_ciclo_precurado:
 
@@ -64,6 +66,8 @@ def get_imoveis_trabalhados(ano, ciclo):
                 imoveis_trabalhados['fechados'] = status["quantidade"]
             elif status["imovel_status"] == 'recusado':
                 imoveis_trabalhados['recusados'] = status["quantidade"]
+            elif status["imovel_status"] == 'nao_inspecionado':
+                imoveis_trabalhados['nao_inspecionados'] = status["quantidade"]
 
         return jsonify(imoveis_trabalhados), 200
 

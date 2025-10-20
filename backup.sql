@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict IBISKu7lozrMvIbgPjoHeIZOCxAfZ02VD5OGDZy9vDgtt6ZrjhoOlOL05SOfUqR
+\restrict lsSbhSrgu2Vev7dRjtjbcQc7NRvc8IZkqXeeklR7GRUNxYSTSnNbspAhghFrUQC
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -1098,7 +1098,7 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 90	302	Par	Urbana	Residência	inspecionado	f	Apto 101	Dengue	f	f	f	f	f	\N	\N	Tudo ok.	3	13	90	3
 91	303	Ímpar	Urbana	Residência	inspecionado	f	\N	Dengue	f	f	f	f	f	\N	\N	Sem alterações.	3	4	91	3
 92	304	Par	Urbana	Comércio	inspecionado	f	Borracharia	Dengue	f	t	f	t	f	\N	\N	Tudo certo.	3	13	92	3
-93	401	Ímpar	Urbana	Terreno Baldio	Ações de bloqueio	t	\N	Zica	f	t	t	t	t	\N	\N	Novo descarte irregular de lixo.	4	5	93	3
+93	401	Ímpar	Urbana	Terreno Baldio	bloqueado	t	\N	Zica	f	t	t	t	t	\N	\N	Novo descarte irregular de lixo.	4	5	93	3
 94	402	Par	Urbana	Residência	inspecionado	f	\N	Zica	f	f	f	f	f	\N	\N	Ok.	4	9	94	3
 95	403	Ímpar	Urbana	Comércio	inspecionado	t	Supermercado	Dengue	f	t	t	t	f	\N	\N	Foco na área dos carrinhos.	4	14	95	3
 96	404	Par	Urbana	Residência	inspecionado	f	\N	Chikungunya	f	f	f	t	f	\N	\N	Morador presente, tudo ok.	4	5	96	3
@@ -1118,7 +1118,7 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 110	802	Par	Urbana	Residência	inspecionado	f	\N	Zica	f	f	f	f	f	\N	\N	Morador encontrado. Tudo certo.	8	16	110	3
 111	803	Ímpar	Urbana	Residência	inspecionado	f	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Ok.	8	11	111	3
 112	804	Par	Urbana	Residência	inspecionado	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	16	112	3
-113	901	Ímpar	Urbana	Outros	Ações de bloqueio	t	Escola	Dengue	f	t	t	t	t	\N	\N	Início do período letivo, tratamento preventivo.	9	1	113	3
+113	901	Ímpar	Urbana	Outros	bloqueado	t	Escola	Dengue	f	t	t	t	t	\N	\N	Início do período letivo, tratamento preventivo.	9	1	113	3
 114	902	Par	Urbana	Residência	inspecionado	t	\N	Zica	f	f	t	t	f	\N	\N	Foco em ralo.	9	12	114	3
 115	903	Ímpar	Urbana	Terreno Baldio	inspecionado	f	Aberto	Chikungunya	f	t	f	t	f	\N	\N	Terreno permanece limpo.	9	1	115	3
 116	904	Par	Urbana	Residência	nao_inspecionado	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	116	3
@@ -1126,7 +1126,7 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 118	1002	Par	Urbana	Residência	nao_inspecionado	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu novamente.	10	16	118	3
 119	1003	Ímpar	Urbana	Residência	nao_inspecionado	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	119	3
 120	1004	Par	Urbana	Terreno Baldio	inspecionado	f	\N	Zica	f	t	f	f	f	\N	\N	Ok.	10	16	120	3
-121	101	Ímpar	Urbana	Residência	Ações de bloqueio	t	Casa A	Zica	f	f	t	t	t	\N	\N	Visita de Zica, foco encontrado na calha.	1	1	121	4
+121	101	Ímpar	Urbana	Residência	bloqueado	t	Casa A	Zica	f	f	t	t	t	\N	\N	Visita de Zica, foco encontrado na calha.	1	1	121	4
 122	102	Par	Urbana	Residência	inspecionado	f	\N	Dengue	f	f	f	t	f	\N	\N	Local limpo.	1	11	122	4
 123	103	Ímpar	Urbana	Comércio	inspecionado	f	Loja 3	Dengue	f	t	f	t	f	\N	\N	Tudo ok.	1	1	123	4
 124	104	Par	Urbana	Residência	inspecionado	t	\N	Chikungunya	f	f	t	f	f	\N	\N	Ok.	1	11	124	4
@@ -1150,7 +1150,7 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 142	602	Par	Urbana	Residência	inspecionado	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	6	16	142	4
 143	603	Ímpar	Urbana	Residência	inspecionado	f	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Piscina ok.	6	15	143	4
 144	604	Par	Urbana	Comércio	nao_inspecionado	f	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	144	4
-145	701	Ímpar	Urbana	Comércio	Ações de bloqueio	t	Restaurante	Chikungunya	f	t	t	t	t	\N	\N	Foco em tambor nos fundos.	7	9	145	4
+145	701	Ímpar	Urbana	Comércio	bloqueado	t	Restaurante	Chikungunya	f	t	t	t	t	\N	\N	Foco em tambor nos fundos.	7	9	145	4
 146	702	Par	Urbana	Residência	inspecionado	f	Casa dos Fundos	Chikungunya	f	f	f	t	f	\N	\N	Tudo ok.	7	16	146	4
 147	703	Ímpar	Urbana	Comércio	inspecionado	f	Clínica	Dengue	f	t	f	f	f	\N	\N	Tudo ok.	7	15	147	4
 148	704	Par	Urbana	Residência	inspecionado	t	\N	Dengue	f	f	t	t	f	\N	\N	Foco em caixa d'água no telhado.	7	16	148	4
@@ -1649,5 +1649,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict IBISKu7lozrMvIbgPjoHeIZOCxAfZ02VD5OGDZy9vDgtt6ZrjhoOlOL05SOfUqR
+\unrestrict lsSbhSrgu2Vev7dRjtjbcQc7NRvc8IZkqXeeklR7GRUNxYSTSnNbspAhghFrUQC
 
