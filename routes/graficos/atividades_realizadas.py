@@ -11,8 +11,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 @graficos.route('/grafico/atividades_realizadas/<int:ano>/<int:ciclo>', methods=['GET'])
-@token_required
-def get_atividades_realizadas(current_user, ano, ciclo):
+def get_atividades_realizadas(ano, ciclo):
 
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     if conn is None:

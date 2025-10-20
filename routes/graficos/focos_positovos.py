@@ -11,8 +11,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 @graficos.route('/grafico/focos_positivos/<int:ano>/<int:ciclo>', methods=['GET'])
-@token_required
-def get_focos_positivos(current_user, ano, ciclo):
+def get_focos_positivos(ano, ciclo):
 
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     if conn is None:

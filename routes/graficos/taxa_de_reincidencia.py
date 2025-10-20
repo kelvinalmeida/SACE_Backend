@@ -11,8 +11,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 @graficos.route('/grafico/taxa_de_reincidencia/<int:ano>/<int:ciclo>', methods=['GET'])
-@token_required
-def get_taxa_de_reincidencia(current_user, ano, ciclo):
+def get_taxa_de_reincidencia(ano, ciclo):
 
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     if conn is None:
