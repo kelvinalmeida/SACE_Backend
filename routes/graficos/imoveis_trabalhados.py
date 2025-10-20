@@ -52,7 +52,7 @@ def get_imoveis_trabalhados(ano, ciclo):
         imoveis_trabalhados['bloqueados'] = 0
         imoveis_trabalhados['fechados'] = 0
         imoveis_trabalhados['recusados'] = 0
-        imoveis_trabalhados['nao_inspecionado'] = 0
+        imoveis_trabalhados['nao_inspecionados'] = 0
         imoveis_trabalhados['total'] = sum([sta['quantidade'] for sta in registros_status_ciclo_precurado])
         # return jsonify(registros_status_ciclo_precurado)
 
