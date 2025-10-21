@@ -9,6 +9,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 # ciclos
 from routes.ciclo.bluprint import ciclos
 from routes.ciclo import get_anos_and_ciclos
+from routes.ciclo import criar_ciclo
 
 
 # graficos
@@ -20,6 +21,9 @@ from routes.graficos import depositos_tratados
 from routes.graficos import taxa_de_reincidencia
 from routes.graficos import casos_comfirmados
 from routes.graficos import atividades_realizadas
+from routes.graficos import acoes_de_bloqueio_por_ciclo
+from routes.graficos import depositos_por_ciclos
+from routes.graficos import casos_por_ciclos
 
 
 # registro_de_campo
