@@ -13,6 +13,28 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+    
+    NovoCicloResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Novo ciclo criado com sucesso!"
+        novo_ciclo:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: "O ID do novo ciclo criado."
+              example: 7
+            numero:
+              type: integer
+              description: "O número sequencial do ciclo dentro do ano."
+              example: 1
+            ano:
+              type: integer
+              description: "O ano do novo ciclo."
+              example: 2026
 
     GraficoPorBairroResponse:
       type: object
@@ -1805,3 +1827,30 @@ paths:
                 $ref: '#/components/schemas/GraficoPorBairroResponse'
         '500':
           description: Erro interno do servidor.
+
+  /criar_ciclo:
+    post:
+      summary: Cria e inicia um novo ciclo de visitas
+      description: |
+        Inicia um novo ciclo de visitas. Esta é uma ação transacional que realiza várias operações:
+        1. Desativa o ciclo ativo anterior, definindo sua data de encerramento.
+        2. Cria um novo ciclo, incrementando o número do ciclo ou reiniciando para 1 se for um novo ano.
+        3. Copia todos os registros de imóveis do ciclo anterior para o novo, zerando seus status e dados de visita para que possam ser inspecionados novamente.
+
+        Esta rota não requer um corpo de requisição.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Novo ciclo criado e iniciado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NovoCicloResponse'
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '500':
+          description: Erro interno do servidor (falha na transação do banco de dados).
