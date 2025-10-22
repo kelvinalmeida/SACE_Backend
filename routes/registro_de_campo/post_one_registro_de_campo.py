@@ -26,6 +26,7 @@ def send_registro_de_campo(current_user):
     except Exception as e:
         return jsonify({"error": "Invalid token: É nescessário ser agente para cadastrar registro de campo. Peça para um supervisor cadastrar você."}), 401
     
+   
     check_filds = check_required_filds(['imovel_numero', 'imovel_lado', 'imovel_categoria_da_localidade', 'imovel_tipo', 'imovel_status'])
 
     if(check_filds):
@@ -72,10 +73,27 @@ def send_registro_de_campo(current_user):
         return jsonify({"error": "Database connection failed"}), 500
     
 
+    # verificando se existe algum ciclo ativo
+    try:
+        cursor = conn.cursor()
+
+        check_ciclos_ativos = """SELECT * FROM ciclos WHERE ativo = True;"""
+        cursor.execute(check_ciclos_ativos)
+        ciclo_ativo = cursor.fetchone()
+
+        if not ciclo_ativo:
+            return jsonify({"error": "É nescessário ter um ciclo ativo! Algum supervisor FINALIZOU UM CICLO e não ativou um novo! Peça para um supervisor criar um novo ciclo!"}), 409
+
+    except Exception as e:
+        cursor.close()
+        conn.close()
+        return jsonify({"error": f"Erro interno no servidor: {str(e)}"}), 500
+        
+
 
     # Query para buscar a área de visita do agente logado
     try:
-        cursor = conn.cursor()
+       
         search_agente_area_de_visita = """SELECT area_de_visita_id FROM agente_area_de_visita WHERE agente_id = %s AND area_de_visita_id = %s;"""
 
         cursor.execute(search_agente_area_de_visita, (agente_id, area_de_visita_id))

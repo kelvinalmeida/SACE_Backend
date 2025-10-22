@@ -13,6 +13,29 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+
+    FinalizarCicloResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Ciclo desativado. Novos registros de campo não serão mais inseridos até que um novo ciclo seja criado (ativado.)"
+        novo_ciclo: # Nota: A chave no seu código é 'novo_ciclo', mas representa o ciclo *finalizado*. Ajustei a descrição.
+          type: object
+          description: "Detalhes do ciclo que foi finalizado."
+          properties:
+            id:
+              type: integer
+              description: "O ID do ciclo finalizado."
+              example: 6
+            numero:
+              type: integer
+              description: "O número sequencial do ciclo dentro do ano."
+              example: 2
+            ano:
+              type: integer
+              description: "O ano do ciclo finalizado."
+              example: 2025
     
     NovoCicloResponse:
       type: object
@@ -753,6 +776,8 @@ paths:
           description: Não autenticado (token ausente ou inválido).
         '403':
           description: Acesso proibido (usuário não é um agente).
+        '409':
+          description: Erro É nescessário ter um ciclo ativo! Algum supervisor FINALIZOU UM CICLO e não ativou um novo! Peça para um supervisor criar um novo ciclo
         '500':
           description: Erro interno do servidor.
     
@@ -1854,3 +1879,30 @@ paths:
           description: Acesso proibido (usuário não é um supervisor).
         '500':
           description: Erro interno do servidor (falha na transação do banco de dados).
+
+  /finalizar_ciclo:
+    post:
+      summary: Finaliza o ciclo de visitas ativo
+      description: |
+        Encerra o ciclo de visitas atualmente ativo no sistema. 
+        Esta ação busca o último ciclo marcado como 'ativo', define seu status como inativo (`ativo = False`) e registra a data/hora de encerramento. 
+        Após esta operação, novos registros de campo não poderão ser associados a este ciclo. 
+        Um novo ciclo precisará ser criado para continuar os registros.
+
+        Esta rota não requer um corpo de requisição.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      security:
+        - bearerAuth: []
+      responses:
+        '200': # Alterado de 201 para 200 OK, pois é uma atualização de estado, não criação.
+          description: Ciclo ativo finalizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinalizarCicloResponse'
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '500':
+          description: Erro interno do servidor (falha na transação do banco de dados ou nenhum ciclo ativo encontrado).
