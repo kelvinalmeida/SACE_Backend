@@ -10,6 +10,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from routes.ciclo.bluprint import ciclos
 from routes.ciclo import get_anos_and_ciclos
 from routes.ciclo import criar_ciclo
+from routes.ciclo import finalizar_ciclo
 
 
 # graficos
