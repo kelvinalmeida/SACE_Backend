@@ -19,7 +19,7 @@ services:
       LC_COLLATE: C.UTF-8
       LC_CTYPE: C.UTF-8
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/18/data
       - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
 
   adminer:
