@@ -35,7 +35,7 @@ def get_all_denuncias(current_user):
         cursor = conn.cursor()
 
         # Query para buscar todos os usuários agentes relacionando ao registro de campo
-        search_denuncias = """SELECT * FROM denuncia INNER JOIN supervisor USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id);"""
+        search_denuncias = """SELECT den.denuncia_id, den.supervisor_id, den.agente_responsavel_id, den.rua_avenida, den.numero, den.bairro, den.tipo_imovel, den.status, den.endereco_complemento, den.data_denuncia, den.hora_denuncia, den.observacoes, usu.nome_completo, usu.cpf, sup.supervisor_id, usu.usuario_id FROM denuncia den INNER JOIN supervisor sup USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id);"""
 
         cursor.execute(search_denuncias)
         all_denuncias = cursor.fetchall()

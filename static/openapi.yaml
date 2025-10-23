@@ -452,10 +452,10 @@ components:
         hora_denuncia: { type: string, format: time, example: "15:59:00" }
         observacoes: { type: string, nullable: true, example: "Muitos pneus acumulados com água." }
         supervisor_id: { type: integer, example: 5 }
-        deposito_id: { type: integer, example: 77 }
         nome_completo: { type: string, description: "Nome do supervisor que registrou a denúncia", example: "Carlos Pereira Costa" }
         cpf: { type: string, example: "34567890123" }
-        email: { type: string, format: email, example: "carlos.costa@example.com" }
+        status: { type: string, example: "Em Análise" }
+        usuario_id: { type: integer, example: 3 }
         agente_responsavel_id: { type: integer, nullable: true, example: 2 }
         # deposito:
         #   $ref: '#/components/schemas/Deposito'
@@ -475,6 +475,8 @@ components:
         endereco_complemento: { type: string, nullable: true, example: "Ao lado da padaria" }
         data_denuncia: { type: string, format: date, example: "2025-10-02" }
         hora_denuncia: { type: string, example: "15:59" }
+        status: { type: string, example: "Em Análise" }
+        usuario_id: { type: integer, example: 3 }
         observacoes: { type: string, nullable: true, example: "Muitos pneus acumulados com água." }
         agente_responsavel_id: { type: integer, nullable: true, example: 2 }
         # a1: { type: integer, example: 10 }
@@ -490,6 +492,7 @@ components:
           example:
             Arquivo 1: "foto1.jpg"
             Arquivo 2: "foto2.png"
+
     UsuarioOutput:
       type: object
       properties:

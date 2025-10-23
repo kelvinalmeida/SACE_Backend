@@ -60,6 +60,7 @@ from routes.denuncia.bluprint import denuncia
 from routes.denuncia import post_one_denuncia
 from routes.denuncia import get_all
 from routes.denuncia import by_id
+from routes.denuncia import update
 
 # artigo
 from routes.artigo.bluprint import blu_artigo

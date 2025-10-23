@@ -34,8 +34,27 @@ def get_denuncia_by_id(current_user, denuncia_id):
     try:
         cursor = conn.cursor()
 
+        # CREATE TABLE denuncia (
+        # denuncia_id INT GENERATED ALWAYS AS IDENTITY,
+        # supervisor_id INT,
+        # deposito_id INT,
+        # agente_responsavel_id INT,
+        # rua_avenida VARCHAR(100) NOT NULL,
+        # numero SMALLINT NOT NULL,
+        # bairro VARCHAR(50) NOT NULL,
+        # tipo_imovel VARCHAR(100) NOT NULL,
+        # status VARCHAR(50) NOT NULL,
+        # endereco_complemento VARCHAR(200),
+        # data_denuncia DATE,
+        # hora_denuncia TIME,
+        # observacoes VARCHAR(255),
+
+
+
+        search_denuncias = """SELECT den.denuncia_id, den.supervisor_id, den.agente_responsavel_id, den.rua_avenida, den.numero, den.bairro, den.tipo_imovel, den.status, den.endereco_complemento, den.data_denuncia, den.hora_denuncia, den.observacoes, usu.nome_completo, usu.cpf, sup.supervisor_id, usu.usuario_id FROM denuncia den INNER JOIN supervisor sup USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id) WHERE denuncia_id = %s"""
+
         # Query para buscar todos os usuários agentes relacionando ao registro de campo
-        search_denuncias = """SELECT * FROM denuncia INNER JOIN supervisor USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id) WHERE denuncia_id = %s;"""
+        # search_denuncias = """SELECT * FROM denuncia INNER JOIN supervisor USING(supervisor_id) INNER JOIN usuario usu USING(usuario_id) WHERE denuncia_id = %s;"""
 
         cursor.execute(search_denuncias, (denuncia_id, ))
         all_denuncias = cursor.fetchall()
@@ -53,31 +72,31 @@ def get_denuncia_by_id(current_user, denuncia_id):
         return jsonify({"error": str(e)}), 500
 
 
-    try:
-        cursor.close()
-        cursor = conn.cursor()
+    # try:
+    #     cursor.close()
+    #     cursor = conn.cursor()
 
-        # Buscar depósitos
-        search_depositos = """SELECT denunc.denuncia_id, a1, a2, b, c, d1, d2, e
-                            FROM denuncia denunc
-                            LEFT JOIN depositos dep USING(deposito_id);"""
+    #     # Buscar depósitos
+    #     search_depositos = """SELECT denunc.denuncia_id, a1, a2, b, c, d1, d2, e
+    #                         FROM denuncia denunc
+    #                         LEFT JOIN depositos dep USING(deposito_id);"""
         
-        cursor.execute(search_depositos)
-        depositos = cursor.fetchall()
+    #     cursor.execute(search_depositos)
+    #     depositos = cursor.fetchall()
 
-        for denunc in serializable_denuncias:
-            deposito = next((dep for dep in depositos if dep['denuncia_id'] == denunc['denuncia_id']), None)
-            if deposito:
-                deposito = deposito.copy()  # Faz uma cópia para não alterar o original
-                deposito.pop('denuncia_id', None)  # Remove a chave se existir
+    #     for denunc in serializable_denuncias:
+    #         deposito = next((dep for dep in depositos if dep['denuncia_id'] == denunc['denuncia_id']), None)
+    #         if deposito:
+    #             deposito = deposito.copy()  # Faz uma cópia para não alterar o original
+    #             deposito.pop('denuncia_id', None)  # Remove a chave se existir
 
-            # Adiciona o depósito ao dicionário da denúncia
-            # denunc['deposito'] = deposito
+    #         # Adiciona o depósito ao dicionário da denúncia
+    #         # denunc['deposito'] = deposito
 
-    except Exception as e:
-        conn.rollback()
-        cursor.close()
-        return jsonify({"error": str(e)}), 500
+    # except Exception as e:
+    #     conn.rollback()
+    #     cursor.close()
+    #     return jsonify({"error": str(e)}), 500
     
     try:
         cursor.close()

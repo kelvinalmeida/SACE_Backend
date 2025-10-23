@@ -7,8 +7,6 @@ from .bluprint import denuncia
 from datetime import datetime
 
 
-
-
 def check_required_filds(required_fild):
     for fild in required_fild:
         if fild not in request.form or request.form[fild] is None or request.form[fild].strip() == "":
@@ -16,9 +14,9 @@ def check_required_filds(required_fild):
     return False
 
 
-@denuncia.route('/denuncia', methods=['POST'])
+@denuncia.route('/denuncia/<int:denuncia_id>', methods=['PUT'])
 @token_required
-def create_denuncia(current_user):
+def update_denuncia(current_user, denuncia_id):
 
     # print("current_user token data:", current_user)
     # Pega o agente_id do token
@@ -104,8 +102,6 @@ def create_denuncia(current_user):
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
     
-    
-
     # # Inserir Depósito
     # try:
     #     
@@ -134,18 +130,29 @@ def create_denuncia(current_user):
     #     conn.rollback()
     #     return jsonify({"error": str(e)}), 500
     
+
     #Inserir Registro de Campo
     try:
         cursor = conn.cursor()
 
-        inserir_denuncia = """INSERT INTO denuncia(
-            supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, status, agente_responsavel_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING denuncia_id; """
+        update_denuncia = """
+            UPDATE denuncia 
+            SET supervisor_id = %s,
+                rua_avenida = %s,
+                numero = %s,
+                bairro = %s,
+                tipo_imovel = %s,
+                endereco_complemento = %s,
+                data_denuncia = %s,
+                hora_denuncia = %s,
+                observacoes = %s,
+                status = %s,
+                agente_responsavel_id = %s
+            WHERE denuncia_id = %s
+            RETURNING denuncia_id;"""
         
-        cursor.execute(inserir_denuncia, (supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, status, agente_responsavel_id))
+        cursor.execute(update_denuncia, (supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, status, agente_responsavel_id, denuncia_id))
 
-        denuncia_fech = cursor.fetchone()
-        denuncia_id = denuncia_fech['denuncia_id']
 
     except Exception as e:
         conn.rollback()
@@ -185,7 +192,7 @@ def create_denuncia(current_user):
 
     return jsonify({
         'status': 'success',
-        'message': 'Denuncia recebida com sucesso',
+        'message': 'Denuncia atualizada com sucesso',
         'data': {
             'denuncia_id': denuncia_id,
             'supervisor_id': supervisor_id,
