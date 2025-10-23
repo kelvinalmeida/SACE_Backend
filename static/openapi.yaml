@@ -14,6 +14,73 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    UpdateLarvicidaResponseData:
+      type: object
+      properties:
+        larvicida_id: { type: integer, example: 1 }
+        tipo: { type: string, example: "Pyriproxyfen" }
+        forma: { type: string, example: "Granulado" }
+        quantidade: { type: integer, example: 5 }
+
+    UpdateAdulticidaResponseData:
+      type: object
+      properties:
+        adulticida_id: { type: integer, example: 1 }
+        tipo: { type: string, example: "Adulticida de Borrifação" }
+        quantidade: { type: integer, example: 20 }
+
+    UpdateRegistroResponseData:
+      type: object
+      # Reutiliza a maior parte da estrutura da resposta POST, mas ajusta os exemplos
+      properties:
+        registro_de_campo_id: { type: integer, example: 1 }
+        ciclo_id: { type: integer, example: 3 }
+        imovel_numero: { type: string, example: "45B" }
+        imovel_lado: { type: string, example: "Ímpar" }
+        imovel_categoria_da_localidade: { type: string, example: "Urbana" }
+        imovel_tipo: { type: string, example: "Residencial" }
+        imovel_status: { type: string, example: "Visitado" } # Exemplo de status atualizado
+        imovel_complemento: { type: string, nullable: true, example: "Apto 101 UPDATED" }
+        formulario_tipo: { type: string, nullable: true, example: "F2" }
+        li: { type: boolean, example: false }
+        pe: { type: boolean, example: true }
+        t: { type: boolean, example: false }
+        df: { type: boolean, example: true }
+        pve: { type: boolean, example: false }
+        numero_da_amostra: { type: string, nullable: true, example: "B-001" }
+        quantiade_tubitos: { type: integer, nullable: true, example: 2 }
+        observacao: { type: string, nullable: true, example: "Atualização de observação." }
+        area_de_visita_id: { type: integer, example: 2 }
+        agente_id: { type: integer, example: 12 }
+        deposito_id: { type: integer, example: 45 }
+        a1: { type: integer, example: 3 }
+        a2: { type: integer, example: 2 }
+        b: { type: integer, example: 1 } # Exemplo de contagem atualizada
+        c: { type: integer, example: 1 }
+        d1: { type: integer, example: 1 }
+        d2: { type: integer, example: 3 }
+        e: { type: integer, example: 2 }
+        larvicidas: # Exemplo de como larvicidas/adulticidas podem ser retornados (baseado no seu código)
+          type: array
+          items:
+            type: object
+            properties:
+              tipo: { type: string }
+              forma: { type: string }
+              quantidade: { type: integer }
+          example: [{"tipo": "Spinosad", "forma": "Tablete", "quantidade": 2}]
+        adulticidas:
+          type: array
+          items:
+            type: object
+            properties:
+              tipo: { type: string }
+              quantidade: { type: integer }
+          example: [{"tipo": "Piretróide", "quantidade": 10}]
+        files: # Exemplo de como arquivos podem ser retornados
+          type: object
+          example: {"Arquivo 1": "nova_foto.jpg"}
+
     FinalizarCicloResponse:
       type: object
       properties:
@@ -572,10 +639,10 @@ components:
       properties:
         a1: { type: integer, example: 5 }
         a2: { type: integer, example: 2 }
-        b: { type: integer, example: 0 }
+        b: { type: integer, example: 1 }
         c: { type: integer, example: 1 }
         d1: { type: integer, example: 3 }
-        d2: { type: integer, example: 0 }
+        d2: { type: integer, example: 1 }
         e: { type: integer, example: 4 }
     Larvicida:
       type: object
@@ -632,7 +699,7 @@ components:
         df: { type: boolean, example: false }
         pve: { type: boolean, example: false }
         numero_da_amostra: { type: string, nullable: true, example: "A-002" }
-        quantiade_tubitos: { type: string, nullable: true, example: "3" }
+        quantiade_tubitos: { type: integer, nullable: true, example: 2 }
         observacao: { type: string, nullable: true, example: "Cão bravo no quintal." }
         area_de_visita_id: { type: integer, example: 2 }
         agente_id: { type: integer, example: 12 }
@@ -745,7 +812,7 @@ paths:
                 df: { type: boolean, description: "Flag booleana para DF." }
                 pve: { type: boolean, description: "Flag booleana para PVE." }
                 numero_da_amostra: { type: string, example: "A-003", nullable: true }
-                quantiade_tubitos: { type: string, example: "4", nullable: true }
+                quantiade_tubitos: { type: integer, example: 4, nullable: true }
                 observacao: { type: string, nullable: true }
                 area_de_visita_id: { type: integer, example: 2 }
                 a1: { type: integer, description: "Contagem depósito A1", example: 2 }
@@ -829,6 +896,137 @@ paths:
           description: Não autorizado.
         '404':
           description: Registro de campo não encontrado.
+        '500':
+          description: Erro interno do servidor.
+    
+    put:
+      summary: Atualiza um registro de campo existente
+      description: |
+        Atualiza completamente um registro de campo existente, incluindo seus depósitos associados. Larvicidas, adulticidas e arquivos são **adicionados** (o código atual não remove/atualiza os existentes, apenas insere novos).
+        **Atenção:** Apenas usuários com nível de acesso "agente" podem realizar esta ação, e o agente deve estar associado à área de visita. Requer um ciclo ativo.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: registro_de_campo_id
+          in: path
+          required: true
+          description: O ID do registro de campo a ser atualizado.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                # Lista de campos obrigatórios para a atualização
+                - imovel_numero
+                - imovel_lado
+                - imovel_categoria_da_localidade
+                - imovel_tipo
+                - imovel_status
+                - area_de_visita_id
+                - a1
+                - a2
+                - b
+                - c
+                - d1
+                - d2
+                - e
+              properties:
+                # Reutilizar as mesmas propriedades do POST /registro_de_campo
+                imovel_numero: { type: string, description: "Número do imóvel.", example: "45B" }
+                imovel_lado: { type: string, description: "Lado da rua (Par/Ímpar).", example: "Ímpar" }
+                imovel_categoria_da_localidade: { type: string, example: "Urbana" }
+                imovel_tipo: { type: string, example: "Residencial" }
+                imovel_status: { type: string, example: "Visitado" }
+                imovel_complemento: { type: string, description: "Ex: Apto 101, Bloco C", nullable: true }
+                formulario_tipo: { type: string, example: "F2", nullable: true }
+                li: { type: boolean, description: "Flag booleana para LI." }
+                pe: { type: boolean, description: "Flag booleana para PE." }
+                t: { type: boolean, description: "Flag booleana para T." }
+                df: { type: boolean, description: "Flag booleana para DF." }
+                pve: { type: boolean, description: "Flag booleana para PVE." }
+                numero_da_amostra: { type: string, example: "B-001", nullable: true }
+                quantiade_tubitos: { type: integer, example: 2, nullable: true }
+                observacao: { type: string, nullable: true, example: "Observação atualizada." }
+                area_de_visita_id: { type: integer, example: 2 }
+                a1: { type: integer, description: "Contagem depósito A1", example: 1 }
+                a2: { type: integer, description: "Contagem depósito A2", example: 2 }
+                b: { type: integer, description: "Contagem depósito B", example: 1 }
+                c: { type: integer, description: "Contagem depósito C", example: 2}
+                d1: { type: integer, description: "Contagem depósito D1", example: 2 }
+                d2: { type: integer, description: "Contagem depósito D2", example: 2 }
+                e: { type: integer, description: "Contagem depósito E", example: 3 }
+                larvicidas:
+                  type: string
+                  description: "String JSON com **novos** larvicidas a serem adicionados."
+                  example: '[{"tipo": "Spinosad", "forma": "Tablete", "quantidade": 2}]'
+                adulticidas:
+                  type: string
+                  description: "String JSON com **novos** adulticidas a serem adicionados."
+                  example: '[{"tipo": "Piretróide", "quantidade": 10}]'
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: "**Novos** arquivos para adicionar ao registro."
+      responses:
+        '200':
+          description: Registro de campo atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Registro de campo atualizado com sucesso" }
+                  data:
+                    $ref: '#/components/schemas/UpdateRegistroResponseData'
+        '400':
+          description: Requisição inválida (campos faltando, dados incorretos, agente não associado à área).
+        '401':
+          description: Não autenticado ou token inválido (não é agente).
+        '404':
+          description: Registro de campo não encontrado com o ID especificado.
+        '409':
+          description: Conflito (nenhum ciclo ativo encontrado).
+        '500':
+          description: Erro interno do servidor.
+          
+    delete:
+      summary: Deleta um registro de campo por ID
+      description: |
+        Remove um registro de campo específico do sistema, identificado pelo seu ID.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: registro_de_campo_id
+          in: path
+          required: true
+          description: O ID do registro de campo a ser deletado.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Registro de campo deletado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registro de campo with ID 1 deleted successfully."
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404':
+          description: Registro de campo não encontrado com o ID especificado.
         '500':
           description: Erro interno do servidor.
 
@@ -1908,3 +2106,170 @@ paths:
           description: Acesso proibido (usuário não é um supervisor).
         '500':
           description: Erro interno do servidor (falha na transação do banco de dados ou nenhum ciclo ativo encontrado).
+
+  
+  /larvicida/{larvicida_id}:
+    put:
+      summary: Atualiza um registro de larvicida
+      description: |
+        Atualiza as informações (tipo, forma, quantidade) de um registro de larvicida específico.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: larvicida_id
+          in: path
+          required: true
+          description: O ID do larvicida a ser atualizado.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data: # Seu código usa request.form, então é form-data
+            schema:
+              type: object
+              required:
+                - tipo
+                - forma
+                - quantidade
+              properties:
+                tipo: { type: string, example: "Pyriproxyfen UPDATED" }
+                forma: { type: string, example: "Líquido" }
+                quantidade: { type: integer, example: 8 }
+      responses:
+        '200':
+          description: Larvicida atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Larvicida atualizado com sucesso" }
+                  data:
+                    $ref: '#/components/schemas/UpdateLarvicidaResponseData'
+        '400':
+          description: Requisição inválida (dados incorretos).
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404': # Adicionar tratamento de 404 no código PUT se o ID não existir
+          description: Larvicida não encontrado com o ID especificado.
+        '500':
+          description: Erro interno do servidor.
+          
+    delete:
+      summary: Deleta um registro de larvicida por ID
+      description: |
+        Remove um registro de larvicida específico do sistema, identificado pelo seu ID.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: larvicida_id
+          in: path
+          required: true
+          description: O ID do larvicida a ser deletado.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Larvicida deletado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "larvicida with ID 1 deleted successfully."
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404':
+          description: Larvicida não encontrado com o ID especificado.
+        '500':
+          description: Erro interno do servidor.
+
+  /adulticida/{adulticida_id}:
+    put:
+      summary: Atualiza um registro de adulticida
+      description: |
+        Atualiza as informações (tipo, quantidade) de um registro de adulticida específico.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: adulticida_id
+          in: path
+          required: true
+          description: O ID do adulticida a ser atualizado.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          multipart/form-data: # Seu código usa request.form
+            schema:
+              type: object
+              required:
+                - tipo
+                - quantidade
+              properties:
+                tipo: { type: string, example: "Piretróide UPDATED" }
+                quantidade: { type: integer, example: 25 }
+      responses:
+        '200':
+          description: Adulticida atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Adulticida atualizado com sucesso" }
+                  data:
+                    $ref: '#/components/schemas/UpdateAdulticidaResponseData'
+        '400':
+          description: Requisição inválida (dados incorretos).
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404': # Adicionar tratamento de 404 no código PUT se o ID não existir
+          description: Adulticida não encontrado com o ID especificado.
+        '500':
+          description: Erro interno do servidor.
+          
+    delete:
+      summary: Deleta um registro de adulticida por ID
+      description: |
+        Remove um registro de adulticida específico do sistema, identificado pelo seu ID.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: adulticida_id
+          in: path
+          required: true
+          description: O ID do adulticida a ser deletado.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Adulticida deletado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "adulticida with ID 1 deleted successfully."
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '404':
+          description: Adulticida não encontrado com o ID especificado.
+        '500':
+          description: Erro interno do servidor.

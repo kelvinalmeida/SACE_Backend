@@ -32,7 +32,6 @@ def send_registro_de_campo(current_user):
     if(check_filds):
         return jsonify(check_filds), 400
 
-    imovel_numero = request.form.get('imovel_numero')
     imovel_lado = request.form.get('imovel_lado')
     imovel_categoria_da_localidade = request.form.get('imovel_categoria_da_localidade')
     imovel_tipo = request.form.get('imovel_tipo')
@@ -50,11 +49,12 @@ def send_registro_de_campo(current_user):
         return jsonify({"error": "Invalid input for li, pe, t, df, or pve. They must be boolean values."}), 400
 
     numero_da_amostra = request.form.get('numero_da_amostra')
-    quantiade_tubitos = request.form.get('quantiade_tubitos')
     observacao = request.form.get('observacao')
     area_de_visita_id = request.form.get('area_de_visita_id')
 
     try:
+        imovel_numero = request.form.get('imovel_numero')
+        quantiade_tubitos = request.form.get('quantiade_tubitos')
         a1 = int(request.form.get('a1'))
         a2 = int(request.form.get('a2'))
         b = int(request.form.get('b'))
@@ -63,7 +63,7 @@ def send_registro_de_campo(current_user):
         d2 = int(request.form.get('d2'))
         e = int(request.form.get('e'))
     except (TypeError, ValueError):
-        return jsonify({"error": "Invalid input for a1, a2, b, c, d1, d2, or e. They must be integers."}), 400
+        return jsonify({"error": "Invalid input for imovel_numero, quantiade_tubitos, a1, a2, b, c, d1, d2, or e. They must be integers."}), 400
     
 
     # Conexão com o banco de dados
