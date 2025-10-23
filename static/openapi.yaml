@@ -537,11 +537,13 @@ components:
       properties:
         tipo: { type: string, example: "temefos" }
         forma: { type: string, example: "g" }
+        larvicida_id: { type: integer, example: 3 }
         quantidade: { type: integer, example: 10 }
     Adulticida:
       type: object
       properties:
         tipo: { type: string, example: "malathion" }
+        adulticida_id: { type: integer, example: 3 }
         quantidade: { type: integer, example: 200 }
     Arquivo:
       type: object

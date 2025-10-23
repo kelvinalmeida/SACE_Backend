@@ -114,7 +114,7 @@ def get_registro_de_campo(current_user):
         cursor = conn.cursor()
 
         # Buscar larvicidas
-        search_larvicidas = """SELECT reg_campo.registro_de_campo_id, quantidade, forma, tipo
+        search_larvicidas = """SELECT reg_campo.registro_de_campo_id, larvicida_id, quantidade, forma, tipo
                             FROM registro_de_campo reg_campo
                             LEFT JOIN larvicida larv USING(registro_de_campo_id);"""
         
@@ -143,7 +143,7 @@ def get_registro_de_campo(current_user):
         cursor = conn.cursor()
 
         # Buscar adulticidas
-        search_adulticidas = """SELECT reg_campo.registro_de_campo_id, quantidade, tipo
+        search_adulticidas = """SELECT reg_campo.registro_de_campo_id, adulticida_id, quantidade, tipo
                             FROM registro_de_campo reg_campo
                             LEFT JOIN adulticida adult USING(registro_de_campo_id);"""
         

@@ -31,6 +31,12 @@ from routes.registro_de_campo.bluprint import registro_de_campo
 from routes.registro_de_campo import get_all
 from routes.registro_de_campo import by_id
 from routes.registro_de_campo import post_one_registro_de_campo
+from routes.registro_de_campo import update
+from routes.registro_de_campo import update_larvicida
+from routes.registro_de_campo import update_adulticida
+from routes.registro_de_campo import delete
+from routes.registro_de_campo import delete_larvicida
+from routes.registro_de_campo import delete_adulticida
 
 
 # area_de_visita
