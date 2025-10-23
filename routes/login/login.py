@@ -104,6 +104,9 @@ def login_user():
         "nome_completo": fech_user["nome_completo"],
         "username": fech_user["cpf"],
         "nivel_de_acesso": fech_user["nivel_de_acesso"],
+        "usuario_id": fech_user["usuario_id"],
+        "agente_id": fech_agente["agente_id"] if fech_agente else None,
+        "supervisor_id": fech_supervisor["supervisor_id"] if fech_supervisor else None,
         "token": token,
     })
     

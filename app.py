@@ -53,6 +53,7 @@ from routes.usuario.bluprint import usuario
 from routes.usuario import post_sereval_users
 from routes.usuario import get_all_users
 from routes.usuario import by_id
+from routes.usuario import area_de_visita_e_denuncias_agente
 
 # denuncia
 from routes.denuncia.bluprint import denuncia

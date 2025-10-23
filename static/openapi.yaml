@@ -14,6 +14,20 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    AgenteVisitasDenunciasResponse:
+      type: object
+      properties:
+        areas_de_visitas:
+          type: array
+          description: "Lista detalhada das áreas de visita associadas ao agente."
+          items:
+            $ref: '#/components/schemas/AreaDeVisitaDetalhes' # Reutiliza o schema existente
+        denuncias:
+          type: array
+          description: "Lista detalhada das denúncias sob responsabilidade do agente."
+          items:
+            $ref: '#/components/schemas/DenunciaCompleta' # Reutiliza o schema existente
+
     UpdateLarvicidaResponseData:
       type: object
       properties:
@@ -2273,3 +2287,41 @@ paths:
           description: Adulticida não encontrado com o ID especificado.
         '500':
           description: Erro interno do servidor.
+  
+  /area_de_visita_denuncias/{agente_id}:
+    get:
+      summary: Busca áreas de visita e denúncias de um agente específico
+      description: |
+        Retorna um objeto contendo duas listas: as áreas de visita atribuídas a um agente e as denúncias pelas quais ele é o responsável.
+        Requer autenticação.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: agente_id
+          in: path
+          required: true
+          description: O ID do agente cujos dados serão buscados.
+          schema:
+            type: integer
+            example: 7
+      responses:
+        '200':
+          description: Áreas de visita e denúncias do agente retornadas com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgenteVisitasDenunciasResponse'
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '404':
+          description: Agente não encontrado com o ID especificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Agente não encontrado"
+        '500':
+          description: Erro interno do servidor (falha na conexão ou consulta ao banco de dados).
