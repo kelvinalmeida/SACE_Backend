@@ -58,11 +58,20 @@ def criar_ciclo(current_user):
             if ano_ultimo_ciclo == current_year:
                 novo_ciclo_numero = numero_ultimo_ciclo + 1
             
-            # Desativa o ciclo anterior
-            set_last_ciclo_inactive_query = """
-                UPDATE ciclos SET ativo = False, encerramento = %s WHERE ciclo_id = %s
+            # # Desativa o ciclo anterior
+            # set_last_ciclo_inactive_query = """
+            #     UPDATE ciclos SET ativo = False, encerramento = %s WHERE ciclo_id = %s
+            # """
+            # cursor.execute(set_last_ciclo_inactive_query, (current_datetime, id_ultimo_ciclo))
+
+            # verificar se existe ciclo ativo
+            check_active_ciclo_query = """
+                SELECT ciclo_id FROM ciclos WHERE ativo = True LIMIT 1
             """
-            cursor.execute(set_last_ciclo_inactive_query, (current_datetime, id_ultimo_ciclo))
+            cursor.execute(check_active_ciclo_query)
+            active_ciclo = cursor.fetchone()
+            if active_ciclo:
+                return jsonify({"error": "Já existe um ciclo ativo. Não é possível criar um novo ciclo enquanto outro estiver ativo."}), 400
 
         # --- INSERIR NOVO CICLO ---
         insert_new_ciclo_query = """

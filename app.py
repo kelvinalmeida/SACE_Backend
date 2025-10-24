@@ -52,7 +52,8 @@ from routes.area_de_visita import delete
 from routes.usuario.bluprint import usuario
 from routes.usuario import post_sereval_users
 from routes.usuario import get_all_users
-from routes.usuario import by_id
+from routes.usuario import get_agente_by_id
+from routes.usuario import get_supervisor_by_id
 from routes.usuario import area_de_visita_e_denuncias_agente
 
 # denuncia
@@ -61,6 +62,7 @@ from routes.denuncia import post_one_denuncia
 from routes.denuncia import get_all
 from routes.denuncia import by_id
 from routes.denuncia import update
+from routes.denuncia import delete
 
 # artigo
 from routes.artigo.bluprint import blu_artigo
