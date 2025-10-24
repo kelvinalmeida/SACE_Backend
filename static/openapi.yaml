@@ -2560,7 +2560,7 @@ paths:
         Retorna um objeto contendo duas listas: as áreas de visita atribuídas a um agente e as denúncias pelas quais ele é o responsável.
         Requer autenticação.
       tags:
-        - Area de Visita
+        - Usuários
       security:
         - bearerAuth: []
       parameters:
