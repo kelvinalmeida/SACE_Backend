@@ -31,6 +31,11 @@ def delete_denuncia(current_user, denuncia_id):
         cursor = conn.cursor()
         delete_query = "DELETE FROM denuncia WHERE denuncia_id = %s RETURNING denuncia_id;"
         cursor.execute(delete_query, (denuncia_id,))
+        result = cursor.fetchone()
+
+        if result is None:
+            return jsonify({"error": "Denúncia não encontrada"}), 404
+        
         conn.commit()
 
         
@@ -46,7 +51,7 @@ def delete_denuncia(current_user, denuncia_id):
     return jsonify({
         "message": "Denúncia deletada com sucesso",
         "denuncia_id": denuncia_id
-     }), 201
+     }), 200
 
 
 

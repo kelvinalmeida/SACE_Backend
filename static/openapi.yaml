@@ -14,6 +14,58 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    DenunciaUpdateInput:
+      type: object
+      required:
+        - tipo_imovel
+        - bairro
+        - numero
+        - rua_avenida
+      properties:
+        rua_avenida: 
+          type: string
+          example: "Avenida da Paz (Atualizada)"
+        numero: 
+          type: integer
+          example: 1001
+        bairro: 
+          type: string
+          example: "Centro"
+        tipo_imovel: 
+          type: string
+          example: "Residência"
+        endereco_complemento: 
+          type: string
+          nullable: true
+          example: "Perto do mercado"
+        data_denuncia: 
+          type: string
+          format: date
+          description: "Data da denúncia (AAAA-MM-DD)"
+          example: "2025-10-03"
+        hora_denuncia: 
+          type: string
+          description: "Hora da denúncia (HH:MM:SS)"
+          example: "10:30:00"
+        observacoes: 
+          type: string
+          nullable: true
+          example: "Denúncia foi atualizada."
+        status:
+          type: string
+          description: "Status atual da denúncia."
+          example: "Em Análise"
+        agente_responsavel_id: 
+          type: integer
+          nullable: true
+          example: 7
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: "Novos arquivos de evidência para adicionar à denúncia."
+
     AgenteVisitasDenunciasResponse:
       type: object
       properties:
@@ -529,7 +581,36 @@ components:
               type: array
               description: "Lista detalhada das áreas de atuação do agente."
               items:
-                $ref: '#/components/schemas/AreaDeVisitaDetalhes'
+                $ref: '#/components/schemas/AreaDeVisitaSimples'
+    
+    AreaDeVisitaSimples: # <--- NOVO SCHEMA
+      type: object
+      description: "Representação de uma área de visita sem a lista de agentes associados, usada na visualização de um agente."
+      properties:
+        area_de_visita_id:
+          type: integer
+          example: 1
+        bairro:
+          type: string
+          example: "Ponta Verde"
+        cep:
+          type: string
+          example: "57035-180"
+        estado:
+          type: string
+          example: "AL"
+        logadouro: # Mantendo o 'logadouro' como está na sua documentação
+          type: string
+          example: "Avenida Álvaro Otacílio"
+        municipio:
+          type: string
+          example: "Maceió"
+        numero_quarteirao:
+          type: integer
+          example: 15
+        setor:
+          type: string
+          example: "Setor Ponta Verde 01"
 
     SupervisorOutput:
       type: object
@@ -745,6 +826,8 @@ paths:
     post:
       summary: Authenticates a user and returns a JWT token
       description: Autentica o usuário e retorna um token JWT que deve ser usado para autenticar requisições futuras.
+      tags:
+        - Autenticação
       requestBody:
         required: true
         content:
@@ -803,6 +886,8 @@ paths:
       description: |
         Submete um registro de campo completo via formulário.
         **Atenção:** Apenas usuários com nível de acesso "agente" podem realizar esta ação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       requestBody:
@@ -880,6 +965,8 @@ paths:
     get:
       summary: Lista todos os registros de campo do ciclo atual (ativo)
       description: Retorna uma lista completa de todos os registros de campo do ciclo atual (ativo). Requer autenticação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       responses:
@@ -900,6 +987,8 @@ paths:
     get:
       summary: Busca um registro de campo por ID
       description: Retorna os detalhes completos de um único registro de campo pelo seu ID. Requer autenticação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       parameters:
@@ -931,6 +1020,8 @@ paths:
       description: |
         Atualiza completamente um registro de campo existente, incluindo seus depósitos associados. Larvicidas, adulticidas e arquivos são **adicionados** (o código atual não remove/atualiza os existentes, apenas insere novos).
         **Atenção:** Apenas usuários com nível de acesso "agente" podem realizar esta ação, e o agente deve estar associado à área de visita. Requer um ciclo ativo.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       parameters:
@@ -1029,6 +1120,8 @@ paths:
       description: |
         Remove um registro de campo específico do sistema, identificado pelo seu ID.
         Requer autenticação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       parameters:
@@ -1063,6 +1156,8 @@ paths:
       description: |
         Retorna uma lista com todas as áreas de visita cadastradas.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Area de Visita
       security:
         - bearerAuth: []
       responses:
@@ -1085,6 +1180,8 @@ paths:
       description: |
         Registra uma ou mais áreas de visita no sistema a partir de uma lista JSON. A operação é transacional: ou todas as áreas são criadas com sucesso, ou nenhuma é.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Area de Visita
       security:
         - bearerAuth: []
       requestBody:
@@ -1140,6 +1237,8 @@ paths:
       description: |
         Remove uma ou mais áreas de visita do sistema com base em uma lista de IDs fornecida. A operação é transacional e será revertida se algum dos IDs não for encontrado.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem deletar áreas.
+      tags:
+        - Area de Visita
       security:
         - bearerAuth: []
       requestBody:
@@ -1185,6 +1284,8 @@ paths:
       description: |
         Retorna os detalhes de uma área de visita específica, identificada pelo seu ID.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Area de Visita
       security:
         - bearerAuth: []
       parameters:
@@ -1225,6 +1326,8 @@ paths:
       description: |
         Atualiza todas as informações de uma área de visita específica, identificada pelo seu ID.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Area de Visita
       security:
         - bearerAuth: []
       parameters:
@@ -1276,6 +1379,8 @@ paths:
       description: |
         Registra um ou mais usuários no sistema a partir de uma lista JSON. A operação é transacional: ou todos os usuários são criados com sucesso, ou nenhum é.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Usuários
       security:
         - bearerAuth: []
       requestBody:
@@ -1356,6 +1461,8 @@ paths:
       description: |
         Retorna um objeto contendo duas listas separadas: uma com todos os agentes e outra com todos os supervisores cadastrados no sistema.
         Requer autenticação.
+      tags:
+        - Usuários
       security:
         - bearerAuth: []
       responses:
@@ -1379,101 +1486,110 @@ paths:
           description: Não autorizado (token ausente ou inválido).
         '500':
           description: Erro interno do servidor.
-
-  /usuarios/{user_id}:
+  
+  /usuarios/agente/{agente_id}:
     get:
-      summary: Busca um usuário por ID
+      summary: Busca um agente específico pelo ID de agente
       description: |
-        Retorna os detalhes completos de um único usuário, identificado pelo seu ID.
-        A estrutura da resposta incluirá `agente_id` se o usuário for um agente, ou `supervisor_id` se for um supervisor.
+        Retorna os detalhes completos de um único usuário agente, 
+        buscando diretamente pelo seu ID de agente (da tabela 'agente').
+        A resposta inclui a lista detalhada de suas áreas de atuação (setor_de_atuacao).
         Requer autenticação.
+      tags:
+        - Usuários
       security:
         - bearerAuth: []
       parameters:
-        - name: user_id
+        - name: agente_id
           in: path
           required: true
-          description: O ID do usuário a ser buscado.
+          description: O ID de agente (chave primária da tabela 'agente').
           schema:
             type: integer
-            example: 12
+            example: 7
       responses:
         '200':
-          description: Detalhes do usuário retornados com sucesso.
+          description: Detalhes do agente retornados com sucesso.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/AgenteOutput'
-                  - $ref: '#/components/schemas/SupervisorOutput'
-              examples:
-                exemploAgente:
-                  summary: Exemplo de resposta para um usuário Agente
-                  value:
-                    usuario_id: 12
-                    nome_completo: "Maria da Silva"
-                    cpf: "11122233344"
-                    rg: "1234567"
-                    data_nascimento: "1990-10-25"
-                    email: "maria.silva@example.com"
-                    telefone_ddd: 82
-                    telefone_numero: "999998888"
-                    estado: "AL"
-                    municipio: "Maceió"
-                    bairro: "Jatiúca"
-                    logradouro: "Avenida João Davino"
-                    numero: 500
-                    registro_do_servidor: "MAT12345"
-                    cargo: "Agente de Endemias"
-                    situacao_atual: true
-                    data_de_admissao: "2020-03-15"
-                    nivel_de_acesso: "agente"
-                    agente_id: 7
-                    setor_de_atuacao:
-                      - area_de_visita_id: 2
-                        cep: "57046-140"
-                        setor: "Setor Serraria 08"
-                        numero_quarteirao: 15
-                        estado: "AL"
-                        municipio: "Maceió"
-                        bairro: "Serraria"
-                        logadouro: "Avenida Menino Marcelo"
-                      - area_de_visita_id: 3
-                        cep: "57046-150"
-                        setor: "Setor Ponta Verde 05"
-                        numero_quarteirao: 8
-                        estado: "AL"
-                        municipio: "Maceió"
-                        bairro: "Ponta Verde"
-                        logadouro: "Rua Professor Antônio Gomes de Barros"
-                exemploSupervisor:
-                  summary: Exemplo de resposta para um usuário Supervisor
-                  value:
-                    usuario_id: 5
-                    nome_completo: "Carlos Pereira Costa"
-                    cpf: "34567890123"
-                    rg: "3456789"
-                    data_nascimento: "1988-11-01"
-                    email: "carlos.costa@example.com"
-                    telefone_ddd: 31
-                    telefone_numero: "988776655"
-                    estado: "MG"
-                    municipio: "Belo Horizonte"
-                    bairro: "Savassi"
-                    logradouro: "Rua Fernandes Tourinho"
-                    numero: 500
-                    registro_do_servidor: "RS-2025-003"
-                    cargo: "Supervisor de Campo"
-                    situacao_atual: true
-                    data_de_admissao: "2023-08-15"
-                    nivel_de_acesso: "supervisor"
-                    supervisor_id: 3
+                # Seu schema 'AgenteOutput' já existente modela essa resposta.
+                $ref: '#/components/schemas/AgenteOutput'
         '401':
-          description: Não autenticado (token ausente ou inválido).
+          description: Não autenticado (token JWT ausente ou inválido).
         '404':
-          description: Usuário não encontrado com o ID especificado.
+          description: Usuário agente não encontrado com o ID especificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Usuário não encontrado"
         '500':
-          description: Erro interno do servidor.
+          description: Erro interno do servidor (ex - falha na conexão ou na consulta pelas áreas de atuação).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed"
+
+
+  /usuarios/supervisor/{supervisor_id}:
+    get:
+      summary: Busca um supervisor específico pelo ID de supervisor
+      description: |
+        Retorna os detalhes completos de um único usuário supervisor, 
+        buscando diretamente pelo seu ID de supervisor (da tabela 'supervisor').
+        Requer autenticação.
+      tags:
+        - Usuários
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: supervisor_id
+          in: path
+          required: true
+          description: O ID de supervisor (chave primária da tabela 'supervisor').
+          schema:
+            type: integer
+            example: 3
+      responses:
+        '200':
+          description: Detalhes do supervisor retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                # O ideal é que esta rota retorne o mesmo schema SupervisorOutput
+                # que você já definiu.
+                $ref: '#/components/schemas/SupervisorOutput'
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '404':
+          description: Usuário supervisor não encontrado com o ID especificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Usuário não encontrado"
+        '500':
+          description: Erro interno do servidor (ex - falha na conexão com o banco de dados).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed"
+
   
   /denuncia:
     post:
@@ -1481,6 +1597,8 @@ paths:
       description: |
         Registra uma nova denúncia sobre um possível foco de dengue. A rota aceita dados do local, contagem de depósitos e múltiplos arquivos (fotos, vídeos) como evidência.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem registrar denúncias.
+      tags:
+        - Denúncia
       security:
         - bearerAuth: []
       requestBody:
@@ -1551,6 +1669,8 @@ paths:
         Retorna uma lista completa de todas as denúncias registradas no sistema.
         Cada denúncia na lista inclui detalhes do local, do supervisor responsável, depósitos e arquivos associados.
         Requer autenticação.
+      tags:
+        - Denúncia
       security:
         - bearerAuth: []
       responses:
@@ -1574,6 +1694,8 @@ paths:
         Retorna os detalhes completos de uma única denúncia, identificada pelo seu ID.
         As informações incluem dados do local, supervisor, depósitos, e arquivos.
         Requer autenticação.
+      tags:
+        - Denúncia
       security:
         - bearerAuth: []
       parameters:
@@ -1597,6 +1719,92 @@ paths:
           description: Nenhuma denúncia foi encontrada com o ID especificado.
         '500':
           description: Erro interno do servidor (pode ocorrer se o ID não for encontrado, devido a um IndexError no código).
+    
+    put:
+      summary: Atualiza uma denúncia por ID
+      description: |
+        Atualiza as informações de uma denúncia existente. Esta rota permite adicionar novos arquivos.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Denúncia
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: denuncia_id
+          in: path
+          required: true
+          description: O ID da denúncia a ser atualizada.
+          schema:
+            type: integer
+            example: 51
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DenunciaUpdateInput'
+      responses:
+        '201': # Seu código retorna 201 (Created)
+          description: Denúncia atualizada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Denuncia atualizada com sucesso" }
+                  data:
+                    $ref: '#/components/schemas/DenunciaResponseData'
+        '400':
+          description: Requisição inválida (campos obrigatórios faltando ou formato de dados incorreto, como data/hora).
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '404':
+          description: Denúncia não encontrada com o ID especificado
+        '500':
+          description: Erro interno do servidor.
+    
+    delete:
+      summary: Deleta uma denúncia por ID
+      description: |
+        Remove uma denúncia específica do sistema, identificada pelo seu ID.
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Denúncia
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: denuncia_id
+          in: path
+          required: true
+          description: O ID da denúncia a ser deletada.
+          schema:
+            type: integer
+            example: 51
+      responses:
+        '200':
+          description: Denúncia deletada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Denúncia deletada com sucesso"
+                  denuncia_id:
+                    type: integer
+                    example: 51
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '404':
+          description: Denúncia não encontrada com o ID especificado.
+        '500':
+          description: Erro interno do servidor (falha na transação do banco de dados).
 
   /artigo:
     post:
@@ -1604,6 +1812,8 @@ paths:
       description: |
         Registra um novo artigo informativo no sistema. A rota aceita um título, descrição, um link externo opcional e uma imagem de capa opcional.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem criar artigos.
+      tags:
+        - Artigos
       security:
         - bearerAuth: []
       requestBody:
@@ -1656,6 +1866,8 @@ paths:
       description: |
         Retorna uma lista de todos os artigos informativos cadastrados no sistema.
         Não Requer autenticação.
+      tags:
+        - Artigos
       security: []
       responses:
         '200':
@@ -1677,6 +1889,8 @@ paths:
       description: |
         Retorna os detalhes completos de um único artigo, identificado pelo seu ID.
         Não Requer autenticação.
+      tags:
+        - Artigos
       security: []
       parameters:
         - name: artigo_id
@@ -1715,6 +1929,8 @@ paths:
         Retorna o arquivo de imagem associado a um artigo específico, identificado pelo seu ID. 
         A resposta não é um JSON, mas sim o próprio arquivo de imagem (e.g., PNG, JPG).
         Esta rota é pública e não requer autenticação.
+      tags:
+        - Artigos
       security: []
       parameters:
         - name: artigo_id
@@ -1759,6 +1975,8 @@ paths:
       description: |
         Retorna um objeto com todos os anos que possuem ciclos cadastrados, e para cada ano, uma lista dos números dos ciclos existentes.
         Requer autenticação.
+      tags:
+        - Ciclo
       security:
         - bearerAuth: []
       responses:
@@ -1779,6 +1997,8 @@ paths:
       description: |
         Retorna uma série histórica de dados com o total de depósitos identificados por ciclo, até o ano e ciclo especificados. Também inclui um resumo comparativo com o ciclo anterior.
         Esta rota é pública.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -1811,6 +2031,8 @@ paths:
       description: |
         Retorna o número total de tratamentos com larvicidas e adulticidas realizados em um ciclo específico.
         Requer autenticação.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -1845,6 +2067,8 @@ paths:
       description: |
         Retorna uma série histórica de dados com o total de focos positivos por ciclo, até o ano e ciclo especificados. Também inclui um resumo comparativo com o ciclo anterior.
         Esta rota é pública.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -1877,6 +2101,8 @@ paths:
       description: |
         Retorna um resumo da quantidade de imóveis por status (inspecionado, bloqueado, fechado, recusado) para um ciclo específico.
         Requer autenticação.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -1911,6 +2137,8 @@ paths:
       description: |
         Retorna o número de imóveis reincidentes com focos positivos (comparado ao ciclo anterior), agrupados por bairro, para um ciclo específico.
         Requer autenticação.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -1945,6 +2173,8 @@ paths:
       description: |
         Retorna uma série histórica de dados com o total de casos confirmados por ciclo, até o ano e ciclo especificados. Também inclui um resumo comparativo com o ciclo anterior.
         Esta rota é pública.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -1977,6 +2207,8 @@ paths:
       description: |
         Retorna a contagem total de cada tipo de atividade (LI, PE, T, DF, PVE) realizada em um ciclo específico.
         Requer autenticação.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -2011,6 +2243,8 @@ paths:
       description: |
         Retorna a quantidade de imóveis com status 'bloqueado' para cada bairro, agrupados por ciclo, dentro de um ano específico. Os dados são formatados para uso direto em bibliotecas de gráficos.
         Esta rota é pública.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -2036,6 +2270,8 @@ paths:
       description: |
         Retorna a quantidade de casos confirmados para cada bairro, agrupados por ciclo, dentro de um ano específico. Os dados são formatados para uso direto em bibliotecas de gráficos.
         Esta rota é pública.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -2061,6 +2297,8 @@ paths:
       description: |
         Retorna a quantidade total de depósitos (soma de todos os tipos) para cada bairro, agrupados por ciclo, dentro de um ano específico. Os dados são formatados para uso direto em bibliotecas de gráficos.
         Esta rota é pública.
+      tags:
+        - Gráficos
       security: []
       parameters:
         - name: ano
@@ -2091,6 +2329,8 @@ paths:
 
         Esta rota não requer um corpo de requisição.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Ciclo
       security:
         - bearerAuth: []
       responses:
@@ -2120,6 +2360,8 @@ paths:
 
         Esta rota não requer um corpo de requisição.
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Ciclo
       security:
         - bearerAuth: []
       responses:
@@ -2143,6 +2385,8 @@ paths:
       description: |
         Atualiza as informações (tipo, forma, quantidade) de um registro de larvicida específico.
         Requer autenticação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       parameters:
@@ -2193,6 +2437,8 @@ paths:
       description: |
         Remove um registro de larvicida específico do sistema, identificado pelo seu ID.
         Requer autenticação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       parameters:
@@ -2227,6 +2473,8 @@ paths:
       description: |
         Atualiza as informações (tipo, quantidade) de um registro de adulticida específico.
         Requer autenticação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       parameters:
@@ -2275,6 +2523,8 @@ paths:
       description: |
         Remove um registro de adulticida específico do sistema, identificado pelo seu ID.
         Requer autenticação.
+      tags:
+        - Registro de Campo
       security:
         - bearerAuth: []
       parameters:
@@ -2309,6 +2559,8 @@ paths:
       description: |
         Retorna um objeto contendo duas listas: as áreas de visita atribuídas a um agente e as denúncias pelas quais ele é o responsável.
         Requer autenticação.
+      tags:
+        - Area de Visita
       security:
         - bearerAuth: []
       parameters:
@@ -2340,3 +2592,4 @@ paths:
                     example: "Agente não encontrado"
         '500':
           description: Erro interno do servidor (falha na conexão ou consulta ao banco de dados).
+  

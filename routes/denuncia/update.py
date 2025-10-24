@@ -153,6 +153,12 @@ def update_denuncia(current_user, denuncia_id):
         
         cursor.execute(update_denuncia, (supervisor_id, rua_avenida, numero, bairro, tipo_imovel, endereco_complemento, data_denuncia, hora_denuncia, observacoes, status, agente_responsavel_id, denuncia_id))
 
+        resultado = cursor.fetchone()
+
+        if not resultado:
+            conn.rollback()
+            return jsonify({"error": "Denúncia não encontrada com o ID especificado."}), 404
+
 
     except Exception as e:
         conn.rollback()
