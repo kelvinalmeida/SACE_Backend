@@ -775,8 +775,18 @@ paths:
                   username:
                     type: string
                     description: O CPF do usuário.
+                  agente_id:
+                    type: integer
+                    example: 2
+                  supervisor_id:
+                    type: integer
+                    example: null
+                  nome_completo:
+                    type: string
+                    example: "Pedro Cavalcante"
                   nivel_de_acesso:
                     type: string
+                    example: "agente"
                     description: O nível de acesso do usuário.
                   token:
                     type: string
@@ -2090,6 +2100,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NovoCicloResponse'
+        '400':
+          description: Já existe um ciclo ativo. Não é possível criar um novo ciclo enquanto outro estiver ativo.
         '401':
           description: Não autenticado (token JWT ausente ou inválido).
         '403':
