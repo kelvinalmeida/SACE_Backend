@@ -14,6 +14,47 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    HeatmapDataPoint:
+      type: object
+      description: "Ponto de dados agregado para uma área de visita, usado no mapa de calor."
+      properties:
+        area_de_visita_id:
+          type: integer
+          example: 1
+        latitude:
+          type: number
+          format: double
+          description: "Latitude da área de visita."
+          example: -9.6653
+        longitude:
+          type: number
+          format: double
+          description: "Longitude da área de visita."
+          example: -35.7354
+        bairro:
+          type: string
+          example: "Ponta Verde"
+        casos_dengue:
+          type: integer
+          description: "Total de casos confirmados de Dengue na área para o ciclo."
+          example: 5
+        casos_zika:
+          type: integer
+          description: "Total de casos confirmados de Zika na área para o ciclo."
+          example: 1
+        casos_chikungunya:
+          type: integer
+          description: "Total de casos confirmados de Chikungunya na área para o ciclo."
+          example: 0
+        focos_encontrados:
+          type: integer
+          description: "Soma de todos os depósitos (A1 a E) encontrados na área para o ciclo."
+          example: 25
+        total_casos_confirmados:
+          type: integer
+          description: "Soma total de todos os casos confirmados na área para o ciclo."
+          example: 6
+
     DenunciaUpdateInput:
       type: object
       required:
@@ -2593,3 +2634,56 @@ paths:
         '500':
           description: Erro interno do servidor (falha na conexão ou consulta ao banco de dados).
   
+  /heatmap_data/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados para o mapa de calor (heatmap) por ciclo
+      description: |
+        Retorna uma lista de pontos de dados agregados por área de visita (latitude, longitude, total de focos, e contagem de casos de Dengue, Zika e Chikungunya) para um ciclo e ano específicos.
+        Esta rota é pública.
+      tags:
+        - Gráficos
+      security: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: "O ano do ciclo a ser consultado."
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: "O número do ciclo a ser consultado."
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: "Dados do mapa de calor retornados com sucesso."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HeatmapDataPoint'
+        '404':
+          description: "Ciclo não encontrado para o ano e número especificados."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Ciclo 2 do ano 2025 não encontrado."
+        '500':
+          description: "Falha na conexão com o banco de dados ou erro interno do servidor."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Falha na conexão com o banco de dados"

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict TBfphXGB2bi1M2QxIgzCbbR3MpBEq5bHbV60t98XN4mnmEjqlLWS6aypAabkanb
+\restrict t3pja8C9VHkfhaRgd3VbFRY78CZmqCk9wMDn0bbMErkN6xFm0i0ks8R1bTLb7oI
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -118,7 +118,9 @@ CREATE TABLE public.area_de_visita (
     municipio character varying(100),
     bairro character varying(100),
     status character varying(50) NOT NULL,
-    logadouro character varying(100)
+    logadouro character varying(100),
+    latitude numeric(10,8),
+    longitude numeric(11,8)
 );
 
 
@@ -497,6 +499,7 @@ ALTER TABLE public.usuario ALTER COLUMN usuario_id ADD GENERATED ALWAYS AS IDENT
 --
 
 COPY public.adulticida (adulticida_id, registro_de_campo_id, tipo, quantidade) FROM stdin;
+1	6	Adulticida de Borrifação Residual (Piretróide)	20
 2	13	Adulticida de Borrifação Residual (Piretróide)	25
 3	26	Adulticida de Borrifação Residual (Piretróide)	15
 4	42	Adulticida de Borrifação Residual (Piretróide)	30
@@ -508,11 +511,6 @@ COPY public.adulticida (adulticida_id, registro_de_campo_id, tipo, quantidade) F
 10	134	Adulticida de Borrifação Residual (Piretróide)	20
 11	138	Adulticida de Borrifação Residual (Piretróide)	30
 12	160	Adulticida de Borrifação Residual (Piretróide)	15
-13	\N	Piretróide	10
-14	\N	Piretróide	10
-15	\N	Piretróide	10
-16	2	temefos	10
-17	2	temefis	10
 \.
 
 
@@ -579,17 +577,17 @@ COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_
 -- Data for Name: area_de_visita; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, status, logadouro) FROM stdin;
-1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Visitado	Avenida Álvaro Otacílio
-2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Visitado	Avenida Doutor Antônio Gomes de Barros
-3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Visitado	Rua Jangadeiros Alagoanos
-4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Visitado	Avenida Fernandes Lima
-5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Visitado	Avenida Brigadeiro Eduardo Gomes de Brito
-6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Não Visitado	Rua Cleto Campelo
-7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Visitado	Avenida Cachoeira do Meirim
-8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Não Visitado	Avenida Menino Marcelo
-9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Visitado	Rua Artur Vital da Silva
-10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Visitado	Rua Professora Maria Esther da Costa Barros
+COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, status, logadouro, latitude, longitude) FROM stdin;
+1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Visitado	Avenida Álvaro Otacílio	-9.66790000	-35.70220000
+2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Visitado	Avenida Doutor Antônio Gomes de Barros	-9.65860000	-35.70320000
+3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Visitado	Rua Jangadeiros Alagoanos	-9.67130000	-35.71180000
+4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Visitado	Avenida Fernandes Lima	-9.64330000	-35.73350000
+5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Visitado	Avenida Brigadeiro Eduardo Gomes de Brito	-9.63870000	-35.69890000
+6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Não Visitado	Rua Cleto Campelo	-9.64530000	-35.72080000
+7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Visitado	Avenida Cachoeira do Meirim	-9.57140000	-35.78910000
+8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Não Visitado	Avenida Menino Marcelo	-9.59360000	-35.75160000
+9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Visitado	Rua Artur Vital da Silva	-9.63580000	-35.73880000
+10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Visitado	Rua Professora Maria Esther da Costa Barros	-9.65590000	-35.71070000
 \.
 
 
@@ -725,6 +723,8 @@ COPY public.denuncia (denuncia_id, supervisor_id, deposito_id, agente_responsave
 --
 
 COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
+1	0	0	2	0	0	0	0
+2	0	0	0	0	0	0	0
 3	0	0	0	0	0	0	0
 4	0	0	0	1	0	0	0
 5	0	0	0	0	0	0	0
@@ -880,7 +880,6 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 155	0	0	0	0	0	0	0
 156	0	0	0	0	0	0	0
 157	0	0	0	0	0	0	0
-2	10	1	1	1	1	1	1
 158	0	0	0	0	0	0	0
 159	0	0	0	0	0	0	0
 160	0	0	0	0	0	0	0
@@ -964,7 +963,6 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 238	0	0	0	0	0	0	0
 239	0	0	0	0	0	0	0
 240	0	0	0	0	0	0	0
-1	1	2	1	2	2	2	3
 \.
 
 
@@ -973,6 +971,8 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 --
 
 COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantidade) FROM stdin;
+1	1	Pyriproxyfen	Granulado	2
+2	1	Methoprene	Tablete	1
 3	4	Bti (Bacillus thuringiensis israelensis)	Tablete	2
 4	6	Pyriproxyfen	Granulado	5
 5	8	Spinosad	Tablete	1
@@ -1000,12 +1000,6 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 27	134	Pyriproxyfen	Granulado	4
 28	138	Spinosad	Tablete	1
 29	160	Pyriproxyfen	Granulado	2
-2	\N	Methoprene	Tablete	1
-30	\N	Spinosad	Tablete	2
-31	\N	Spinosad	Tablete	2
-32	\N	Spinosad	Tablete	2
-33	2	temefos	g	10
-34	2	temefis	c	10
 \.
 
 
@@ -1014,6 +1008,8 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 --
 
 COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado, imovel_categoria_da_localidade, imovel_tipo, imovel_status, caso_comfirmado, imovel_complemento, formulario_tipo, li, pe, t, df, pve, numero_da_amostra, quantiade_tubitos, observacao, area_de_visita_id, agente_id, deposito_id, ciclo_id) FROM stdin;
+1	101	Ímpar	Urbana	Residência	inspecionado	t	Casa A	Dengue	f	f	t	t	f	\N	\N	Foco encontrado em prato de planta.	1	1	1	1
+2	102	Par	Urbana	Residência	inspecionado	f	\N	Dengue	f	f	f	t	f	\N	\N	Nenhum foco encontrado.	1	11	2	1
 3	103	Ímpar	Urbana	Comércio	fechado	f	Loja 3	\N	f	f	f	f	f	\N	\N	Estabelecimento fechado.	1	1	3	1
 4	104	Par	Urbana	Residência	inspecionado	f	\N	Chikungunya	f	f	f	t	f	\N	\N	Morador orientado.	1	11	4	1
 5	201	Ímpar	Urbana	Comércio	inspecionado	f	Loja 02	Dengue	f	t	f	f	f	\N	\N	Nenhum foco encontrado.	2	2	5	1
@@ -1068,7 +1064,6 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 54	402	Par	Urbana	Residência	inspecionado	f	\N	Zica	f	f	f	t	f	\N	\N	Tudo ok.	4	9	54	2
 55	403	Ímpar	Urbana	Comércio	inspecionado	f	Supermercado	Dengue	f	t	f	f	f	\N	\N	Sem alterações.	4	14	55	2
 56	404	Par	Urbana	Residência	nao_inspecionado	f	\N	\N	f	f	f	f	f	\N	\N	Morador em viagem.	4	5	56	2
-2	33	par	rural	Terreno Baldio\t	nao_inspecionado\t\t	f	Perto da praça A	zica	f	t	t	f	f	A003	3	Foco bromélia na varanda.\t	2	2	2	1
 57	501	Ímpar	Urbana	Residência	inspecionado	f	\N	Dengue	f	f	f	f	f	\N	\N	Revisita de acompanhamento, sem larvas.	5	1	57	2
 58	502	Par	Urbana	Terreno Baldio	inspecionado	f	Murado	Dengue	f	t	f	f	f	\N	\N	Sem novos focos.	5	7	58	2
 59	503	Ímpar	Urbana	Residência	nao_inspecionado	f	\N	\N	f	f	f	f	f	\N	\N	Morador continua recusando a visita.	5	15	59	2
@@ -1181,6 +1176,7 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 --
 
 COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, registro_de_campo_id, arquivo_nome) FROM stdin;
+1	1	foco_prato_planta.jpg
 2	3	comercio_fechado_ciclo1.jpg
 3	4	calha_com_agua.jpg
 4	6	caixa_dagua_destampada_antes.jpg
@@ -1222,7 +1218,6 @@ COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, registro_d
 40	142	comercio_fechado_ciclo6.jpg
 41	111	recusa_final_ciclo6.jpg
 42	123	recusa_final_ciclo6.jpg
-1	\N	foco_prato_planta.jpg
 \.
 
 
@@ -1271,7 +1266,7 @@ COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email,
 -- Name: adulticida_adulticida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 17, true);
+SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 12, true);
 
 
 --
@@ -1341,7 +1336,7 @@ SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 240, true);
 -- Name: larvicida_larvicida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 34, true);
+SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 29, true);
 
 
 --
@@ -1656,5 +1651,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict TBfphXGB2bi1M2QxIgzCbbR3MpBEq5bHbV60t98XN4mnmEjqlLWS6aypAabkanb
+\unrestrict t3pja8C9VHkfhaRgd3VbFRY78CZmqCk9wMDn0bbMErkN6xFm0i0ks8R1bTLb7oI
 

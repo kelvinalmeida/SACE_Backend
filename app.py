@@ -25,6 +25,7 @@ from routes.graficos import atividades_realizadas
 from routes.graficos import acoes_de_bloqueio_por_ciclo
 from routes.graficos import depositos_por_ciclos
 from routes.graficos import casos_por_ciclos
+from routes.graficos import heatmap_data
 
 
 # registro_de_campo
@@ -55,6 +56,7 @@ from routes.usuario import get_all_users
 from routes.usuario import get_agente_by_id
 from routes.usuario import get_supervisor_by_id
 from routes.usuario import area_de_visita_e_denuncias_agente
+from routes.usuario import falta_terminar_delete_sereval_agente_by_id
 
 # denuncia
 from routes.denuncia.bluprint import denuncia
