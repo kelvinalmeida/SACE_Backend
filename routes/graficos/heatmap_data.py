@@ -1,14 +1,48 @@
+# ⚠️ Ponto Importante sobre as Cores (Níveis de Risco):
+
+# Sua base de dados atual não armazena diretamente o nível de risco (Preta, Vermelha, Laranja, Amarela) para cada area_de_visita. Para calcular isso, precisamos definir os critérios.
+
+#     Como exemplo, vou usar a seguinte lógica hipotética baseada nas contagens por area_de_visita dentro do ciclo:
+
+#         Preta (Emergência): >= 5 casos confirmados E >= 10 focos encontrados
+
+#         Vermelha (Perigo): >= 3 casos confirmados E >= 5 focos encontrados
+
+#         Laranja (Alerta): >= 1 caso confirmado OU >= 3 focos encontrados
+
+#         Amarela (Atenção): >= 1 foco encontrado (e não se encaixa nas anteriores)
+
+#         (Implícito) Normal/Sem Risco: 0 casos e 0 focos
+
+
 from flask import jsonify, current_app
 from db import create_connection
-# Se precisar de autenticação, descomente a linha abaixo
-# from routes.login.token_required import token_required
-from .bluprint import graficos # Importa o blueprint 'graficos'
+# from routes.login.token_required import token_required # Descomente se precisar de autenticação
+from .bluprint import graficos
 import logging
 
 # Configuração básica de log
 logging.basicConfig(level=logging.INFO)
 
-# Se precisar de autenticação, descomente o decorator abaixo
+# --- Função para calcular o nível de risco ---
+def calculate_risk_level(casos, focos):
+    """
+    Define o nível de risco (cor) baseado no número de casos e focos.
+    *** AJUSTE ESTA LÓGICA CONFORME OS SEUS CRITÉRIOS REAIS ***
+    """
+    if casos >= 5 and focos >= 10:
+        return "Preta"
+    elif casos >= 3 and focos >= 5:
+        return "Vermelha"
+    elif casos >= 1 or focos >= 3:
+        return "Laranja"
+    elif focos >= 1:
+        return "Amarela"
+    else:
+        return "Normal"
+# --- Fim da Função ---
+
+# Descomente o decorator se precisar de autenticação
 # @token_required
 # def get_heatmap_data(current_user, ano, ciclo):
 @graficos.route('/heatmap_data/<int:ano>/<int:ciclo>', methods=['GET'])
@@ -16,9 +50,9 @@ def get_heatmap_data(ano, ciclo):
     """
     Endpoint para obter dados agregados por área de visita para um mapa de calor.
 
-    Retorna latitude, longitude, contagem total de focos (depósitos), e contagem
-    específica de casos confirmados de Dengue, Zika e Chikungunya para cada
-    área de visita dentro de um ciclo específico.
+    Retorna latitude, longitude, contagem total de focos, contagem total e
+    específica (Dengue, Zika, Chikungunya) de casos confirmados, e o nível
+    de risco (cor) para cada ponto geográfico dentro de um ciclo específico.
     """
     conn = None
     cursor = None
@@ -46,14 +80,11 @@ def get_heatmap_data(ano, ciclo):
 
         ciclo_id = ciclo_result['ciclo_id']
         logging.info(f"Ciclo ID encontrado: {ciclo_id} para Ano: {ano}, Ciclo: {ciclo}")
-        
-        # return jsonify(ciclo_result)
-
 
         # --- 2. Query principal para agregar dados por COORDENADAS E BAIRRO ---
+        # <<< MODIFICADA PARA REINCLUIR CONTAGENS ESPECÍFICAS DE CASOS >>>
         heatmap_query = """
             SELECT
-                -- Removido av.area_de_visita_id da seleção principal
                 av.latitude,
                 av.longitude,
                 av.bairro,
@@ -75,38 +106,52 @@ def get_heatmap_data(ano, ciclo):
             WHERE
                 av.latitude IS NOT NULL AND av.longitude IS NOT NULL -- Apenas áreas com coordenadas
             GROUP BY
-                -- Alterado o GROUP BY para agrupar por coordenadas e bairro
                 av.latitude,
                 av.longitude,
                 av.bairro
             ORDER BY
-                av.bairro; -- Mantém a ordenação por bairro
+                av.bairro;
         """
         cursor.execute(heatmap_query, (ciclo_id,))
-        results = cursor.fetchall()
+        results = cursor.fetchall() # Resultados do banco de dados
 
         logging.info(f"Consulta para heatmap retornou {len(results)} pontos/bairros agregados.")
 
-        # Converte os resultados para inteiros onde aplicável
+        # --- 3. Processa os resultados para adicionar o nível de risco ---
+        processed_results = []
         for row in results:
-             row['casos_dengue'] = int(row['casos_dengue'])
-             row['casos_zika'] = int(row['casos_zika'])
-             row['casos_chikungunya'] = int(row['casos_chikungunya'])
-             row['focos_encontrados'] = int(row['focos_encontrados'])
-             row['total_casos_confirmados'] = int(row['total_casos_confirmados'])
+            casos_total = int(row['total_casos_confirmados'])
+            focos = int(row['focos_encontrados'])
+            casos_dengue = int(row['casos_dengue']) # <<< ADICIONADO >>>
+            casos_zika = int(row['casos_zika'])     # <<< ADICIONADO >>>
+            casos_chikungunya = int(row['casos_chikungunya']) # <<< ADICIONADO >>>
 
+            # Calcula o nível de risco usando a função
+            nivel_risco = calculate_risk_level(casos_total, focos)
 
-        return jsonify(results), 200
+            # Cria um novo dicionário com todos os dados + nível de risco
+            processed_row = {
+                "latitude": row['latitude'],
+                "longitude": row['longitude'],
+                "bairro": row['bairro'],
+                "focos_encontrados": focos,
+                "total_casos_confirmados": casos_total,
+                "casos_dengue": casos_dengue,         # <<< ADICIONADO >>>
+                "casos_zika": casos_zika,             # <<< ADICIONADO >>>
+                "casos_chikungunya": casos_chikungunya, # <<< ADICIONADO >>>
+                "nivel_risco": nivel_risco
+            }
+            processed_results.append(processed_row)
+
+        return jsonify(processed_results), 200 # Retorna a lista processada
 
     except Exception as e:
         logging.error(f"Erro ao buscar dados para heatmap: {e}", exc_info=True)
-        # Se houver erro, tenta fazer rollback (embora seja um SELECT, é boa prática)
         if conn:
             conn.rollback()
         return jsonify({"error": "Ocorreu um erro interno ao processar a solicitação.", "details": str(e)}), 500
 
     finally:
-        # Garante que cursor e conexão sejam fechados
         if cursor:
             cursor.close()
         if conn:

@@ -14,6 +14,46 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    DashboardDepositos:
+      type: object
+      description: "Contagem total de depósitos por tipo no ciclo."
+      properties:
+        a1: { type: integer, example: 50 }
+        a2: { type: integer, example: 20 }
+        b: { type: integer, example: 15 }
+        c: { type: integer, example: 10 }
+        d1: { type: integer, example: 30 }
+        d2: { type: integer, example: 25 }
+        e: { type: integer, example: 5 }
+
+    DashboardCasosConfirmados:
+      type: object
+      description: "Contagem total de casos confirmados por doença no ciclo."
+      properties:
+        dengue: { type: integer, example: 5 }
+        zika: { type: integer, example: 2 }
+        chikungunya: { type: integer, example: 1 }
+
+    DashboardAreasRisco:
+      type: object
+      description: "Contagem de áreas de visita agrupadas por nível de risco (baseado nos critérios do código)."
+      properties:
+        Preta: { type: integer, example: 1 }
+        Vermelha: { type: integer, example: 3 }
+        Laranja: { type: integer, example: 8 }
+        Amarela: { type: integer, example: 12 }
+
+    DashboardSummaryResponse:
+      type: object
+      description: "Resposta com os dados resumidos para o dashboard."
+      properties:
+        depositos:
+          $ref: '#/components/schemas/DashboardDepositos'
+        casos_confirmados:
+          $ref: '#/components/schemas/DashboardCasosConfirmados'
+        areas_risco:
+          $ref: '#/components/schemas/DashboardAreasRisco'
+
     HeatmapDataPoint:
       type: object
       description: "Ponto de dados agregado para uma área de visita, usado no mapa de calor."
@@ -34,6 +74,9 @@ components:
         bairro:
           type: string
           example: "Ponta Verde"
+        nivel_risco:
+          type: string
+          example: "Laranja"
         casos_dengue:
           type: integer
           description: "Total de casos confirmados de Dengue na área para o ciclo."
@@ -2667,6 +2710,62 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/HeatmapDataPoint'
+        '404':
+          description: "Ciclo não encontrado para o ano e número especificados."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Ciclo 2 do ano 2025 não encontrado."
+        '500':
+          description: "Falha na conexão com o banco de dados ou erro interno do servidor."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Falha na conexão com o banco de dados"
+
+  /grafico/dashboard_summary/{ano}/{ciclo}:
+    get:
+      summary: Obtém um resumo de dados para o dashboard
+      description: |
+        Endpoint para obter um resumo de dados para o dashboard de um ciclo específico. 
+        Retorna a contagem total de depósitos por tipo (A1, A2, B, etc.), 
+        a contagem total de casos confirmados por doença (Dengue, Zika, Chikungunya) e
+        a contagem de áreas de visita agrupadas por nível de risco (Preta, Vermelha, Laranja, Amarela).
+        
+        Esta rota é pública e não requer autenticação.
+      tags:
+        - Gráficos
+      security: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: "O ano do ciclo a ser consultado."
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: "O número do ciclo a ser consultado."
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: "Dados do resumo retornados com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummaryResponse'
         '404':
           description: "Ciclo não encontrado para o ano e número especificados."
           content:
