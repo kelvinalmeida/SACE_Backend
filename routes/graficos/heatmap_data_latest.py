@@ -20,11 +20,11 @@ from db import create_connection
 # from routes.login.token_required import token_required # Descomente se precisar de autenticação
 from .bluprint import graficos
 import logging
+from collections import Counter # Usaremos Counter para contar as cores
 
 # Configuração básica de log
 logging.basicConfig(level=logging.INFO)
 
-# --- Função para calcular o nível de risco ---
 def calculate_risk_level(casos, focos):
     """
     Define o nível de risco (cor) baseado no número de casos e focos.
@@ -39,20 +39,20 @@ def calculate_risk_level(casos, focos):
     elif focos >= 1:
         return "Amarela"
     else:
-        return "Normal"
-# --- Fim da Função ---
+        return "Normal" # Ou None, se não quiser contar áreas sem risco
+    
 
+# ... (importações, função calculate_risk_level, rota get_heatmap_data) ...
+
+# --- NOVA ROTA PARA O CICLO MAIS RECENTE ---
 # Descomente o decorator se precisar de autenticação
 # @token_required
-# def get_heatmap_data(current_user, ano, ciclo):
-@graficos.route('/heatmap_data/<int:ano>/<int:ciclo>', methods=['GET'])
-def get_heatmap_data(ano, ciclo):
+# def get_latest_heatmap_data(current_user):
+@graficos.route('/heatmap_data/latest', methods=['GET'])
+def get_latest_heatmap_data():
     """
-    Endpoint para obter dados agregados por área de visita para um mapa de calor.
-
-    Retorna latitude, longitude, contagem total de focos, contagem total e
-    específica (Dengue, Zika, Chikungunya) de casos confirmados, e o nível
-    de risco (cor) para cada ponto geográfico dentro de um ciclo específico.
+    Endpoint para obter dados agregados por área de visita para um mapa de calor
+    para o CICLO MAIS RECENTE.
     """
     conn = None
     cursor = None
@@ -64,89 +64,82 @@ def get_heatmap_data(ano, ciclo):
 
         cursor = conn.cursor()
 
-        # --- 1. Encontrar o ciclo_id ---
-        find_ciclo_id_query = """
-            SELECT ciclo_id
+        # --- 1. Encontrar o ciclo_id MAIS RECENTE ---
+        find_latest_ciclo_id_query = """
+            SELECT ciclo_id, EXTRACT(YEAR FROM ano_de_criacao)::INTEGER AS ano, ciclo
             FROM ciclos
-            WHERE EXTRACT(YEAR FROM ano_de_criacao)::INTEGER = %s AND ciclo = %s
+            ORDER BY ano_de_criacao DESC, ciclo DESC
             LIMIT 1;
         """
-        cursor.execute(find_ciclo_id_query, (ano, ciclo))
-        ciclo_result = cursor.fetchone()
+        cursor.execute(find_latest_ciclo_id_query)
+        latest_ciclo_result = cursor.fetchone()
 
-        if not ciclo_result:
-            logging.warning(f"Ciclo não encontrado para ano {ano}, ciclo {ciclo}")
-            return jsonify({"error": f"Ciclo {ciclo} do ano {ano} não encontrado."}), 404
+        if not latest_ciclo_result:
+            logging.warning("Nenhum ciclo encontrado no banco de dados.")
+            return jsonify({"error": "Nenhum ciclo encontrado no sistema."}), 404
 
-        ciclo_id = ciclo_result['ciclo_id']
-        logging.info(f"Ciclo ID encontrado: {ciclo_id} para Ano: {ano}, Ciclo: {ciclo}")
+        ciclo_id = latest_ciclo_result['ciclo_id']
+        logging.info(f"Ciclo ID mais recente encontrado: {ciclo_id}")
 
         # --- 2. Query principal para agregar dados por COORDENADAS E BAIRRO ---
-        # <<< MODIFICADA PARA REINCLUIR CONTAGENS ESPECÍFICAS DE CASOS >>>
+        # (A query é a mesma da rota anterior, só muda o parâmetro ciclo_id)
         heatmap_query = """
             SELECT
-                av.latitude,
-                av.longitude,
-                av.bairro,
-                -- Contagem de casos confirmados por tipo (usando formulario_tipo)
+                av.latitude, av.longitude, av.bairro,
                 SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Dengue' THEN 1 ELSE 0 END) AS casos_dengue,
                 SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Zica' THEN 1 ELSE 0 END) AS casos_zika,
                 SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Chikungunya' THEN 1 ELSE 0 END) AS casos_chikungunya,
-                -- Soma total de depósitos (focos encontrados)
                 COALESCE(SUM(d.a1 + d.a2 + d.b + d.c + d.d1 + d.d2 + d.e), 0) AS focos_encontrados,
-                -- Contagem total de casos confirmados na área (independente do tipo)
                 SUM(CASE WHEN rc.caso_comfirmado = TRUE THEN 1 ELSE 0 END) AS total_casos_confirmados
-            FROM
-                area_de_visita av
-            LEFT JOIN
-                registro_de_campo rc ON av.area_de_visita_id = rc.area_de_visita_id
-                                   AND rc.ciclo_id = %s -- Filtro do ciclo no JOIN
-            LEFT JOIN
-                depositos d ON rc.deposito_id = d.deposito_id
-            WHERE
-                av.latitude IS NOT NULL AND av.longitude IS NOT NULL -- Apenas áreas com coordenadas
-            GROUP BY
-                av.latitude,
-                av.longitude,
-                av.bairro
-            ORDER BY
-                av.bairro;
+            FROM area_de_visita av
+            LEFT JOIN registro_de_campo rc ON av.area_de_visita_id = rc.area_de_visita_id AND rc.ciclo_id = %s
+            LEFT JOIN depositos d ON rc.deposito_id = d.deposito_id
+            WHERE av.latitude IS NOT NULL AND av.longitude IS NOT NULL
+            GROUP BY av.latitude, av.longitude, av.bairro
+            ORDER BY av.bairro;
         """
         cursor.execute(heatmap_query, (ciclo_id,))
-        results = cursor.fetchall() # Resultados do banco de dados
+        results = cursor.fetchall()
 
-        logging.info(f"Consulta para heatmap retornou {len(results)} pontos/bairros agregados.")
+        logging.info(f"Consulta para heatmap (latest) retornou {len(results)} pontos/bairros agregados.")
 
         # --- 3. Processa os resultados para adicionar o nível de risco ---
+        # (A lógica é a mesma da rota anterior)
         processed_results = []
         for row in results:
             casos_total = int(row['total_casos_confirmados'])
             focos = int(row['focos_encontrados'])
-            casos_dengue = int(row['casos_dengue']) # <<< ADICIONADO >>>
-            casos_zika = int(row['casos_zika'])     # <<< ADICIONADO >>>
-            casos_chikungunya = int(row['casos_chikungunya']) # <<< ADICIONADO >>>
-
-            # Calcula o nível de risco usando a função
+            casos_dengue = int(row['casos_dengue'])
+            casos_zika = int(row['casos_zika'])
+            casos_chikungunya = int(row['casos_chikungunya'])
             nivel_risco = calculate_risk_level(casos_total, focos)
 
-            # Cria um novo dicionário com todos os dados + nível de risco
             processed_row = {
-                "latitude": row['latitude'],
-                "longitude": row['longitude'],
-                "bairro": row['bairro'],
-                "focos_encontrados": focos,
+                "latitude": row['latitude'], "longitude": row['longitude'],
+                "bairro": row['bairro'], "focos_encontrados": focos,
                 "total_casos_confirmados": casos_total,
-                "casos_dengue": casos_dengue,         # <<< ADICIONADO >>>
-                "casos_zika": casos_zika,             # <<< ADICIONADO >>>
-                "casos_chikungunya": casos_chikungunya, # <<< ADICIONADO >>>
+                "casos_dengue": casos_dengue, "casos_zika": casos_zika,
+                "casos_chikungunya": casos_chikungunya,
                 "nivel_risco": nivel_risco
             }
             processed_results.append(processed_row)
+            
+        # Adiciona informação sobre qual ciclo foi usado na resposta (opcional, mas útil)
+        response_data = {
+             "ciclo_info": {
+                 "ano": latest_ciclo_result['ano'], 
+                 "ciclo": latest_ciclo_result['ciclo'], 
+                 "id": ciclo_id
+             },
+             "heatmap_points": processed_results
+         }
 
-        return jsonify(processed_results), 200 # Retorna a lista processada
+        return jsonify(processed_results), 200 # Retorna só a lista
+        # return jsonify(response_data), 200 # Retorna a lista dentro de um objeto com info do ciclo
+
 
     except Exception as e:
-        logging.error(f"Erro ao buscar dados para heatmap: {e}", exc_info=True)
+        logging.error(f"Erro ao buscar dados para heatmap (latest): {e}", exc_info=True)
         if conn:
             conn.rollback()
         return jsonify({"error": "Ocorreu um erro interno ao processar a solicitação.", "details": str(e)}), 500
