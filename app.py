@@ -27,6 +27,8 @@ from routes.graficos import depositos_por_ciclos
 from routes.graficos import casos_por_ciclos
 from routes.graficos import heatmap_data
 from routes.graficos import heatmap_painel
+from routes.graficos import heatmap_data_latest
+from routes.graficos import heatmap_painel_latest
 
 
 # registro_de_campo

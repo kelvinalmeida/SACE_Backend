@@ -2731,7 +2731,7 @@ paths:
                     type: string
                     example: "Falha na conexão com o banco de dados"
 
-  /grafico/dashboard_summary/{ano}/{ciclo}:
+  /dashboard_summary/{ano}/{ciclo}:
     get:
       summary: Obtém um resumo de dados para o dashboard
       description: |
@@ -2786,3 +2786,94 @@ paths:
                   error:
                     type: string
                     example: "Falha na conexão com o banco de dados"
+                  
+  /dashboard_summary/latest:
+    get:
+      summary: Obtém resumo do dashboard para o ciclo mais recente
+      description: |
+        Busca o ciclo mais recente registrado no sistema e retorna um resumo de dados 
+        para o dashboard, incluindo contagem total de depósitos por tipo, 
+        casos confirmados por doença e contagem de áreas de visita por nível de risco.
+        
+        Esta rota é pública e não requer autenticação.
+      tags:
+        - Gráficos
+      security: []
+      responses:
+        '200':
+          description: "Dados do resumo para o ciclo mais recente retornados com sucesso."
+          content:
+            application/json:
+              schema:
+                # Reutiliza o mesmo schema da rota que especifica o ciclo
+                $ref: '#/components/schemas/DashboardSummaryResponse' 
+        '404':
+          description: "Nenhum ciclo encontrado no sistema."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Nenhum ciclo encontrado no sistema."
+        '500':
+          description: "Falha na conexão com o banco de dados ou erro interno do servidor."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Falha na conexão com o banco de dados"
+                  details: # Incluído com base no seu código Python
+                    type: string 
+                    example: "Specific database error message..."
+
+  /heatmap_data/latest:
+    get:
+      summary: Obtém dados para o mapa de calor do ciclo mais recente
+      description: |
+        Busca o ciclo mais recente registrado no sistema e retorna uma lista de pontos 
+        de dados agregados por ponto geográfico (latitude, longitude, bairro) 
+        para uso em um mapa de calor (heatmap). Cada ponto inclui contagem de focos, 
+        casos confirmados (total e por doença) e o nível de risco calculado.
+        
+        Esta rota é pública e não requer autenticação.
+      tags:
+        - Gráficos
+      security: []
+      responses:
+        '200':
+          description: "Dados do mapa de calor para o ciclo mais recente retornados com sucesso."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  # Usa o schema HeatmapDataPoint atualizado
+                  $ref: '#/components/schemas/HeatmapDataPoint' 
+        '404':
+          description: "Nenhum ciclo encontrado no sistema."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Nenhum ciclo encontrado no sistema."
+        '500':
+          description: "Falha na conexão com o banco de dados ou erro interno do servidor."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Falha na conexão com o banco de dados"
+                  details: # Incluído com base no seu código Python
+                    type: string 
+                    example: "Specific database error message..."
