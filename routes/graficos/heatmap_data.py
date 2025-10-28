@@ -50,16 +50,16 @@ def get_heatmap_data(ano, ciclo):
         # return jsonify(ciclo_result)
 
 
-        # --- 2. Query principal para agregar dados por área de visita ---
+        # --- 2. Query principal para agregar dados por COORDENADAS E BAIRRO ---
         heatmap_query = """
             SELECT
-                av.area_de_visita_id,
+                -- Removido av.area_de_visita_id da seleção principal
                 av.latitude,
                 av.longitude,
                 av.bairro,
                 -- Contagem de casos confirmados por tipo (usando formulario_tipo)
                 SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Dengue' THEN 1 ELSE 0 END) AS casos_dengue,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Zica' THEN 1 ELSE 0 END) AS casos_zika, -- Ajustado para 'Zica' conforme seu exemplo
+                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Zica' THEN 1 ELSE 0 END) AS casos_zika,
                 SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Chikungunya' THEN 1 ELSE 0 END) AS casos_chikungunya,
                 -- Soma total de depósitos (focos encontrados)
                 COALESCE(SUM(d.a1 + d.a2 + d.b + d.c + d.d1 + d.d2 + d.e), 0) AS focos_encontrados,
@@ -75,17 +75,19 @@ def get_heatmap_data(ano, ciclo):
             WHERE
                 av.latitude IS NOT NULL AND av.longitude IS NOT NULL -- Apenas áreas com coordenadas
             GROUP BY
-                av.area_de_visita_id, av.latitude, av.longitude, av.bairro
+                -- Alterado o GROUP BY para agrupar por coordenadas e bairro
+                av.latitude,
+                av.longitude,
+                av.bairro
             ORDER BY
-                av.bairro;
+                av.bairro; -- Mantém a ordenação por bairro
         """
         cursor.execute(heatmap_query, (ciclo_id,))
         results = cursor.fetchall()
 
-        logging.info(f"Consulta para heatmap retornou {len(results)} áreas.")
+        logging.info(f"Consulta para heatmap retornou {len(results)} pontos/bairros agregados.")
 
-        return jsonify(results)
-        # Converte os resultados para inteiros onde aplicável (já devem ser, mas garante)
+        # Converte os resultados para inteiros onde aplicável
         for row in results:
              row['casos_dengue'] = int(row['casos_dengue'])
              row['casos_zika'] = int(row['casos_zika'])
