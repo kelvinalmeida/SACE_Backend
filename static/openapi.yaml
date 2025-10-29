@@ -1621,6 +1621,125 @@ paths:
                   error:
                     type: string
                     example: "Database connection failed"
+    
+    put: 
+      summary: Atualiza um agente e suas áreas de atuação
+      description: |
+        Atualiza os dados de registro de um agente e, opcionalmente, 
+        substitui completamente sua lista de áreas de atuação.
+        Requer autenticação.
+      tags:
+        - Usuários
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: agente_id
+          in: path
+          required: true
+          description: O ID do agente a ser atualizado.
+          schema:
+            type: integer
+            example: 7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Todos os campos são opcionais. Se enviados, substituem os dados existentes. O campo 'setor_de_atuacao' substitui as áreas de visita.
+              properties:
+                nome_completo: { type: string }
+                cpf: { type: string }
+                rg: { type: string }
+                data_nascimento: { type: string, description: "Formato esperado é DD/MM/YYYY" }
+                email: { type: string, format: email }
+                telefone_ddd: { type: integer }
+                telefone_numero: { type: string }
+                estado: { type: string }
+                municipio: { type: string }
+                bairro: { type: string }
+                logradouro: { type: string }
+                numero: { type: integer }
+                registro_do_servidor: { type: string }
+                cargo: { type: string }
+                situacao_atual: { type: boolean }
+                data_de_admissao: { type: string, description: "Formato esperado é DD/MM/YYYY" }
+                senha: { type: string }
+                setor_de_atuacao:
+                  type: array
+                  items: { type: integer }
+                  description: "Lista de IDs das áreas de visita (substituição total)."
+            # Exemplo de Request Body completo
+            example:
+              nome_completo: "Mateus dos Santos Ferreira"
+              cpf: "12433age6s"
+              rg: "123333"
+              data_nascimento: "10/02/1995"
+              email: "123.m@dwail.com"
+              telefone_ddd: 82
+              telefone_numero: "98713973"
+              estado: "AL"
+              municipio: "Santa Lucia"
+              bairro: "123"
+              logradouro: "Condomínio Residencial Galápagos"
+              numero: 123
+              registro_do_servidor: "mat374347"
+              cargo: "Agente de Endemias"
+              situacao_atual: true
+              data_de_admissao: "10/02/1995"
+              senha: "123456789"
+              setor_de_atuacao: [1, 2]
+      responses:
+        '200':
+          description: Dados do agente atualizados com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Dados do Agente com ID 7 atualizados com sucesso." }
+                  usuario_id: { type: integer, example: 12 }
+        '400':
+          description: Dados inválidos (ex. formato de data, ID de área inexistente).
+        '404':
+          description: Agente não encontrado.
+        '500':
+          description: Erro interno do servidor.
+    delete: # <-- NOVO
+      summary: Deleta um agente pelo ID de agente
+      description: |
+        Remove um agente do sistema. Esta ação também remove o registro associado na tabela 'usuario' (CASCADE).
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Usuários
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: agente_id
+          in: path
+          required: true
+          description: O ID do agente a ser deletado.
+          schema:
+            type: integer
+            example: 7
+      responses:
+        '200':
+          description: Agente deletado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Agente com ID 7 deletado com sucesso." }
+                  agente_id: { type: integer, example: 7 }
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '404':
+          description: Agente não encontrado com o ID especificado.
+        '500':
+          description: Erro interno do servidor.
 
 
   /usuarios/supervisor/{supervisor_id}:
@@ -1673,6 +1792,118 @@ paths:
                   error:
                     type: string
                     example: "Database connection failed"
+    
+    put: 
+      summary: Atualiza um supervisor
+      description: |
+        Atualiza os dados de registro de um supervisor.
+        Requer autenticação.
+      tags:
+        - Usuários
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: supervisor_id
+          in: path
+          required: true
+          description: O ID do supervisor a ser atualizado.
+          schema:
+            type: integer
+            example: 3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Todos os campos são opcionais. Se enviados, substituem os dados existentes.
+              properties:
+                nome_completo: { type: string }
+                cpf: { type: string }
+                rg: { type: string }
+                data_nascimento: { type: string, description: "Formato esperado é DD/MM/YYYY" }
+                email: { type: string, format: email }
+                telefone_ddd: { type: integer }
+                telefone_numero: { type: string }
+                estado: { type: string }
+                municipio: { type: string }
+                bairro: { type: string }
+                logradouro: { type: string }
+                numero: { type: integer }
+                registro_do_servidor: { type: string }
+                cargo: { type: string }
+                situacao_atual: { type: boolean }
+                data_de_admissao: { type: string, description: "Formato esperado é DD/MM/YYYY" }
+                senha: { type: string }
+            # Exemplo de Request Body completo
+            example:
+              nome_completo: "Mateus dos Santos Ferreira"
+              cpf: "12433sup6s"
+              rg: "123333"
+              data_nascimento: "10/02/1995"
+              email: "12365434.m@dwail.com"
+              telefone_ddd: 82
+              telefone_numero: "98713973"
+              estado: "AL"
+              municipio: "Santa Lucia"
+              bairro: "123"
+              logradouro: "Condomínio Residencial Galápagos"
+              numero: 123
+              registro_do_servidor: "mat374347"
+              cargo: "Supervisor de Endemias"
+              situacao_atual: true
+              data_de_admissao: "10/02/1995"
+              senha: "123456789"
+      responses:
+        '200':
+          description: Dados do supervisor atualizados com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Dados do Supervisor com ID 3 atualizados com sucesso." }
+                  usuario_id: { type: integer, example: 10 }
+        '404':
+          description: Supervisor não encontrado.
+        '500':
+          description: Erro interno do servidor.
+    
+    delete: # <-- NOVO
+      summary: Deleta um supervisor pelo ID de supervisor
+      description: |
+        Remove um supervisor do sistema. Esta ação também remove o registro associado na tabela 'usuario' (CASCADE).
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
+      tags:
+        - Usuários
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: supervisor_id
+          in: path
+          required: true
+          description: O ID do supervisor a ser deletado.
+          schema:
+            type: integer
+            example: 3
+      responses:
+        '200':
+          description: Supervisor deletado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "success" }
+                  message: { type: string, example: "Supervisor com ID 3 deletado com sucesso." }
+                  supervisor_id: { type: integer, example: 3 }
+        '403':
+          description: Acesso proibido (usuário não é um supervisor).
+        '404':
+          description: Supervisor não encontrado com o ID especificado.
+        '500':
+          description: Erro interno do servidor.
 
   
   /denuncia:
@@ -2877,3 +3108,56 @@ paths:
                   details: # Incluído com base no seu código Python
                     type: string 
                     example: "Specific database error message..."
+  
+  /ciclos/status:
+    get:
+      summary: Obtém o status do ciclo de visitas atual
+      description: |
+        Verifica se existe um ciclo de visitas ativo no momento. 
+        Retorna 'ativo' com os detalhes do ciclo ou 'inativo' se não houver um ciclo em andamento.
+        Requer autenticação.
+      tags:
+        - Ciclo
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Status do ciclo retornado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ativo, inativo]
+                    description: Indica se um ciclo de visitas está ativo ou inativo.
+                  detalhes:
+                    description: Detalhes do ciclo ativo (se houver) ou mensagem de status inativo.
+                    oneOf: # Mantemos o oneOf para a definição do schema, cobrindo os dois tipos
+                      - type: object
+                        properties:
+                          ciclo_id: { type: integer, example: 4 }
+                          ano: { type: integer, example: 2025 }
+                          ciclo_numero: { type: integer, example: 2 }
+                      - type: string
+              
+              # ESTA SEÇÃO FORÇA A EXIBIÇÃO DE EXEMPLOS COMPLETOS NA DOCUMENTAÇÃO
+              examples:
+                CicloAtivo:
+                  summary: Exemplo de Ciclo Ativo
+                  value:
+                    status: "ativo"
+                    detalhes:
+                      ciclo_id: 4
+                      ano: 2025
+                      ciclo_numero: 2
+                CicloInativo:
+                  summary: Exemplo de Ciclo Inativo
+                  value:
+                    status: "inativo"
+                    detalhes: "Nenhum ciclo ativo encontrado. É necessário iniciar um novo ciclo."
+        '401':
+          description: Não autenticado (token ausente ou inválido).
+        '500':
+          description: Erro interno do servidor.

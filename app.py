@@ -11,6 +11,7 @@ from routes.ciclo.bluprint import ciclos
 from routes.ciclo import get_anos_and_ciclos
 from routes.ciclo import criar_ciclo
 from routes.ciclo import finalizar_ciclo
+from routes.ciclo import status
 
 
 # graficos
@@ -59,8 +60,10 @@ from routes.usuario import get_all_users
 from routes.usuario import get_agente_by_id
 from routes.usuario import get_supervisor_by_id
 from routes.usuario import area_de_visita_e_denuncias_agente
-from routes.usuario import falta_terminar_delete_sereval_agente_by_id
-
+from routes.usuario import update_agente
+from routes.usuario import update_supervisor
+from routes.usuario import delete_agente
+from routes.usuario import delete_supervisor
 # denuncia
 from routes.denuncia.bluprint import denuncia
 from routes.denuncia import post_one_denuncia
