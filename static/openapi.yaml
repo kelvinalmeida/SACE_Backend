@@ -1234,6 +1234,118 @@ paths:
         '500':
           description: Erro interno do servidor.
 
+  /registro_de_campo/{ano}/{ciclo}:
+    get:
+      summary: Lista registros de campo por Ano e Ciclo
+      description: |
+        Retorna uma lista completa de todos os registros de campo associados a um ano e ciclo específicos.
+        Requer autenticação.
+      tags:
+        - Registro de Campo
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo a ser consultado.
+          schema:
+            type: integer
+            example: 2024
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo a ser consultado (ex 1, 2).
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Lista de registros retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegistroDeCampoCompleto'
+        '401':
+          description: Não autorizado.
+        '404':
+          description: Ciclo não encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Ciclo 2 do ano 2024 não encontrado."
+        '500':
+          description: Erro interno do servidor.
+    
+  /casos_confirmado/{registro_de_campo_id}:
+    put:
+      summary: Marca um registro de campo como caso confirmado
+      description: |
+        Atualiza um registro de campo específico, definindo o campo `caso_comfirmado` como `TRUE`. 
+        Esta ação indica que o imóvel visitado associado a este registro teve um caso confirmado (ex: Dengue, Zika, Chikungunya, dependendo do `formulario_tipo` original).
+
+        **Atenção:** Requer autenticação via token JWT (usuários logados). 
+        A rota não exige um corpo de requisição, apenas o ID no path.
+      tags:
+        - Registro de Campo # Ou uma tag mais específica se preferir, como "Casos Confirmados"
+      security:
+        - bearerAuth: [] # Indica que requer autenticação definida em components/securitySchemes
+      parameters:
+        - name: registro_de_campo_id
+          in: path
+          required: true
+          description: O ID do registro de campo a ser marcado como caso confirmado.
+          schema:
+            type: integer
+            example: 123 
+      responses:
+        '200':
+          description: Caso confirmado com sucesso para o registro de campo especificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Caso confirmado com sucesso do degistro de campo com o ID 123."
+        '401':
+          description: Não autenticado (token JWT ausente, inválido ou expirado).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token is missing!" # Ou outra mensagem dependendo da implementação do @token_required
+        '404':
+          description: Registro de campo não encontrado com o ID especificado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Registro de campo not found"
+        '500':
+          description: Erro interno do servidor (ex - falha na conexão com o banco de dados ou erro na execução do UPDATE).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Database connection failed" # Ou "Erro interno no servidor: ..."
+
   /area_de_visita:
     get:
       summary: Lista todas as áreas de visita

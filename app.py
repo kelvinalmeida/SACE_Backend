@@ -43,6 +43,8 @@ from routes.registro_de_campo import update_adulticida
 from routes.registro_de_campo import delete
 from routes.registro_de_campo import delete_larvicida
 from routes.registro_de_campo import delete_adulticida
+from routes.registro_de_campo import casos_confirmados
+from routes.registro_de_campo import get_by_ciclo
 
 
 # area_de_visita
