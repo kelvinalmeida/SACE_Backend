@@ -30,6 +30,7 @@ from routes.graficos import heatmap_data
 from routes.graficos import heatmap_painel
 from routes.graficos import heatmap_data_latest
 from routes.graficos import heatmap_painel_latest
+from routes.graficos import summary_pdf
 
 
 # registro_de_campo
@@ -45,6 +46,7 @@ from routes.registro_de_campo import delete_larvicida
 from routes.registro_de_campo import delete_adulticida
 from routes.registro_de_campo import casos_confirmados
 from routes.registro_de_campo import get_by_ciclo
+
 
 
 # area_de_visita

@@ -3273,3 +3273,89 @@ paths:
           description: Não autenticado (token ausente ou inválido).
         '500':
           description: Erro interno do servidor.
+          
+  /summary_pdf/{ano}/{ciclo}:
+    get:
+      summary: Gera um relatório PDF de resumo do ciclo
+      description: |
+        Gera um relatório completo em PDF contendo o resumo de um ciclo específico, identificado pelo ano e número. O PDF é dividido em três seções principais:
+        
+        1.  **Resumo por Agente:** Uma tabela listando todos os agentes e suas métricas (total de imóveis, inspecionados, bloqueados, fechados, recusados, total de focos e total de casos confirmados).
+        2.  **Resumo de Depósitos e Tratamentos:** Tabelas que detalham o total de depósitos encontrados (A1, A2, B, etc.) e o total de tratamentos aplicados (Larvicidas e Adulticidas por tipo) em todo o ciclo.
+        3.  **Resumo por Zona (Bairro):** (Em uma nova página) Um bloco de informações para cada zona/bairro, detalhando o nível de risco, total de focos e casos confirmados (total e por doença).
+        
+        **Atenção:** Esta rota é protegida e requer nível de acesso "supervisor".
+      tags:
+        - Gráficos
+      security:
+        - bearerAuth: [] # Requer autenticação
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: "O ano do ciclo a ser consultado."
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: "O número do ciclo a ser consultado."
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: "Relatório PDF atualizado (com 3 seções) gerado com sucesso. O corpo da resposta é o arquivo PDF binário."
+          headers:
+            Content-Type:
+              description: "O tipo de mídia do conteúdo retornado."
+              schema:
+                type: string
+                example: "application/pdf"
+            Content-Disposition:
+              description: "Instrui o navegador a exibir o PDF inline e sugere um nome de arquivo."
+              schema:
+                type: string
+                example: "inline; filename=resumo_ciclo_2025_2.pdf"
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+                description: "O conteúdo binário do arquivo PDF gerado."
+        '401':
+          description: "Não autenticado (token JWT ausente, inválido ou expirado)."
+        '403':
+          description: "Acesso proibido (usuário não possui nível de acesso 'supervisor')."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid token: É nescessário ser supervisor para cadastrar denuncia."
+        '404':
+          description: "Ciclo não encontrado para o ano e número especificados."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Ciclo 2 do ano 2025 não encontrado."
+        '500':
+          description: "Falha na conexão com o banco de dados ou erro interno ao gerar o PDF."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Ocorreu um erro interno ao gerar o PDF."
+                  details:
+                    type: string
+                    example: "Specific exception message..."
