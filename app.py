@@ -5,6 +5,12 @@ from routes.login.login import login
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 
+import os # Adicione esta importação no topo do arquivo
+# Modifique a importação do Flask para incluir send_from_directory
+from flask import Flask, render_template, send_from_directory 
+from flask_cors import CORS
+from config import Config
+
 
 # ciclos
 from routes.ciclo.bluprint import ciclos
@@ -115,6 +121,11 @@ app.register_blueprint(ciclos)
 print(app.url_map)
 
 app.config.from_object(Config)
+
+@app.route('/sw.js')
+def serve_sw():
+    """Serve o arquivo sw.js a partir do diretório static na raiz."""
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'sw.js')
 
 @app.route('/', methods=['GET'])
 def rota_de_teste():
