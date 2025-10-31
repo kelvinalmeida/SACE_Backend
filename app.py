@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from config import Config
 from routes.login.login import login
@@ -115,6 +115,11 @@ app.register_blueprint(ciclos)
 print(app.url_map)
 
 app.config.from_object(Config)
+
+@app.route('/', methods=['GET'])
+def rota_de_teste():
+    """ Rota de teste para servir um HTML. """
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
