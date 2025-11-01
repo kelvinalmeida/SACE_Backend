@@ -39,11 +39,13 @@ def update_registro_de_campo(current_user, registro_de_campo_id):
     formulario_tipo = request.form.get('formulario_tipo')
 
     try:
-        li = bool(request.form.get('li'))
-        pe = bool(request.form.get('pe'))
-        t = bool(request.form.get('t'))
-        df = bool(request.form.get('df'))
-        pve = bool(request.form.get('pve'))
+        li = request.form.get('li', 'false').lower() == 'true'
+        pe = request.form.get('pe', 'false').lower() == 'true'
+        t = request.form.get('t', 'false').lower() == 'true'
+        df = request.form.get('df', 'false').lower() == 'true'
+        pve = request.form.get('pve', 'false').lower() == 'true'
+
+        print ("li, pe, t, df, pve: ", li, pe, t, df, pve)
     except (TypeError, ValueError):
         return jsonify({"error": "Invalid input for li, pe, t, df, or pve. They must be boolean values."}), 400
 
