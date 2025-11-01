@@ -11,6 +11,9 @@ from flask import Flask, render_template, send_from_directory
 from flask_cors import CORS
 from config import Config
 
+# notificacoes
+from routes.notificacoes.bluprint import notificacao
+from routes.notificacoes import send_all
 
 # ciclos
 from routes.ciclo.bluprint import ciclos
@@ -18,7 +21,6 @@ from routes.ciclo import get_anos_and_ciclos
 from routes.ciclo import criar_ciclo
 from routes.ciclo import finalizar_ciclo
 from routes.ciclo import status
-
 
 # graficos
 from routes.graficos.bluprint import graficos
@@ -38,7 +40,6 @@ from routes.graficos import heatmap_data_latest
 from routes.graficos import heatmap_painel_latest
 from routes.graficos import summary_pdf
 
-
 # registro_de_campo
 from routes.registro_de_campo.bluprint import registro_de_campo
 from routes.registro_de_campo import get_all
@@ -52,8 +53,6 @@ from routes.registro_de_campo import delete_larvicida
 from routes.registro_de_campo import delete_adulticida
 from routes.registro_de_campo import casos_confirmados
 from routes.registro_de_campo import get_by_ciclo
-
-
 
 # area_de_visita
 from routes.area_de_visita.bluprint import area_para_visita
@@ -74,6 +73,7 @@ from routes.usuario import update_agente
 from routes.usuario import update_supervisor
 from routes.usuario import delete_agente
 from routes.usuario import delete_supervisor
+
 # denuncia
 from routes.denuncia.bluprint import denuncia
 from routes.denuncia import post_one_denuncia
@@ -88,6 +88,8 @@ from routes.artigo import post_one_artigo
 from routes.artigo import get_all
 from routes.artigo import by_id
 from routes.artigo import download_img
+from routes.artigo import update
+from routes.artigo import delete
 
 
 app = Flask(__name__)
@@ -117,6 +119,7 @@ app.register_blueprint(denuncia)
 app.register_blueprint(blu_artigo)
 app.register_blueprint(graficos)
 app.register_blueprint(ciclos)
+app.register_blueprint(notificacao)
 
 print(app.url_map)
 

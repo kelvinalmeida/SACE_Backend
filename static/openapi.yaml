@@ -14,6 +14,42 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    ArtigoUpdateResponse:
+      type: object
+      description: "Resposta ao atualizar um artigo com sucesso."
+      properties:
+        message:
+          type: string
+          example: "Artigo atualizado com sucesso."
+        artigo_id:
+          type: integer
+          example: 42
+        titulo:
+          type: string
+          example: "Título Atualizado do Artigo"
+        descricao:
+          type: string
+          example: "Descrição atualizada do artigo."
+        link_artigo:
+          type: string
+          format: uri
+          example: "https://www.who.int/news-room/fact-sheets/detail/dengue"
+        imagem_nome:
+          type: string
+          nullable: true
+          example: "nova_capa.png"
+
+    ArtigoDeleteResponse:
+      type: object
+      description: "Resposta ao deletar um artigo com sucesso."
+      properties:
+        message:
+          type: string
+          example: "Artigo e arquivo de imagem associado foram deletados com sucesso."
+        artigo_id_deletado:
+          type: integer
+          example: 42
+
     DashboardDepositos:
       type: object
       description: "Contagem total de depósitos por tipo no ciclo."
@@ -2348,6 +2384,144 @@ paths:
                     example: "Artigo not found"
         '500':
           description: Erro interno do servidor.
+    put:
+      summary: Atualiza um artigo existente
+      description: |
+        Atualiza os detalhes (título, descrição, link) de um artigo existente.
+        Permite o envio opcional de uma nova imagem de capa (`imagem`). Se uma nova imagem for enviada, a imagem antiga associada a este artigo será deletada do servidor.
+        
+        **Atenção:** Requer autenticação de **Supervisor**.
+      tags:
+        - Artigos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: artigo_id
+          in: path
+          required: true
+          description: "O ID do artigo a ser atualizado."
+          schema:
+            type: integer
+            example: 42
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - titulo
+                - descricao
+                - link_artigo
+              properties:
+                titulo:
+                  type: string
+                  description: "O novo título do artigo."
+                  example: "Título Atualizado do Artigo"
+                descricao:
+                  type: string
+                  description: "A nova descrição do artigo."
+                  example: "Descrição atualizada do artigo."
+                link_artigo:
+                  type: string
+                  format: uri
+                  description: "O novo link externo para o artigo."
+                  example: "https://www.who.int/news-room/fact-sheets/detail/dengue"
+                imagem:
+                  type: string
+                  format: binary
+                  description: "Opcional: Um novo arquivo de imagem para substituir a capa existente."
+      responses:
+        '200':
+          description: "Artigo atualizado com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtigoUpdateResponse'
+        '400':
+          description: "Requisição inválida (campo obrigatório faltando)."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Campo obrigatório 'titulo' faltando."
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido. O usuário não é supervisor."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Acesso negado: Você não tem permissão para editar este artigo."
+        '404':
+          description: "Artigo não encontrado com o ID especificado."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Artigo não encontrado."
+        '500':
+          description: "Erro interno do servidor (ex: falha no banco de dados, erro ao salvar/deletar imagem)."
+
+    delete:
+      summary: Deleta um artigo e sua imagem associada
+      description: |
+        Deleta permanentemente um artigo do banco de dados e remove o arquivo de imagem de capa associado do servidor.
+        
+        **Atenção:** Requer autenticação de **Supervisor**.
+      tags:
+        - Artigos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: artigo_id
+          in: path
+          required: true
+          description: "O ID do artigo a ser deletado."
+          schema:
+            type: integer
+            example: 42
+      responses:
+        '200':
+          description: "Artigo e imagem associada deletados com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtigoDeleteResponse'
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido. O usuário não é supervisor."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Acesso negado: Você não tem permissão para deletar este artigo."
+        '404':
+          description: "Artigo não encontrado com o ID especificado."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Artigo não encontrado."
+        '500':
+          description: "Erro interno do servidor (ex: falha no banco de dados, erro ao deletar arquivo)."
           
   /artigo/img/{artigo_id}:
     get:
