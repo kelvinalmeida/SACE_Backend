@@ -8,6 +8,36 @@ import logging
 # Configuração básica de log para exibir erros
 logging.basicConfig(level=logging.INFO)
 
+coordenadas_bairros_maceio = {
+    # Bairros da sua lista original
+    "Ponta Verde": {"latitude": -9.6679, "longitude": -35.7022},
+    "Jatiúca": {"latitude": -9.6586, "longitude": -35.7032},
+    "Pajuçara": {"latitude": -9.6713, "longitude": -35.7118},
+    "Farol": {"latitude": -9.6433, "longitude": -35.7335},
+    "Cruz das Almas": {"latitude": -9.6387, "longitude": -35.6989},
+    "Jacintinho": {"latitude": -9.6453, "longitude": -35.7208},
+    "Benedito Bentes": {"latitude": -9.5714, "longitude": -35.7891},
+    "Serraria": {"latitude": -9.5936, "longitude": -35.7516},
+    "Gruta de Lourdes": {"latitude": -9.6358, "longitude": -35.7388},
+    "Mangabeiras": {"latitude": -9.6559, "longitude": -35.7107},
+
+    # --- Novos bairros adicionados ---
+    
+    # Bairros da Orla e Parte Baixa
+    "Poço": {"latitude": -9.6580, "longitude": -35.7190},
+    "Jaraguá": {"latitude": -9.6725, "longitude": -35.7222},
+    "Centro": {"latitude": -9.6658, "longitude": -35.7350},
+    "Vergel do Lago": {"latitude": -9.6546, "longitude": -35.7593},
+    "Pontal da Barra": {"latitude": -9.7131, "longitude": -35.7967},
+    
+    # Bairros da Parte Alta
+    "Barro Duro": {"latitude": -9.6221, "longitude": -35.7154},
+    "Tabuleiro do Martins": {"latitude": -9.5581, "longitude": -35.7803},
+    "Antares": {"latitude": -9.5763, "longitude": -35.7368},
+    "Clima Bom": {"latitude": -9.5750, "longitude": -35.7890},
+}
+
+
 @area_para_visita.route('/area_de_visita', methods=['POST'])
 @token_required
 def criar_varias_areas_de_visita(current_user):
@@ -40,8 +70,8 @@ def criar_varias_areas_de_visita(current_user):
         
         # SQL base para inserção
         insert_area_sql = """
-            INSERT INTO area_de_visita (supervisor_id, cep, setor, numero_quarteirao, estado, status, municipio, bairro, logadouro) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) 
+            INSERT INTO area_de_visita (supervisor_id, cep, setor, numero_quarteirao, estado, status, municipio, bairro, logadouro, latitude, longitude) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
             RETURNING area_de_visita_id;
         """
         
@@ -72,6 +102,15 @@ def criar_varias_areas_de_visita(current_user):
                 area['bairro'],
                 area['logadouro']
             )
+
+            # Adiciona latitude e longitude se disponíveis
+            bairro = area['bairro']
+            coords = coordenadas_bairros_maceio.get(bairro)
+
+            if coords:
+                values += (coords['latitude'], coords['longitude'])
+            else:
+                values += (None, None)
 
             # Executa a inserção
             cursor.execute(insert_area_sql, values)
