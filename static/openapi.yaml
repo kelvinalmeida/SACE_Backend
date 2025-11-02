@@ -14,6 +14,53 @@ components:
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
 
+    NotificacaoInput:
+      type: object
+      description: "Corpo da requisição para enviar uma notificação."
+      required:
+        - title
+        - message
+        - url
+      properties:
+        title:
+          type: string
+          description: "O título da notificação push."
+          example: "Novo Alerta de Risco"
+        message:
+          type: string
+          description: "A mensagem principal (corpo) da notificação."
+          example: "Um novo caso de dengue foi confirmado na sua área."
+        url:
+          type: string
+          format: uri
+          description: "A URL de destino que o usuário abrirá ao clicar na notificação."
+          example: "https://seu-app.com/alertas/123"
+
+    NotificacaoSuccessResponse:
+      type: object
+      description: "Resposta de sucesso encaminhada da API PushAlert."
+      properties:
+        success:
+          type: boolean
+          example: true
+        id:
+          type: integer
+          description: "O ID da notificação enviada, retornado pela API PushAlert."
+          example: 123456
+        # Pode haver outros campos retornados pela API
+      
+    NotificacaoErrorPushAlert:
+      type: object
+      description: "Resposta de erro encaminhada da API PushAlert."
+      properties:
+        error:
+          type: string
+          example: "Erro da API PushAlert"
+        details:
+          type: string
+          description: "A resposta de erro original da API PushAlert (pode ser JSON ou texto)."
+          example: "{\"error\": \"Invalid API Key\"}"
+
     ArtigoUpdateResponse:
       type: object
       description: "Resposta ao atualizar um artigo com sucesso."
@@ -3533,3 +3580,75 @@ paths:
                   details:
                     type: string
                     example: "Specific exception message..."
+  
+  /notificacao/send_all:
+    post:
+      summary: Envia uma notificação push para todos os usuários
+      description: |
+        Dispara uma notificação push para todos os assinantes através do serviço externo PushAlert.
+        
+        Esta rota atua como um proxy seguro:
+        1.  Valida a permissão do usuário (deve ser supervisor).
+        2.  Recebe `title`, `message`, e `url`.
+        3.  Adiciona a `PUSHALERT_API_KEY` do servidor.
+        4.  Faz a requisição para `api.pushalert.co` e encaminha a resposta (sucesso ou erro) de volta ao cliente.
+        
+        **Atenção:** Requer autenticação de **Supervisor**.
+      tags:
+        - Notificação
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: "Os dados da notificação a ser enviada."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificacaoInput'
+      responses:
+        '200':
+          description: "Notificação enviada com sucesso (resposta da API PushAlert)."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificacaoSuccessResponse'
+        '400':
+          description: "Requisição inválida (campos obrigatórios 'title', 'message' ou 'url' faltando no JSON)."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Os campos 'title', 'message', e 'url' são obrigatórios."
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido (usuário não possui nível de acesso 'supervisor')."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Acesso negado: Apenas supervisores podem enviar notificações."
+        '500':
+          description: "Erro interno do servidor (ex: Chave da API PushAlert não configurada no backend, ou falha de conexão com a API)."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Chave da API de notificação não configurada no servidor."
+        default:
+          description: |
+            Erro encaminhado da API PushAlert. 
+            O código de status HTTP (ex: 401, 422, 503) será o mesmo retornado pela API PushAlert.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificacaoErrorPushAlert'
