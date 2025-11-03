@@ -30,6 +30,9 @@ instance/
 .vscode/
 .idea/
 
+# Arquivos de configuração sensíveis
+config.env
+
 # Arquivos do sistema
 .DS_Store
 Thumbs.db
