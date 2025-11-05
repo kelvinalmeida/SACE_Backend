@@ -13,6 +13,153 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+    GraficoPontoTotalDoencas:
+      type: object
+      properties:
+        ano: { type: integer, example: 2025 }
+        ciclo: { type: integer, example: 1 }
+        otal_doencas: { type: integer, example: 15 }
+
+    GraficoResumoTotalDoencas:
+      type: object
+      properties:
+        total_doencas:
+          type: integer
+          description: "Número total de doenças confirmadas no ciclo solicitado."
+          example: 15
+        dados_do_ultimo_ciclo:
+          type: integer
+          description: "Número total de doenças confirmadas no ciclo imediatamente anterior."
+          example: 10
+        porcentagem:
+          type: string
+          description: "A variação percentual em relação ao ciclo anterior."
+          example: "50.0% ↑"
+        crescimento:
+          type: string
+          description: "Indica se o número de doenças aumentou, diminuiu ou permaneceu estável."
+          enum: [aumentou, diminuiu, estável, "Novo"]
+          example: "aumentou"
+
+    GraficoTotalDoencasResponse:
+      type: object
+      properties:
+        dados_grafico:
+          type: array
+          description: "Lista de dados históricos para construir o gráfico."
+          items:
+            $ref: '#/components/schemas/GraficoPontoTotalDoencas'
+        resumo_ciclo_atual:
+          $ref: '#/components/schemas/GraficoResumoTotalDoencas'
+
+    DoencaConfirmadaInput:
+      type: object
+      description: "Schema para criar ou atualizar um registro de doença confirmada."
+      required:
+        - tipo_da_doenca
+        - rua
+      properties:
+        nome:
+          type: string
+          nullable: true
+          description: "Nome do paciente (opcional)."
+          example: "José Maria"
+        tipo_da_doenca:
+          type: string
+          description: "Tipo da doença (obrigatório)."
+          enum: [Dengue, Chikungunya, Zica]
+          example: "Dengue"
+        rua:
+          type: string
+          description: "Nome da rua/avenida da ocorrência (obrigatório)."
+          example: "Avenida Fernandes Lima"
+        numero:
+          type: string
+          nullable: true
+          description: "Número do imóvel (opcional)."
+          example: "1024"
+        bairro:
+          type: string
+          nullable: true
+          description: "Bairro da ocorrência (opcional)."
+          example: "Farol"
+          
+    DoencaConfirmadaOutput:
+      type: object
+      description: "Schema de um registro de doença confirmada retornado pela API."
+      properties:
+        doenca_confirmada_id:
+          type: integer
+          example: 1
+        nome:
+          type: string
+          nullable: true
+          example: "José Maria"
+        tipo_da_doenca:
+          type: string
+          example: "Dengue"
+        rua:
+          type: string
+          example: "Avenida Fernandes Lima"
+        numero:
+          type: string
+          nullable: true
+          example: "1024"
+        bairro:
+          type: string
+          nullable: true
+          example: "Farol"
+        ciclo_id:
+          type: integer
+          example: 4
+        # Campos adicionados pelo JOIN com a tabela 'ciclos'
+        ciclo:
+          type: integer
+          description: "O número do ciclo ao qual o registro foi associado."
+          example: 2
+        ano:
+          type: integer
+          description: "O ano do ciclo ao qual o registro foi associado."
+          example: 2025
+
+    DoencaConfirmadaPostResponse:
+      type: object
+      description: "Resposta de sucesso ao criar registros de doenças em lote."
+      properties:
+        message:
+          type: string
+          example: "2 registros de doenças confirmadas criados com sucesso."
+        ids_criados:
+          type: array
+          items:
+            type: integer
+          example: [16, 17]
+        ciclo_id_associado:
+          type: integer
+          description: "ID do ciclo ativo ao qual os registros foram associados."
+          example: 4
+          
+    DoencaConfirmadaUpdateResponse:
+      type: object
+      description: "Resposta de sucesso ao atualizar um registro."
+      properties:
+        message:
+          type: string
+          example: "Registro atualizado com sucesso."
+        id:
+          type: integer
+          example: 16
+
+    DoencaConfirmadaDeleteResponse:
+      type: object
+      description: "Resposta de sucesso ao deletar um registro."
+      properties:
+        message:
+          type: string
+          example: "Registro deletado com sucesso."
+        id_deletado:
+          type: integer
+          example: 16
 
     NotificacaoInput:
       type: object
@@ -2814,6 +2961,41 @@ paths:
           description: Não autenticado (token ausente ou inválido).
         '500':
           description: Erro interno do servidor.
+  
+  /grafico/total_doencas_confirmadas/{ano}/{ciclo}:
+    get:
+      summary: Obtém dados históricos para o gráfico de total de doenças confirmadas
+      description: |
+        Retorna uma série histórica de dados com o total de doenças confirmadas (da tabela 'doencas_confirmadas') por ciclo, até o ano e ciclo especificados. 
+        Também inclui um resumo comparativo com o ciclo anterior.
+        Esta rota é pública.
+      tags:
+        - Gráficos
+      security: []
+      parameters:
+        - name: ano
+          in: path
+          required: true
+          description: O ano do ciclo final da consulta.
+          schema:
+            type: integer
+            example: 2025
+        - name: ciclo
+          in: path
+          required: true
+          description: O número do ciclo final da consulta.
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Dados para o gráfico retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraficoTotalDoencasResponse'
+        '500':
+          description: Erro interno do servidor.
 
   /grafico/casos_confirmados/{ano}/{ciclo}:
     get:
@@ -3652,3 +3834,194 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotificacaoErrorPushAlert'
+
+  /doencas_confirmadas:
+    post:
+      summary: Cria um ou mais registros de doenças confirmadas (em lote)
+      description: |
+        Registra um ou mais casos de doenças confirmadas a partir de um array JSON. 
+        Todos os registros criados serão automaticamente associados ao ciclo de visitas que está ativo no momento.
+        
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem criar registros.
+      tags:
+        - Doenças Confirmadas
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: "Um array JSON contendo um ou mais objetos de doença confirmada."
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DoencaConfirmadaInput'
+            example:
+              - nome: "José Maria"
+                tipo_da_doenca: "Dengue"
+                rua: "Avenida Fernandes Lima"
+                numero: "1024"
+                bairro: "Farol"
+              - tipo_da_doenca: "Chikungunya"
+                rua: "Rua do Comércio"
+                bairro: "Centro"
+      responses:
+        '201':
+          description: "Registros criados com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoencaConfirmadaPostResponse'
+        '400':
+          description: "Requisição inválida (ex: corpo não é uma lista, ou falta campos obrigatórios como 'tipo_da_doenca' ou 'rua')."
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido (usuário não é um supervisor)."
+        '409':
+          description: "Conflito (Nenhum ciclo ativo encontrado para associar os registros)."
+        '500':
+          description: "Erro interno do servidor."
+          
+    get:
+      summary: Lista todos os registros de doenças confirmadas
+      description: |
+        Retorna uma lista de todos os casos de doenças confirmadas registrados no sistema, ordenados dos mais recentes para os mais antigos.
+        Inclui informações do ciclo (ano e número) associado a cada registro.
+        
+        Requer autenticação (qualquer usuário logado).
+      tags:
+        - Doenças Confirmadas
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Lista de registros retornada com sucesso."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoencaConfirmadaOutput'
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '500':
+          description: "Erro interno do servidor."
+
+  /doencas_confirmadas/{doenca_id}:
+    get:
+      summary: Busca um registro de doença confirmada por ID
+      description: |
+        Retorna os detalhes de um único registro de doença confirmada, identificado pelo seu ID.
+        Inclui informações do ciclo (ano e número) associado.
+        
+        Requer autenticação (qualquer usuário logado).
+      tags:
+        - Doenças Confirmadas
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: doenca_id
+          in: path
+          required: true
+          description: "O ID do registro de doença a ser buscado."
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: "Detalhes do registro retornados com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoencaConfirmadaOutput'
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '404':
+          description: "Registro não encontrado com o ID especificado."
+        '500':
+          description: "Erro interno do servidor."
+          
+    put:
+      summary: Atualiza um registro de doença confirmada
+      description: |
+        Atualiza as informações de um registro de doença confirmada existente. 
+        O `ciclo_id` não pode ser alterado por esta rota.
+        
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem atualizar registros.
+      tags:
+        - Doenças Confirmadas
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: doenca_id
+          in: path
+          required: true
+          description: "O ID do registro de doença a ser atualizado."
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        description: "Um objeto JSON com os dados a serem atualizados."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoencaConfirmadaInput'
+            example:
+              nome: "Maria José (Atualizado)"
+              tipo_da_doenca: "Dengue"
+              rua: "Rua Jangadeiros Alagoanos"
+              numero: "500"
+              bairro: "Pajuçara"
+      responses:
+        '200':
+          description: "Registro atualizado com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoencaConfirmadaUpdateResponse'
+        '400':
+          description: "Requisição inválida (faltando campos obrigatórios 'tipo_da_doenca' ou 'rua')."
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido (usuário não é um supervisor)."
+        '404':
+          description: "Registro não encontrado com o ID especificado."
+        '500':
+          description: "Erro interno do servidor."
+          
+    delete:
+      summary: Deleta um registro de doença confirmada
+      description: |
+        Remove permanentemente um registro de doença confirmada do sistema.
+        
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem deletar registros.
+      tags:
+        - Doenças Confirmadas
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: doenca_id
+          in: path
+          required: true
+          description: "O ID do registro de doença a ser deletado."
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: "Registro deletado com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoencaConfirmadaDeleteResponse'
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido (usuário não é um supervisor)."
+        '404':
+          description: "Registro não encontrado com o ID especificado."
+        '500':
+          description: "Erro interno do servidor."
