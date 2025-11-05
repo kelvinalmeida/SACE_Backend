@@ -8,7 +8,8 @@ docker-compose exec db pg_dump -U user -d postgres | Out-File -Encoding utf8 bac
 
 
 
+DATABASE_URL = postgres://avnadmin:AVNS_rnccXhutYeiO8Vd1h0G@pg-256b7f66-kelvinsantosdealmeida1-e64b.f.aivencloud.com:16055/defaultdb?sslmode=require
 
 
+docker-compose exec app pytest
 
-DATABASE_URL = postgresql://user:secret@db:5432/postgres

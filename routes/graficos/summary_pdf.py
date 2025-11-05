@@ -163,7 +163,7 @@ class PDF(FPDF):
             self.cell(self.col_widths['other'], 6, f"{agent['total_focos']}", 1, 0, 'C')
             self.cell(self.col_widths['other'], 6, f"{agent['total_casos_confirmados']}", 1, 1, 'C')
 
-    # --- START OF NEW METHOD ---
+    # --- START OF ORIGINAL METHOD ---
     def add_deposits_and_treatments_summary(self, deposits_data, larvicides_data, adulticides_data):
         self.ln(5)
         self.set_font('Arial', 'B', 14)
@@ -251,7 +251,65 @@ class PDF(FPDF):
         
         # Set Y to the bottom of the *tallest* of the two tables
         self.set_y(max(y_after_larv_table, y_after_adult_table))
-    # --- END OF NEW METHOD ---
+    # --- END OF ORIGINAL METHOD ---
+
+    # --- INÍCIO DO NOVO MÉTODO ADICIONADO ---
+    def add_doencas_confirmadas_table(self, doencas_data):
+        """
+        Adiciona uma tabela com o detalhamento de doenças confirmadas (tabela 'doencas_confirmadas').
+        """
+        self.ln(5)
+        self.set_font('Arial', 'B', 14)
+        self.cell(0, 8, "Doenças Confirmadas (Tabela Oficial)", 0, 1, 'C')
+        self.ln(2)
+
+        if not doencas_data:
+            self.set_font('Arial', '', 12)
+            self.cell(0, 10, "Nenhum caso confirmado (tabela oficial) registrado para este ciclo.", 0, 1, 'C')
+            return
+
+        # --- Definição das Larguras da Tabela ---
+        page_w = self.epw # Largura efetiva da página
+        col_widths = {
+            'nome': page_w * 0.30,      # 30%
+            'doenca': page_w * 0.15,    # 15%
+            'bairro': page_w * 0.20,    # 20%
+            'rua': page_w * 0.25,       # 25%
+            'numero': page_w * 0.10     # 10%
+        }
+
+        # --- Cabeçalho da Tabela ---
+        self.set_font('Arial', 'B', 9)
+        self.set_fill_color(230, 230, 230)
+        self.cell(col_widths['nome'], 6, "Nome do Paciente", 1, 0, 'C', fill=True)
+        self.cell(col_widths['doenca'], 6, "Doença", 1, 0, 'C', fill=True)
+        self.cell(col_widths['bairro'], 6, "Bairro", 1, 0, 'C', fill=True)
+        self.cell(col_widths['rua'], 6, "Rua", 1, 0, 'C', fill=True)
+        self.cell(col_widths['numero'], 6, "Nº", 1, 1, 'C', fill=True) # 1, 1 (quebra a linha)
+
+        # --- Linhas da Tabela ---
+        self.set_font('Arial', '', 8)
+        for item in doencas_data:
+            # Verifica se precisa pular a página
+            if self.get_y() > (self.h - 30): # 30mm da margem inferior
+                self.add_page()
+                # Redesenha o cabeçalho
+                self.set_font('Arial', 'B', 9)
+                self.cell(col_widths['nome'], 6, "Nome do Paciente", 1, 0, 'C', fill=True)
+                self.cell(col_widths['doenca'], 6, "Doença", 1, 0, 'C', fill=True)
+                self.cell(col_widths['bairro'], 6, "Bairro", 1, 0, 'C', fill=True)
+                self.cell(col_widths['rua'], 6, "Rua", 1, 0, 'C', fill=True)
+                self.cell(col_widths['numero'], 6, "Nº", 1, 1, 'C', fill=True)
+                self.set_font('Arial', '', 8)
+
+            # Adiciona os dados (usando .get() e 'or' para tratar valores None)
+            self.cell(col_widths['nome'], 6, f"{item.get('nome') or '-'}", 1, 0, 'L')
+            self.cell(col_widths['doenca'], 6, f"{item.get('tipo_da_doenca') or '-'}", 1, 0, 'L')
+            self.cell(col_widths['bairro'], 6, f"{item.get('bairro') or '-'}", 1, 0, 'L')
+            self.cell(col_widths['rua'], 6, f"{item.get('rua') or '-'}", 1, 0, 'L')
+            self.cell(col_widths['numero'], 6, f"{item.get('numero') or '-'}", 1, 1, 'C')
+
+    # --- FIM DO NOVO MÉTODO ADICIONADO ---
 
 
 # @token_required # Uncomment if this route needs to be protected
@@ -336,7 +394,7 @@ def get_summary_pdf(ano, ciclo):
         agent_results = cursor.fetchall()
         logging.info(f"Dados para PDF (Resumo Agentes: {len(agent_results)} agentes) recuperados.")
 
-        # --- 4. START OF NEW QUERIES ---
+        # --- 4. START OF ORIGINAL QUERIES ---
         # Query for Total Deposits
         deposits_query = """
             SELECT
@@ -382,10 +440,23 @@ def get_summary_pdf(ano, ciclo):
         cursor.execute(adulticides_query, (ciclo_id,))
         adulticides_result = cursor.fetchall()
         logging.info("Dados de depósitos e tratamentos recuperados.")
-        # --- END OF NEW QUERIES ---
+        # --- END OF ORIGINAL QUERIES ---
+
+        # --- INÍCIO DA NOVA QUERY ADICIONADA ---
+        # --- 5. Fetch Doenças Confirmadas Data ---
+        doencas_query = """
+            SELECT nome, tipo_da_doenca, rua, numero, bairro
+            FROM doencas_confirmadas
+            WHERE ciclo_id = %s
+            ORDER BY bairro, rua, nome;
+        """
+        cursor.execute(doencas_query, (ciclo_id,))
+        doencas_results = cursor.fetchall()
+        logging.info(f"Dados para PDF (Doenças Confirmadas: {len(doencas_results)} casos) recuperados.")
+        # --- FIM DA NOVA QUERY ADICIONADA ---
 
 
-        # --- 5. Generate the PDF (ORDER CHANGED) ---
+        # --- 6. Generate the PDF (ORDER CHANGED) ---
         pdf = PDF(ano=ano, ciclo=ciclo)
         pdf.add_page()
         
@@ -417,8 +488,14 @@ def get_summary_pdf(ano, ciclo):
             for row in bairro_results:
                 pdf.add_bairro_summary(row)
 
+        # --- INÍCIO DA NOVA SEÇÃO ADICIONADA ---
+        # --- Section 4: Doenças Confirmadas (Fourth, on a new page) ---
+        pdf.add_page()
+        pdf.add_doencas_confirmadas_table(doencas_results)
+        # --- FIM DA NOVA SEÇÃO ADICIONADA ---
 
-        # --- 6. Prepare and return the PDF response ---
+
+        # --- 7. Prepare and return the PDF response ---
         pdf_output = bytes(pdf.output(dest='B'))
         
         response = make_response(pdf_output)

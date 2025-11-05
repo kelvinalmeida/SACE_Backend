@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict t3pja8C9VHkfhaRgd3VbFRY78CZmqCk9wMDn0bbMErkN6xFm0i0ks8R1bTLb7oI
+\restrict ydA65PEPAyynhPXNzY33XsxdgbaNUdC2aJIZabGq98RYfsMyRkQHFVehgelMOhz
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -316,6 +316,37 @@ ALTER TABLE public.depositos OWNER TO "user";
 
 ALTER TABLE public.depositos ALTER COLUMN deposito_id ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public.depositos_deposito_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: doencas_confirmadas; Type: TABLE; Schema: public; Owner: user
+--
+
+CREATE TABLE public.doencas_confirmadas (
+    doenca_confirmada_id integer NOT NULL,
+    nome character varying(100),
+    tipo_da_doenca character varying(11) NOT NULL,
+    rua character varying(30) NOT NULL,
+    numero character varying(10),
+    bairro character varying(30),
+    ciclo_id integer
+);
+
+
+ALTER TABLE public.doencas_confirmadas OWNER TO "user";
+
+--
+-- Name: doencas_confirmadas_doenca_confirmada_id_seq; Type: SEQUENCE; Schema: public; Owner: user
+--
+
+ALTER TABLE public.doencas_confirmadas ALTER COLUMN doenca_confirmada_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.doencas_confirmadas_doenca_confirmada_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -967,6 +998,29 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 
 
 --
+-- Data for Name: doencas_confirmadas; Type: TABLE DATA; Schema: public; Owner: user
+--
+
+COPY public.doencas_confirmadas (doenca_confirmada_id, nome, tipo_da_doenca, rua, numero, bairro, ciclo_id) FROM stdin;
+1	Ana Lúcia Barbosa	Dengue	Rua Prof. Sandoval Arroxelas	120	Ponta Verde	1
+2	Bruno Costa	Chikungunya	Rua B. de Atalaia	45	Jacintinho	1
+3	Carla Dias Ferreira	Zica	Av. Garça Torta	1100	Benedito Bentes	1
+4	Danilo Menezes	Dengue	Rua Dr. Lessa de Azevedo	330	Pajuçara	2
+5	Elisa Correia	Dengue	Rua Adolfo Gustavo	50	Serraria	2
+6	Fábio Henrique Lima	Dengue	Rua D. Antônio Brandão	789	Farol	2
+7	Gabriela Peixoto	Dengue	Rua Prof. Sandoval Arroxelas	210	Ponta Verde	3
+8	Heitor Vasconcelos	Chikungunya	Rua D. Antônio Brandão	800	Farol	3
+9	Isabela Ramos	Zica	Rua A, Cj. Santo Dumont	15	Gruta de Lourdes	3
+10	José Carlos Almeida	Dengue	Rua B. de Atalaia	125	Jacintinho	3
+11	Larissa Farias	Dengue	Rua Bancário Rady Gusmão	220	Jatiúca	3
+12	Marcos Vinícius	Chikungunya	Av. Garça Torta	1500	Benedito Bentes	4
+13	Natalia Gusmão	Zica	Rua Prof. Sandoval Arroxelas	505	Ponta Verde	4
+14	Otávio Lins	Dengue	Rua Adolfo Gustavo	130	Serraria	4
+15	Patrícia Vilela	Dengue	Rua Dr. Lessa de Azevedo	410	Pajuçara	4
+\.
+
+
+--
 -- Data for Name: larvicida; Type: TABLE DATA; Schema: public; Owner: user
 --
 
@@ -1333,6 +1387,13 @@ SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 240, true);
 
 
 --
+-- Name: doencas_confirmadas_doenca_confirmada_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
+--
+
+SELECT pg_catalog.setval('public.doencas_confirmadas_doenca_confirmada_id_seq', 15, true);
+
+
+--
 -- Name: larvicida_larvicida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
@@ -1448,6 +1509,14 @@ ALTER TABLE ONLY public.depositos
 
 
 --
+-- Name: doencas_confirmadas doencas_confirmadas_pkey; Type: CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.doencas_confirmadas
+    ADD CONSTRAINT doencas_confirmadas_pkey PRIMARY KEY (doenca_confirmada_id);
+
+
+--
 -- Name: larvicida larvicida_pkey; Type: CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -1552,6 +1621,14 @@ ALTER TABLE ONLY public.registro_de_campo
 
 
 --
+-- Name: doencas_confirmadas fk_ciclo; Type: FK CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.doencas_confirmadas
+    ADD CONSTRAINT fk_ciclo FOREIGN KEY (ciclo_id) REFERENCES public.ciclos(ciclo_id) ON DELETE CASCADE;
+
+
+--
 -- Name: arquivos_denuncia fk_denuncia; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -1651,5 +1728,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict t3pja8C9VHkfhaRgd3VbFRY78CZmqCk9wMDn0bbMErkN6xFm0i0ks8R1bTLb7oI
+\unrestrict ydA65PEPAyynhPXNzY33XsxdgbaNUdC2aJIZabGq98RYfsMyRkQHFVehgelMOhz
 
