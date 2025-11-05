@@ -21,6 +21,21 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/18/data
       - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+  
+  db-test:
+    image: postgres  # <--- This is the fix
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: postgres
+      LC_COLLATE: C.UTF-8
+      LC_CTYPE: C.UTF-8
+    volumes:
+      - db_data_test:/var/lib/postgresql/18/data
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+    # You might want to map this to a different port to inspect it
+    ports:
+      - "5433:5432"
 
   adminer:
     image: adminer
@@ -29,3 +44,4 @@ services:
 
 volumes:
   db_data:
+  db_data_test:
