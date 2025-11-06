@@ -103,6 +103,16 @@ from routes.artigo import update
 from routes.artigo import delete
 
 
+# nudges
+from routes.nudges.bluprint import nudges_bp
+from routes.nudges import post_one
+from routes.nudges import update
+from routes.nudges import delete
+from routes.nudges import get_all
+from routes.nudges import get_by_id
+
+
+
 app = Flask(__name__)
 
 
@@ -133,6 +143,7 @@ app.register_blueprint(graficos)
 app.register_blueprint(ciclos)
 app.register_blueprint(notificacao)
 app.register_blueprint(doentes_confirmados_bp)
+app.register_blueprint(nudges_bp)
 
 print(app.url_map)
 

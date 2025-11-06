@@ -13,6 +13,57 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+
+    NudgeInput:
+      type: object
+      description: "Schema para criar ou atualizar um nudge."
+      required:
+        - titulo
+        - descricao
+        - url
+      properties:
+        titulo:
+          type: string
+          maxLength: 50
+          example: "Lembrete: Verifique sua caixa d'água!"
+        descricao:
+          type: string
+          maxLength: 200
+          example: "Manter a caixa d'água tampada evita a proliferação do mosquito."
+        url:
+          type: string
+          maxLength: 200
+          format: uri
+          example: "https://seusite.com/dicas/caixa-dagua"
+
+    NudgeOutput:
+      type: object
+      description: "Schema de um nudge retornado pela API."
+      properties:
+        nudges_id:
+          type: integer
+          example: 1
+        titulo:
+          type: string
+          example: "Lembrete: Verifique sua caixa d'água!"
+        descricao:
+          type: string
+          example: "Manter a caixa d'água tampada evita a proliferação do mosquito."
+        url:
+          type: string
+          format: uri
+          example: "https://seusite.com/dicas/caixa-dagua"
+
+    NudgeDeleteResponse:
+      type: object
+      description: "Resposta de sucesso ao deletar um nudge."
+      properties:
+        message:
+          type: string
+          example: "Nudge deletado com sucesso."
+        id_deletado:
+          type: integer
+          example: 1
   
     RegistroDeCampoResumido:
       type: object
@@ -4088,5 +4139,167 @@ paths:
           description: "Acesso proibido (usuário não é um supervisor)."
         '404':
           description: "Registro não encontrado com o ID especificado."
+        '500':
+          description: "Erro interno do servidor."
+
+  /nudges:
+      post:
+        summary: Cria um novo nudge
+        description: |
+          Cria um novo nudge (dica/alerta).
+          
+          **Atenção:** Apenas usuários com nível de acesso "supervisor" podem criar registros.
+        tags:
+          - Nudges
+        security:
+          - bearerAuth: []
+        requestBody:
+          required: true
+          description: "O objeto JSON do nudge a ser criado."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NudgeInput'
+        responses:
+          '201':
+            description: "Nudge criado com sucesso. Retorna o objeto criado."
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/NudgeOutput'
+          '400':
+            description: "Requisição inválida (campos obrigatórios faltando)."
+          '401':
+            description: "Não autenticado (token JWT ausente ou inválido)."
+          '403':
+            description: "Acesso proibido (usuário não é um supervisor)."
+          '500':
+            description: "Erro interno do servidor."
+            
+      get:
+        summary: Lista todos os nudges
+        description: |
+          Retorna uma lista de todos os nudges (dicas/alertas) cadastrados, ordenados do mais recente para o mais antigo.
+          
+          Esta rota é **pública** e não requer autenticação.
+        tags:
+          - Nudges
+        security: []
+        responses:
+          '200':
+            description: "Lista de nudges retornada com sucesso."
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/NudgeOutput'
+          '500':
+            description: "Erro interno do servidor."
+
+  /nudges/{nudges_id}:
+    get:
+      summary: Busca um nudge por ID
+      description: |
+        Retorna os detalhes de um nudge específico, identificado pelo seu ID.
+        
+        Esta rota é **pública** e não requer autenticação.
+      tags:
+        - Nudges
+      security: []
+      parameters:
+        - name: nudges_id
+          in: path
+          required: true
+          description: "O ID do nudge a ser buscado."
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: "Detalhes do nudge retornados com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NudgeOutput'
+        '404':
+          description: "Nudge não encontrado com o ID especificado."
+        '500':
+          description: "Erro interno do servidor."
+          
+    put:
+      summary: Atualiza um nudge
+      description: |
+        Atualiza as informações de um nudge existente.
+        
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem atualizar registros.
+      tags:
+        - Nudges
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: nudges_id
+          in: path
+          required: true
+          description: "O ID do nudge a ser atualizado."
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        description: "Um objeto JSON com os dados a serem atualizados."
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NudgeInput'
+      responses:
+        '200':
+          description: "Nudge atualizado com sucesso. Retorna o objeto atualizado."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NudgeOutput'
+        '400':
+          description: "Requisição inválida (campos obrigatórios faltando)."
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido (usuário não é um supervisor)."
+        '404':
+          description: "Nudge não encontrado com o ID especificado."
+        '500':
+          description: "Erro interno do servidor."
+          
+    delete:
+      summary: Deleta um nudge
+      description: |
+        Remove permanentemente um nudge do sistema.
+        
+        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem deletar registros.
+      tags:
+        - Nudges
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: nudges_id
+          in: path
+          required: true
+          description: "O ID do nudge a ser deletado."
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: "Nudge deletado com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NudgeDeleteResponse'
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '403':
+          description: "Acesso proibido (usuário não é um supervisor)."
+        '404':
+          description: "Nudge não encontrado com o ID especificado."
         '500':
           description: "Erro interno do servidor."
