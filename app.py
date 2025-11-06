@@ -11,6 +11,11 @@ from flask import Flask, render_template, send_from_directory
 from flask_cors import CORS
 from config import Config
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv('config.env')
+
 # doencas_confirmadas
 from routes.doentes_confirmados.bluprint import doentes_confirmados_bp
 from routes.doentes_confirmados import post_batch, get_all, get_by_id, update, delete
@@ -104,6 +109,7 @@ app = Flask(__name__)
 CORS(app)
 
 API_URL = "/static/openapi.yaml"
+# API_URL = os.getenv('API_URL')
 SWAGGER_URL = "/api/docs"
 
 swaggerui_blueprint = get_swaggerui_blueprint(
