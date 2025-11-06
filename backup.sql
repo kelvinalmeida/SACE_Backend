@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict ydA65PEPAyynhPXNzY33XsxdgbaNUdC2aJIZabGq98RYfsMyRkQHFVehgelMOhz
+\restrict xGd8UfxsZyliIpwodmvPPUF6j9HWX6cYJsPfX9CfQYFXfNvhpe6fsBCaqYfSGHg
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -325,11 +325,11 @@ ALTER TABLE public.depositos ALTER COLUMN deposito_id ADD GENERATED ALWAYS AS ID
 
 
 --
--- Name: doencas_confirmadas; Type: TABLE; Schema: public; Owner: user
+-- Name: doentes_confirmados; Type: TABLE; Schema: public; Owner: user
 --
 
-CREATE TABLE public.doencas_confirmadas (
-    doenca_confirmada_id integer NOT NULL,
+CREATE TABLE public.doentes_confirmados (
+    doente_confirmado_id integer NOT NULL,
     nome character varying(100),
     tipo_da_doenca character varying(11) NOT NULL,
     rua character varying(30) NOT NULL,
@@ -339,14 +339,14 @@ CREATE TABLE public.doencas_confirmadas (
 );
 
 
-ALTER TABLE public.doencas_confirmadas OWNER TO "user";
+ALTER TABLE public.doentes_confirmados OWNER TO "user";
 
 --
--- Name: doencas_confirmadas_doenca_confirmada_id_seq; Type: SEQUENCE; Schema: public; Owner: user
+-- Name: doentes_confirmados_doente_confirmado_id_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
-ALTER TABLE public.doencas_confirmadas ALTER COLUMN doenca_confirmada_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.doencas_confirmadas_doenca_confirmada_id_seq
+ALTER TABLE public.doentes_confirmados ALTER COLUMN doente_confirmado_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.doentes_confirmados_doente_confirmado_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -998,10 +998,10 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 
 
 --
--- Data for Name: doencas_confirmadas; Type: TABLE DATA; Schema: public; Owner: user
+-- Data for Name: doentes_confirmados; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.doencas_confirmadas (doenca_confirmada_id, nome, tipo_da_doenca, rua, numero, bairro, ciclo_id) FROM stdin;
+COPY public.doentes_confirmados (doente_confirmado_id, nome, tipo_da_doenca, rua, numero, bairro, ciclo_id) FROM stdin;
 1	Ana Lúcia Barbosa	Dengue	Rua Prof. Sandoval Arroxelas	120	Ponta Verde	1
 2	Bruno Costa	Chikungunya	Rua B. de Atalaia	45	Jacintinho	1
 3	Carla Dias Ferreira	Zica	Av. Garça Torta	1100	Benedito Bentes	1
@@ -1387,10 +1387,10 @@ SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 240, true);
 
 
 --
--- Name: doencas_confirmadas_doenca_confirmada_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
+-- Name: doentes_confirmados_doente_confirmado_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.doencas_confirmadas_doenca_confirmada_id_seq', 15, true);
+SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 15, true);
 
 
 --
@@ -1509,11 +1509,11 @@ ALTER TABLE ONLY public.depositos
 
 
 --
--- Name: doencas_confirmadas doencas_confirmadas_pkey; Type: CONSTRAINT; Schema: public; Owner: user
+-- Name: doentes_confirmados doentes_confirmados_pkey; Type: CONSTRAINT; Schema: public; Owner: user
 --
 
-ALTER TABLE ONLY public.doencas_confirmadas
-    ADD CONSTRAINT doencas_confirmadas_pkey PRIMARY KEY (doenca_confirmada_id);
+ALTER TABLE ONLY public.doentes_confirmados
+    ADD CONSTRAINT doentes_confirmados_pkey PRIMARY KEY (doente_confirmado_id);
 
 
 --
@@ -1621,10 +1621,10 @@ ALTER TABLE ONLY public.registro_de_campo
 
 
 --
--- Name: doencas_confirmadas fk_ciclo; Type: FK CONSTRAINT; Schema: public; Owner: user
+-- Name: doentes_confirmados fk_ciclo; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
-ALTER TABLE ONLY public.doencas_confirmadas
+ALTER TABLE ONLY public.doentes_confirmados
     ADD CONSTRAINT fk_ciclo FOREIGN KEY (ciclo_id) REFERENCES public.ciclos(ciclo_id) ON DELETE CASCADE;
 
 
@@ -1728,5 +1728,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ydA65PEPAyynhPXNzY33XsxdgbaNUdC2aJIZabGq98RYfsMyRkQHFVehgelMOhz
+\unrestrict xGd8UfxsZyliIpwodmvPPUF6j9HWX6cYJsPfX9CfQYFXfNvhpe6fsBCaqYfSGHg
 

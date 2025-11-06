@@ -1,14 +1,14 @@
 from flask import jsonify, current_app
 from db import create_connection
 from routes.login.token_required import token_required
-from .bluprint import doencas_confirmadas_bp
+from .bluprint import doentes_confirmados_bp
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
-@doencas_confirmadas_bp.route('/doencas_confirmadas/<int:doenca_id>', methods=['DELETE'])
+@doentes_confirmados_bp.route('/doente_confirmado/<int:doenca_id>', methods=['DELETE'])
 @token_required
-def delete_doenca_confirmada(current_user, doenca_id):
+def delete_doente_confirmado(current_user, doenca_id):
     """
     Deleta um registro de doença confirmada.
     Requer permissão de supervisor.
@@ -22,7 +22,7 @@ def delete_doenca_confirmada(current_user, doenca_id):
         conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
         cursor = conn.cursor()
         
-        delete_sql = "DELETE FROM doencas_confirmadas WHERE doenca_confirmada_id = %s RETURNING doenca_confirmada_id;"
+        delete_sql = "DELETE FROM doentes_confirmados WHERE doente_confirmado_id = %s RETURNING doente_confirmado_id;"
         
         cursor.execute(delete_sql, (doenca_id,))
         result = cursor.fetchone()
@@ -31,7 +31,7 @@ def delete_doenca_confirmada(current_user, doenca_id):
             return jsonify({"error": "Registro não encontrado."}), 404
         
         conn.commit()
-        return jsonify({"message": "Registro deletado com sucesso.", "id_deletado": result['doenca_confirmada_id']}), 200
+        return jsonify({"message": "Registro deletado com sucesso.", "id_deletado": result['doente_confirmado_id']}), 200
 
     except Exception as e:
         if conn: conn.rollback()

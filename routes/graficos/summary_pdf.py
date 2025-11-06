@@ -254,13 +254,13 @@ class PDF(FPDF):
     # --- END OF ORIGINAL METHOD ---
 
     # --- INÍCIO DO NOVO MÉTODO ADICIONADO ---
-    def add_doencas_confirmadas_table(self, doencas_data):
+    def add_doentes_confirmados_table(self, doencas_data):
         """
-        Adiciona uma tabela com o detalhamento de doenças confirmadas (tabela 'doencas_confirmadas').
+        Adiciona uma tabela com o detalhamento de Doentes confirmados (tabela 'doentes_confirmados').
         """
         self.ln(5)
         self.set_font('Arial', 'B', 14)
-        self.cell(0, 8, "Doenças Confirmadas (Tabela Oficial)", 0, 1, 'C')
+        self.cell(0, 8, "Doentes Confirmados (Tabela Oficial)", 0, 1, 'C')
         self.ln(2)
 
         if not doencas_data:
@@ -282,7 +282,7 @@ class PDF(FPDF):
         self.set_font('Arial', 'B', 9)
         self.set_fill_color(230, 230, 230)
         self.cell(col_widths['nome'], 6, "Nome do Paciente", 1, 0, 'C', fill=True)
-        self.cell(col_widths['doenca'], 6, "Doença", 1, 0, 'C', fill=True)
+        self.cell(col_widths['doenca'], 6, "Doente", 1, 0, 'C', fill=True)
         self.cell(col_widths['bairro'], 6, "Bairro", 1, 0, 'C', fill=True)
         self.cell(col_widths['rua'], 6, "Rua", 1, 0, 'C', fill=True)
         self.cell(col_widths['numero'], 6, "Nº", 1, 1, 'C', fill=True) # 1, 1 (quebra a linha)
@@ -296,7 +296,7 @@ class PDF(FPDF):
                 # Redesenha o cabeçalho
                 self.set_font('Arial', 'B', 9)
                 self.cell(col_widths['nome'], 6, "Nome do Paciente", 1, 0, 'C', fill=True)
-                self.cell(col_widths['doenca'], 6, "Doença", 1, 0, 'C', fill=True)
+                self.cell(col_widths['doenca'], 6, "Doente", 1, 0, 'C', fill=True)
                 self.cell(col_widths['bairro'], 6, "Bairro", 1, 0, 'C', fill=True)
                 self.cell(col_widths['rua'], 6, "Rua", 1, 0, 'C', fill=True)
                 self.cell(col_widths['numero'], 6, "Nº", 1, 1, 'C', fill=True)
@@ -443,16 +443,16 @@ def get_summary_pdf(ano, ciclo):
         # --- END OF ORIGINAL QUERIES ---
 
         # --- INÍCIO DA NOVA QUERY ADICIONADA ---
-        # --- 5. Fetch Doenças Confirmadas Data ---
+        # --- 5. Fetch Doentes Confirmadas Data ---
         doencas_query = """
             SELECT nome, tipo_da_doenca, rua, numero, bairro
-            FROM doencas_confirmadas
+            FROM doentes_confirmados
             WHERE ciclo_id = %s
             ORDER BY bairro, rua, nome;
         """
         cursor.execute(doencas_query, (ciclo_id,))
         doencas_results = cursor.fetchall()
-        logging.info(f"Dados para PDF (Doenças Confirmadas: {len(doencas_results)} casos) recuperados.")
+        logging.info(f"Dados para PDF (Doentes Confirmadas: {len(doencas_results)} casos) recuperados.")
         # --- FIM DA NOVA QUERY ADICIONADA ---
 
 
@@ -489,9 +489,9 @@ def get_summary_pdf(ano, ciclo):
                 pdf.add_bairro_summary(row)
 
         # --- INÍCIO DA NOVA SEÇÃO ADICIONADA ---
-        # --- Section 4: Doenças Confirmadas (Fourth, on a new page) ---
+        # --- Section 4: Doentes Confirmadas (Fourth, on a new page) ---
         pdf.add_page()
-        pdf.add_doencas_confirmadas_table(doencas_results)
+        pdf.add_doentes_confirmados_table(doencas_results)
         # --- FIM DA NOVA SEÇÃO ADICIONADA ---
 
 

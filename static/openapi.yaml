@@ -13,23 +13,23 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
-    GraficoPontoTotalDoencas:
+    GraficoPontoTotalDoentes:
       type: object
       properties:
         ano: { type: integer, example: 2025 }
         ciclo: { type: integer, example: 1 }
-        otal_doencas: { type: integer, example: 15 }
+        total_Doentes: { type: integer, example: 15 }
 
-    GraficoResumoTotalDoencas:
+    GraficoResumoTotalDoentes:
       type: object
       properties:
-        total_doencas:
+        total_Doentes:
           type: integer
-          description: "Número total de doenças confirmadas no ciclo solicitado."
+          description: "Número total de doentes confirmados no ciclo solicitado."
           example: 15
         dados_do_ultimo_ciclo:
           type: integer
-          description: "Número total de doenças confirmadas no ciclo imediatamente anterior."
+          description: "Número total de doentes confirmados no ciclo imediatamente anterior."
           example: 10
         porcentagem:
           type: string
@@ -37,24 +37,24 @@ components:
           example: "50.0% ↑"
         crescimento:
           type: string
-          description: "Indica se o número de doenças aumentou, diminuiu ou permaneceu estável."
+          description: "Indica se o número de doentes aumentou, diminuiu ou permaneceu estável."
           enum: [aumentou, diminuiu, estável, "Novo"]
           example: "aumentou"
 
-    GraficoTotalDoencasResponse:
+    GraficoTotalDoentesResponse:
       type: object
       properties:
         dados_grafico:
           type: array
           description: "Lista de dados históricos para construir o gráfico."
           items:
-            $ref: '#/components/schemas/GraficoPontoTotalDoencas'
+            $ref: '#/components/schemas/GraficoPontoTotalDoentes'
         resumo_ciclo_atual:
-          $ref: '#/components/schemas/GraficoResumoTotalDoencas'
+          $ref: '#/components/schemas/GraficoResumoTotalDoentes'
 
     DoencaConfirmadaInput:
       type: object
-      description: "Schema para criar ou atualizar um registro de doença confirmada."
+      description: "Schema para criar ou atualizar um registro de doente confirmado."
       required:
         - tipo_da_doenca
         - rua
@@ -66,7 +66,7 @@ components:
           example: "José Maria"
         tipo_da_doenca:
           type: string
-          description: "Tipo da doença (obrigatório)."
+          description: "Tipo da doente (obrigatório)."
           enum: [Dengue, Chikungunya, Zica]
           example: "Dengue"
         rua:
@@ -86,9 +86,9 @@ components:
           
     DoencaConfirmadaOutput:
       type: object
-      description: "Schema de um registro de doença confirmada retornado pela API."
+      description: "Schema de um registro de doente confirmado retornado pela API."
       properties:
-        doenca_confirmada_id:
+        doente_confirmado_id:
           type: integer
           example: 1
         nome:
@@ -124,11 +124,11 @@ components:
 
     DoencaConfirmadaPostResponse:
       type: object
-      description: "Resposta de sucesso ao criar registros de doenças em lote."
+      description: "Resposta de sucesso ao criar registros de doentes em lote."
       properties:
         message:
           type: string
-          example: "2 registros de doenças confirmadas criados com sucesso."
+          example: "2 registros de doentes confirmados criados com sucesso."
         ids_criados:
           type: array
           items:
@@ -258,7 +258,7 @@ components:
 
     DashboardCasosConfirmados:
       type: object
-      description: "Contagem total de casos confirmados por doença no ciclo."
+      description: "Contagem total de casos confirmados por doente no ciclo."
       properties:
         dengue: { type: integer, example: 5 }
         zika: { type: integer, example: 2 }
@@ -2962,11 +2962,11 @@ paths:
         '500':
           description: Erro interno do servidor.
   
-  /grafico/total_doencas_confirmadas/{ano}/{ciclo}:
+  /grafico/total_doentes_confirmados/{ano}/{ciclo}:
     get:
-      summary: Obtém dados históricos para o gráfico de total de doenças confirmadas
+      summary: Obtém dados históricos para o gráfico de total de doentes confirmados
       description: |
-        Retorna uma série histórica de dados com o total de doenças confirmadas (da tabela 'doencas_confirmadas') por ciclo, até o ano e ciclo especificados. 
+        Retorna uma série histórica de dados com o total de doentes confirmados (da tabela 'doentes_confirmados') por ciclo, até o ano e ciclo especificados. 
         Também inclui um resumo comparativo com o ciclo anterior.
         Esta rota é pública.
       tags:
@@ -2993,7 +2993,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GraficoTotalDoencasResponse'
+                $ref: '#/components/schemas/GraficoTotalDoentesResponse'
         '500':
           description: Erro interno do servidor.
 
@@ -3483,7 +3483,7 @@ paths:
       description: |
         Endpoint para obter um resumo de dados para o dashboard de um ciclo específico. 
         Retorna a contagem total de depósitos por tipo (A1, A2, B, etc.), 
-        a contagem total de casos confirmados por doença (Dengue, Zika, Chikungunya) e
+        a contagem total de casos confirmados por doente (Dengue, Zika, Chikungunya) e
         a contagem de áreas de visita agrupadas por nível de risco (Preta, Vermelha, Laranja, Amarela).
         
         Esta rota é pública e não requer autenticação.
@@ -3539,7 +3539,7 @@ paths:
       description: |
         Busca o ciclo mais recente registrado no sistema e retorna um resumo de dados 
         para o dashboard, incluindo contagem total de depósitos por tipo, 
-        casos confirmados por doença e contagem de áreas de visita por nível de risco.
+        casos confirmados por doente e contagem de áreas de visita por nível de risco.
         
         Esta rota é pública e não requer autenticação.
       tags:
@@ -3584,7 +3584,7 @@ paths:
         Busca o ciclo mais recente registrado no sistema e retorna uma lista de pontos 
         de dados agregados por ponto geográfico (latitude, longitude, bairro) 
         para uso em um mapa de calor (heatmap). Cada ponto inclui contagem de focos, 
-        casos confirmados (total e por doença) e o nível de risco calculado.
+        casos confirmados (total e por doente) e o nível de risco calculado.
         
         Esta rota é pública e não requer autenticação.
       tags:
@@ -3685,7 +3685,7 @@ paths:
         
         1.  **Resumo por Agente:** Uma tabela listando todos os agentes e suas métricas (total de imóveis, inspecionados, bloqueados, fechados, recusados, total de focos e total de casos confirmados).
         2.  **Resumo de Depósitos e Tratamentos:** Tabelas que detalham o total de depósitos encontrados (A1, A2, B, etc.) e o total de tratamentos aplicados (Larvicidas e Adulticidas por tipo) em todo o ciclo.
-        3.  **Resumo por Zona (Bairro):** (Em uma nova página) Um bloco de informações para cada zona/bairro, detalhando o nível de risco, total de focos e casos confirmados (total e por doença).
+        3.  **Resumo por Zona (Bairro):** (Em uma nova página) Um bloco de informações para cada zona/bairro, detalhando o nível de risco, total de focos e casos confirmados (total e por doente).
         
         **Atenção:** Esta rota é protegida e requer nível de acesso "supervisor".
       tags:
@@ -3835,21 +3835,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotificacaoErrorPushAlert'
 
-  /doencas_confirmadas:
+  /doentes_confirmados:
     post:
-      summary: Cria um ou mais registros de doenças confirmadas (em lote)
+      summary: Cria um ou mais registros de doentes confirmados (em lote)
       description: |
-        Registra um ou mais casos de doenças confirmadas a partir de um array JSON. 
+        Registra um ou mais casos de doentes confirmados a partir de um array JSON. 
         Todos os registros criados serão automaticamente associados ao ciclo de visitas que está ativo no momento.
         
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem criar registros.
       tags:
-        - Doenças Confirmadas
+        - doentes confirmados
       security:
         - bearerAuth: []
       requestBody:
         required: true
-        description: "Um array JSON contendo um ou mais objetos de doença confirmada."
+        description: "Um array JSON contendo um ou mais objetos de doente confirmado."
         content:
           application/json:
             schema:
@@ -3884,14 +3884,14 @@ paths:
           description: "Erro interno do servidor."
           
     get:
-      summary: Lista todos os registros de doenças confirmadas
+      summary: Lista todos os registros de doentes confirmados
       description: |
-        Retorna uma lista de todos os casos de doenças confirmadas registrados no sistema, ordenados dos mais recentes para os mais antigos.
+        Retorna uma lista de todos os casos de doentes confirmados registrados no sistema, ordenados dos mais recentes para os mais antigos.
         Inclui informações do ciclo (ano e número) associado a cada registro.
         
         Requer autenticação (qualquer usuário logado).
       tags:
-        - Doenças Confirmadas
+        - doentes confirmados
       security:
         - bearerAuth: []
       responses:
@@ -3908,23 +3908,23 @@ paths:
         '500':
           description: "Erro interno do servidor."
 
-  /doencas_confirmadas/{doenca_id}:
+  /doentes_confirmados/{doenca_id}:
     get:
-      summary: Busca um registro de doença confirmada por ID
+      summary: Busca um registro de doente confirmado por ID
       description: |
-        Retorna os detalhes de um único registro de doença confirmada, identificado pelo seu ID.
+        Retorna os detalhes de um único registro de doente confirmado, identificado pelo seu ID.
         Inclui informações do ciclo (ano e número) associado.
         
         Requer autenticação (qualquer usuário logado).
       tags:
-        - Doenças Confirmadas
+        - doentes confirmados
       security:
         - bearerAuth: []
       parameters:
         - name: doenca_id
           in: path
           required: true
-          description: "O ID do registro de doença a ser buscado."
+          description: "O ID do registro de doente a ser buscado."
           schema:
             type: integer
             example: 1
@@ -3943,21 +3943,21 @@ paths:
           description: "Erro interno do servidor."
           
     put:
-      summary: Atualiza um registro de doença confirmada
+      summary: Atualiza um registro de doente confirmado
       description: |
-        Atualiza as informações de um registro de doença confirmada existente. 
+        Atualiza as informações de um registro de doente confirmado existente. 
         O `ciclo_id` não pode ser alterado por esta rota.
         
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem atualizar registros.
       tags:
-        - Doenças Confirmadas
+        - doentes confirmados
       security:
         - bearerAuth: []
       parameters:
         - name: doenca_id
           in: path
           required: true
-          description: "O ID do registro de doença a ser atualizado."
+          description: "O ID do registro de doente a ser atualizado."
           schema:
             type: integer
             example: 1
@@ -3993,20 +3993,20 @@ paths:
           description: "Erro interno do servidor."
           
     delete:
-      summary: Deleta um registro de doença confirmada
+      summary: Deleta um registro de doente confirmado
       description: |
-        Remove permanentemente um registro de doença confirmada do sistema.
+        Remove permanentemente um registro de doente confirmado do sistema.
         
         **Atenção:** Apenas usuários com nível de acesso "supervisor" podem deletar registros.
       tags:
-        - Doenças Confirmadas
+        - doentes confirmados
       security:
         - bearerAuth: []
       parameters:
         - name: doenca_id
           in: path
           required: true
-          description: "O ID do registro de doença a ser deletado."
+          description: "O ID do registro de doente a ser deletado."
           schema:
             type: integer
             example: 1

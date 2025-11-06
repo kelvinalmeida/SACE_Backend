@@ -7,11 +7,11 @@ import logging
 # Configuração básica de log
 logging.basicConfig(level=logging.INFO)
 
-@graficos.route('/grafico/total_doencas_confirmadas/<int:ano>/<int:ciclo>', methods=['GET'])
-def get_total_doencas_confirmadas_historico(ano, ciclo):
+@graficos.route('/grafico/total_doentes_confirmados/<int:ano>/<int:ciclo>', methods=['GET'])
+def get_total_doentes_confirmados_historico(ano, ciclo):
     """
     Endpoint para obter dados históricos do total de doenças confirmadas
-    (da tabela doencas_confirmadas) para um gráfico.
+    (da tabela doentes_confirmados) para um gráfico.
 
     Esta rota busca todos os dados de doenças confirmadas desde o início até o 
     ano e ciclo especificados. Retorna uma lista de pontos de dados para o 
@@ -25,16 +25,16 @@ def get_total_doencas_confirmadas_historico(ano, ciclo):
     try:
         cursor = conn.cursor()
 
-        # Query SQL modificada para usar a tabela 'doencas_confirmadas'
+        # Query SQL modificada para usar a tabela 'doentes_confirmados'
         query_grafico = """
             SELECT
                 EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER AS ano,
                 c.ciclo,
-                COUNT(dc.doenca_confirmada_id) AS total_doencas
+                COUNT(dc.doente_confirmado_id) AS total_doentes
             FROM
                 ciclos c
             LEFT JOIN
-                doencas_confirmadas dc ON c.ciclo_id = dc.ciclo_id
+                doentes_confirmados dc ON c.ciclo_id = dc.ciclo_id
             WHERE
                 EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER < %s OR
                 (EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s AND c.ciclo <= %s)
@@ -51,7 +51,7 @@ def get_total_doencas_confirmadas_historico(ano, ciclo):
             return jsonify({
                 "dados_grafico": [],
                 "resumo_ciclo_atual": {
-                    "total_doencas": 0,
+                    "total_doentes": 0,
                     "dados_do_ultimo_ciclo": 0,
                     "porcentagem": "0%",
                     "crescimento": "estável"
@@ -59,35 +59,35 @@ def get_total_doencas_confirmadas_historico(ano, ciclo):
             }), 200
 
         # Lógica para calcular o resumo (variáveis renomeadas)
-        total_doencas_atual = 0
-        total_doencas_anterior = 0
+        total_doentes_atual = 0
+        total_doentes_anterior = 0
 
         if len(dados_grafico) > 0:
-            total_doencas_atual = int(dados_grafico[-1]['total_doencas'])
+            total_doentes_atual = int(dados_grafico[-1]['total_doentes'])
         if len(dados_grafico) > 1:
-            total_doencas_anterior = int(dados_grafico[-2]['total_doencas'])
+            total_doentes_anterior = int(dados_grafico[-2]['total_doentes'])
         
         porcentagem_str = "0%"
         crescimento_str = "estável"
 
-        if total_doencas_anterior == 0:
-            if total_doencas_atual > 0:
+        if total_doentes_anterior == 0:
+            if total_doentes_atual > 0:
                 porcentagem_str = "100% (Novo) ↑"
                 crescimento_str = "aumentou"
-        elif total_doencas_anterior > 0:
-            if total_doencas_atual > total_doencas_anterior:
-                percentage = round(((total_doencas_atual / total_doencas_anterior) - 1) * 100, 2)
+        elif total_doentes_anterior > 0:
+            if total_doentes_atual > total_doentes_anterior:
+                percentage = round(((total_doentes_atual / total_doentes_anterior) - 1) * 100, 2)
                 porcentagem_str = f"{percentage}% ↑"
                 crescimento_str = "aumentou"
-            elif total_doencas_atual < total_doencas_anterior:
-                percentage = round((1 - (total_doencas_atual / total_doencas_anterior)) * 100, 2)
+            elif total_doentes_atual < total_doentes_anterior:
+                percentage = round((1 - (total_doentes_atual / total_doentes_anterior)) * 100, 2)
                 porcentagem_str = f"{percentage}% ↓"
                 crescimento_str = "diminuiu"
 
         # Monta o objeto de resumo
         resumo = {
-            "total_doencas": total_doencas_atual,
-            "dados_do_ultimo_ciclo": total_doencas_anterior,
+            "total_doentes": total_doentes_atual,
+            "dados_do_ultimo_ciclo": total_doentes_anterior,
             "porcentagem": porcentagem_str,
             "crescimento": crescimento_str
         }

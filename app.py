@@ -12,8 +12,8 @@ from flask_cors import CORS
 from config import Config
 
 # doencas_confirmadas
-from routes.doencas_registradas.bluprint import doencas_confirmadas_bp
-from routes.doencas_registradas import post_batch, get_all, get_by_id, update, delete
+from routes.doentes_confirmados.bluprint import doentes_confirmados_bp
+from routes.doentes_confirmados import post_batch, get_all, get_by_id, update, delete
 
 # notificacoes
 from routes.notificacoes.bluprint import notificacao
@@ -43,7 +43,7 @@ from routes.graficos import heatmap_painel
 from routes.graficos import heatmap_data_latest
 from routes.graficos import heatmap_painel_latest
 from routes.graficos import summary_pdf
-from routes.graficos import total_doencas_confirmadas
+from routes.graficos import total_doentes_confirmados
 
 # registro_de_campo
 from routes.registro_de_campo.bluprint import registro_de_campo
@@ -125,7 +125,7 @@ app.register_blueprint(blu_artigo)
 app.register_blueprint(graficos)
 app.register_blueprint(ciclos)
 app.register_blueprint(notificacao)
-app.register_blueprint(doencas_confirmadas_bp)
+app.register_blueprint(doentes_confirmados_bp)
 
 print(app.url_map)
 
