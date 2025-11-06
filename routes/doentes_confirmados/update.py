@@ -1,12 +1,12 @@
 from flask import request, jsonify, current_app
 from db import create_connection
 from routes.login.token_required import token_required
-from .bluprint import doencas_confirmadas_bp
+from .bluprint import doentes_confirmados_bp
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
-@doencas_confirmadas_bp.route('/doencas_confirmadas/<int:doenca_id>', methods=['PUT'])
+@doentes_confirmados_bp.route('/doentes_confirmados/<int:doenca_id>', methods=['PUT'])
 @token_required
 def update_doenca_confirmada(current_user, doenca_id):
     """
@@ -28,10 +28,10 @@ def update_doenca_confirmada(current_user, doenca_id):
         cursor = conn.cursor()
         
         update_sql = """
-            UPDATE doencas_confirmadas
+            UPDATE doentes_confirmados
             SET nome = %s, tipo_da_doenca = %s, rua = %s, numero = %s, bairro = %s
-            WHERE doenca_confirmada_id = %s
-            RETURNING doenca_confirmada_id;
+            WHERE doente_confirmado_id = %s
+            RETURNING doente_confirmado_id;
         """
         values = (
             data.get('nome'),
@@ -49,7 +49,7 @@ def update_doenca_confirmada(current_user, doenca_id):
             return jsonify({"error": "Registro não encontrado."}), 404
         
         conn.commit()
-        return jsonify({"message": "Registro atualizado com sucesso.", "id": result['doenca_confirmada_id']}), 200
+        return jsonify({"message": "Registro atualizado com sucesso.", "id": result['doente_confirmado_id']}), 200
 
     except Exception as e:
         if conn: conn.rollback()

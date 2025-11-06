@@ -1,15 +1,15 @@
 from flask import request, jsonify, current_app
 from db import create_connection
 from routes.login.token_required import token_required
-from .bluprint import doencas_confirmadas_bp
+from .bluprint import doentes_confirmados_bp
 import logging
 
 # Configuração de log
 logging.basicConfig(level=logging.INFO)
 
-@doencas_confirmadas_bp.route('/doencas_confirmadas', methods=['POST'])
+@doentes_confirmados_bp.route('/doentes_confirmados', methods=['POST'])
 @token_required
-def create_doencas_confirmadas_batch(current_user):
+def create_doentes_confirmados_batch(current_user):
     """
     Cria um ou mais registros de doenças confirmadas a partir de um array JSON.
     Requer permissão de supervisor.
@@ -46,9 +46,9 @@ def create_doencas_confirmadas_batch(current_user):
 
         # 4. Preparar o SQL de Inserção
         insert_sql = """
-            INSERT INTO doencas_confirmadas (nome, tipo_da_doenca, rua, numero, bairro, ciclo_id)
+            INSERT INTO doentes_confirmados (nome, tipo_da_doenca, rua, numero, bairro, ciclo_id)
             VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING doenca_confirmada_id;
+            RETURNING doente_confirmado_id;
         """
 
         # 5. Iterar e Inserir cada item do array
@@ -68,7 +68,7 @@ def create_doencas_confirmadas_batch(current_user):
             )
             
             cursor.execute(insert_sql, values)
-            new_id = cursor.fetchone()['doenca_confirmada_id']
+            new_id = cursor.fetchone()['doente_confirmado_id']
             created_ids.append(new_id)
 
         # 6. Commit final

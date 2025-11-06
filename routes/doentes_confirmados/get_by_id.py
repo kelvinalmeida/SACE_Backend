@@ -1,14 +1,14 @@
 from flask import jsonify, current_app
 from db import create_connection
 from routes.login.token_required import token_required
-from .bluprint import doencas_confirmadas_bp
+from .bluprint import doentes_confirmados_bp
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
-@doencas_confirmadas_bp.route('/doencas_confirmadas/<int:doenca_id>', methods=['GET'])
+@doentes_confirmados_bp.route('/doentes_confirmados/<int:doenca_id>', methods=['GET'])
 @token_required
-def get_doenca_confirmada_by_id(current_user, doenca_id):
+def get_doente_confirmado_by_id(current_user, doenca_id):
     """
     Busca um registro de doença confirmada pelo ID.
     Requer autenticação.
@@ -21,9 +21,9 @@ def get_doenca_confirmada_by_id(current_user, doenca_id):
         
         query = """
             SELECT dc.*, c.ciclo, EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER AS ano 
-            FROM doencas_confirmadas dc
+            FROM doentes_confirmados dc
             JOIN ciclos c ON dc.ciclo_id = c.ciclo_id
-            WHERE dc.doenca_confirmada_id = %s;
+            WHERE dc.doente_confirmado_id = %s;
         """
         cursor.execute(query, (doenca_id,))
         result = cursor.fetchone()
