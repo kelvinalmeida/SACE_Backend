@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict xGd8UfxsZyliIpwodmvPPUF6j9HWX6cYJsPfX9CfQYFXfNvhpe6fsBCaqYfSGHg
+\restrict zf48YZ2ZNA5GuR0SM5zalE52fFX5LMsTKgMSEIMhW1iFbVfhMcrpXEGarqhf7UU
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -376,6 +376,34 @@ ALTER TABLE public.larvicida OWNER TO "user";
 
 ALTER TABLE public.larvicida ALTER COLUMN larvicida_id ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public.larvicida_larvicida_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: nudges; Type: TABLE; Schema: public; Owner: user
+--
+
+CREATE TABLE public.nudges (
+    nudges_id integer NOT NULL,
+    titulo character varying(50) NOT NULL,
+    descricao character varying(200) NOT NULL,
+    url character varying(200) NOT NULL
+);
+
+
+ALTER TABLE public.nudges OWNER TO "user";
+
+--
+-- Name: nudges_nudges_id_seq; Type: SEQUENCE; Schema: public; Owner: user
+--
+
+ALTER TABLE public.nudges ALTER COLUMN nudges_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.nudges_nudges_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1058,6 +1086,20 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 
 
 --
+-- Data for Name: nudges; Type: TABLE DATA; Schema: public; Owner: user
+--
+
+COPY public.nudges (nudges_id, titulo, descricao, url) FROM stdin;
+1	Não se esqueça da vistoria!	A vistoria semanal de 10 minutos na sua casa é a melhor forma de combater o mosquito.	https://sace-rosy.vercel.app/informacoes
+2	Água parada? Vire!	Garrafas, pneus e vasos de planta podem acumular água. Vire todos os recipientes.	https://sace-rosy.vercel.app/informacoes
+3	Calhas limpas, casa segura	Verifique se as calhas da sua casa não estão entupidas com folhas, evitando o acúmulo de água.	https://sace-rosy.vercel.app/informacoes
+4	Cuidado com as plantas	Coloque areia nos pratos de vasos de planta ou lave-os com bucha e sabão semanalmente.	https://sace-rosy.vercel.app/informacoes
+5	Lixo bem fechado	Mantenha sacos de lixo bem amarrados e lixeiras tampadas. O mosquito adora lixo acumulado!	https://sace-rosy.vercel.app/informacoes
+6	Caixa d'água vedada	Uma caixa d'água mal tampada pode se tornar um grande criadouro. Verifique a vedação.	https://sace-rosy.vercel.app/informacoes
+\.
+
+
+--
 -- Data for Name: registro_de_campo; Type: TABLE DATA; Schema: public; Owner: user
 --
 
@@ -1401,6 +1443,13 @@ SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 29, true);
 
 
 --
+-- Name: nudges_nudges_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
+--
+
+SELECT pg_catalog.setval('public.nudges_nudges_id_seq', 6, true);
+
+
+--
 -- Name: registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
@@ -1522,6 +1571,14 @@ ALTER TABLE ONLY public.doentes_confirmados
 
 ALTER TABLE ONLY public.larvicida
     ADD CONSTRAINT larvicida_pkey PRIMARY KEY (larvicida_id);
+
+
+--
+-- Name: nudges nudges_pkey; Type: CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.nudges
+    ADD CONSTRAINT nudges_pkey PRIMARY KEY (nudges_id);
 
 
 --
@@ -1728,5 +1785,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict xGd8UfxsZyliIpwodmvPPUF6j9HWX6cYJsPfX9CfQYFXfNvhpe6fsBCaqYfSGHg
+\unrestrict zf48YZ2ZNA5GuR0SM5zalE52fFX5LMsTKgMSEIMhW1iFbVfhMcrpXEGarqhf7UU
 
