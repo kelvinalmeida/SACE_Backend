@@ -66,6 +66,7 @@ from routes.area_de_visita import get_by_id
 from routes.area_de_visita import post_several_areas
 from routes.area_de_visita import update
 from routes.area_de_visita import delete
+from routes.area_de_visita import get_registros_by_area
 
 # usuario
 from routes.usuario.bluprint import usuario

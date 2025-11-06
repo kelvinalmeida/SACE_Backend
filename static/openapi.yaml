@@ -13,6 +13,33 @@ components:
       bearerFormat: JWT
       description: "Token de autenticação JWT. Deve ser incluído no cabeçalho 'Authorization' com o prefixo 'Bearer'."
   schemas:
+  
+    RegistroDeCampoResumido:
+      type: object
+      description: "Representação resumida de um registro de campo (imóvel) dentro de uma área de visita."
+      properties:
+        registro_de_campo_id:
+          type: integer
+          example: 1
+        imovel_numero:
+          type: string
+          example: "123A"
+        imovel_tipo:
+          type: string
+          example: "Terreno Baldio"
+        imovel_complemento:
+          type: string
+          example: "Perto da Farmacia B"
+        imovel_categoria_da_localidade:
+          type: string
+          example: "Urbana"
+        imovel_lado:
+          type: string
+          example: "Par"
+        imovel_status:
+          type: string
+          example: "inspecionado"
+
     GraficoPontoTotalDoentes:
       type: object
       properties:
@@ -1798,6 +1825,44 @@ paths:
           description: Área de visita não encontrada com o ID especificado.
         '500':
           description: Erro interno do servidor.
+  
+  /area_de_visita/{area_de_visita_id}/registros:
+    get:
+      summary: Lista os imóveis (registros) de uma área de visita no ciclo ATIVO
+      description: |
+        Retorna uma lista de todos os registros de campo (imóveis) associados a uma `area_de_visita_id` específica, 
+        mas **apenas** aqueles que pertencem ao ciclo de visitas atualmente ativo.
+        
+        A resposta inclui o ID do registro, detalhes do endereço (número, lado, complemento, ...) e o status do imóvel (ex: inspecionado, fechado, recusado, ...).
+        
+        Requer autenticação.
+      tags:
+        - Area de Visita
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: area_de_visita_id
+          in: path
+          required: true
+          description: "O ID da área de visita cujos registros serão buscados."
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: "Lista de registros do ciclo ativo retornada com sucesso (pode ser uma lista vazia)."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RegistroDeCampoResumido'
+        '401':
+          description: "Não autenticado (token JWT ausente ou inválido)."
+        '404':
+          description: "Nenhum ciclo ativo encontrado."
+        '500':
+          description: "Erro interno do servidor."
           
   /usuarios:
     post:
