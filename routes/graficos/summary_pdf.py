@@ -1,7 +1,7 @@
 import logging
 from flask import jsonify, current_app, make_response
 from db import create_connection
-# from routes.login.token_required import token_required # Uncomment if this route needs to be protected
+from routes.login.token_required import token_required # Importando o decorator
 from .bluprint import graficos
 from fpdf import FPDF
 from datetime import datetime
@@ -110,7 +110,14 @@ class PDF(FPDF):
     def add_agent_summary_table(self, agent_data):
         self.ln(5)
         self.set_font('Arial', 'B', 14)
-        self.cell(0, 8, "Resumo por Agente", 0, 1, 'C')
+        
+        # --- MODIFICAÇÃO: Título dinâmico ---
+        if len(agent_data) > 1:
+            self.cell(0, 8, "Resumo por Agente (Equipe)", 0, 1, 'C')
+        else:
+             self.cell(0, 8, "Resumo de Atividade Individual", 0, 1, 'C')
+        # --- FIM DA MODIFICAÇÃO ---
+
         self.ln(2)
 
         # Table Header
@@ -253,10 +260,10 @@ class PDF(FPDF):
         self.set_y(max(y_after_larv_table, y_after_adult_table))
     # --- END OF ORIGINAL METHOD ---
 
-    # --- INÍCIO DO NOVO MÉTODO ADICIONADO ---
+    # --- INÍCIO DO NOVO MÉTODO ADICIONADO (Mantido como estava) ---
     def add_doentes_confirmados_table(self, doencas_data):
         """
-        Adiciona uma tabela com o detalhamento de Doentes confirmados (tabela 'doentes_confirmados').
+        Adiciona uma tabela com o detalhamento de Doentes Confirmados (tabela 'doentes_confirmados').
         """
         self.ln(5)
         self.set_font('Arial', 'B', 14)
@@ -282,7 +289,7 @@ class PDF(FPDF):
         self.set_font('Arial', 'B', 9)
         self.set_fill_color(230, 230, 230)
         self.cell(col_widths['nome'], 6, "Nome do Paciente", 1, 0, 'C', fill=True)
-        self.cell(col_widths['doenca'], 6, "Doente", 1, 0, 'C', fill=True)
+        self.cell(col_widths['doenca'], 6, "Doença", 1, 0, 'C', fill=True)
         self.cell(col_widths['bairro'], 6, "Bairro", 1, 0, 'C', fill=True)
         self.cell(col_widths['rua'], 6, "Rua", 1, 0, 'C', fill=True)
         self.cell(col_widths['numero'], 6, "Nº", 1, 1, 'C', fill=True) # 1, 1 (quebra a linha)
@@ -296,7 +303,7 @@ class PDF(FPDF):
                 # Redesenha o cabeçalho
                 self.set_font('Arial', 'B', 9)
                 self.cell(col_widths['nome'], 6, "Nome do Paciente", 1, 0, 'C', fill=True)
-                self.cell(col_widths['doenca'], 6, "Doente", 1, 0, 'C', fill=True)
+                self.cell(col_widths['doenca'], 6, "Doença", 1, 0, 'C', fill=True)
                 self.cell(col_widths['bairro'], 6, "Bairro", 1, 0, 'C', fill=True)
                 self.cell(col_widths['rua'], 6, "Rua", 1, 0, 'C', fill=True)
                 self.cell(col_widths['numero'], 6, "Nº", 1, 1, 'C', fill=True)
@@ -312,11 +319,13 @@ class PDF(FPDF):
     # --- FIM DO NOVO MÉTODO ADICIONADO ---
 
 
-# @token_required # Uncomment if this route needs to be protected
+# --- MODIFICAÇÃO: Rota agora protegida e recebe current_user ---
 @graficos.route('/summary_pdf/<int:ano>/<int:ciclo>', methods=['GET'])
-def get_summary_pdf(ano, ciclo):
+@token_required # Decorator ativado
+def get_summary_pdf(current_user, ano, ciclo): # 'current_user' adicionado
     """
     Endpoint para obter um PDF com o resumo de dados agregados por área de visita.
+    O conteúdo do PDF é filtrado com base no nível de acesso do usuário.
     """
     conn = None
     cursor = None
@@ -346,6 +355,7 @@ def get_summary_pdf(ano, ciclo):
         logging.info(f"Ciclo ID encontrado: {ciclo_id} para Ano: {ano}, Ciclo: {ciclo}")
 
         # --- 2. Query for Bairro Summary (Identical to heatmap_data.py) ---
+        # (Esta query não é alterada, pois supervisores e agentes devem ver o resumo das zonas)
         heatmap_query = """
             SELECT
                 av.latitude, av.longitude, av.bairro,
@@ -365,8 +375,12 @@ def get_summary_pdf(ano, ciclo):
         bairro_results = cursor.fetchall()
         logging.info(f"Dados para PDF (Resumo Bairros: {len(bairro_results)} pontos) recuperados.")
 
-        # --- 3. Fetch Agent Summary Data ---
-        agent_summary_query = """
+        # --- 3. MODIFICAÇÃO: Fetch Agent Summary Data (Condicional) ---
+        
+        nivel_acesso = current_user.get("nivel_de_acesso")
+        
+        # Partes da Query
+        agent_query_base = """
             SELECT
                 u.nome_completo,
                 a.agente_id,
@@ -385,16 +399,43 @@ def get_summary_pdf(ano, ciclo):
                 registro_de_campo rc ON a.agente_id = rc.agente_id AND rc.ciclo_id = %s
             LEFT JOIN
                 depositos d ON rc.deposito_id = d.deposito_id
+        """
+        
+        agent_query_group_order = """
             GROUP BY
                 a.agente_id, u.nome_completo
             ORDER BY
                 u.nome_completo;
         """
-        cursor.execute(agent_summary_query, (ciclo_id,))
-        agent_results = cursor.fetchall()
+
+        if nivel_acesso == "supervisor":
+            # Lógica para Supervisor: Busca todos os agentes
+            logging.info(f"Gerando PDF (Supervisor). Buscando todos os agentes para ciclo_id {ciclo_id}.")
+            agent_summary_query = agent_query_base + agent_query_group_order
+            cursor.execute(agent_summary_query, (ciclo_id,))
+            agent_results = cursor.fetchall()
+        
+        else:
+            # Lógica para Agente (ou outro nível): Filtra pelo agente_id do token
+            agente_id = current_user.get("agente_id")
+            
+            if not agente_id:
+                logging.warning(f"Usuário {current_user.get('username')} com nível '{nivel_acesso}' não possui um 'agente_id' no token.")
+                agent_results = []
+            else:
+                logging.info(f"Gerando PDF (Agente). Buscando agente_id {agente_id} para ciclo_id {ciclo_id}.")
+                agent_query_where = " WHERE a.agente_id = %s "
+                agent_summary_query = agent_query_base + agent_query_where + agent_query_group_order
+                
+                # Parâmetros: (ciclo_id, agente_id)
+                cursor.execute(agent_summary_query, (ciclo_id, agente_id))
+                agent_results = cursor.fetchall() # Deve conter 0 ou 1 resultado
+
         logging.info(f"Dados para PDF (Resumo Agentes: {len(agent_results)} agentes) recuperados.")
+        # --- FIM DA MODIFICAÇÃO ---
 
         # --- 4. START OF ORIGINAL QUERIES ---
+        # (Esta seção não é alterada)
         # Query for Total Deposits
         deposits_query = """
             SELECT
@@ -442,17 +483,18 @@ def get_summary_pdf(ano, ciclo):
         logging.info("Dados de depósitos e tratamentos recuperados.")
         # --- END OF ORIGINAL QUERIES ---
 
-        # --- INÍCIO DA NOVA QUERY ADICIONADA ---
-        # --- 5. Fetch Doentes Confirmadas Data ---
+        # --- INÍCIO DA NOVA QUERY ADICIONADA (Mantida como estava) ---
+        # --- 5. Fetch Doentes Confirmados Data ---
+        # (Mantendo a tabela 'doentes_confirmados' conforme o arquivo original)
         doencas_query = """
             SELECT nome, tipo_da_doenca, rua, numero, bairro
-            FROM doentes_confirmados
+            FROM doentes_confirmados 
             WHERE ciclo_id = %s
             ORDER BY bairro, rua, nome;
         """
         cursor.execute(doencas_query, (ciclo_id,))
         doencas_results = cursor.fetchall()
-        logging.info(f"Dados para PDF (Doentes Confirmadas: {len(doencas_results)} casos) recuperados.")
+        logging.info(f"Dados para PDF (Doentes Confirmados: {len(doencas_results)} casos) recuperados.")
         # --- FIM DA NOVA QUERY ADICIONADA ---
 
 
@@ -461,6 +503,9 @@ def get_summary_pdf(ano, ciclo):
         pdf.add_page()
         
         # --- Section 1: Agent Summary (First) ---
+        # (Esta função agora recebe a lista filtrada (agent_results)
+        # Se for supervisor, recebe a lista completa.
+        # Se for agente, recebe a lista com 1 único item.)
         if agent_results:
             pdf.add_agent_summary_table(agent_results)
         else:
@@ -488,8 +533,8 @@ def get_summary_pdf(ano, ciclo):
             for row in bairro_results:
                 pdf.add_bairro_summary(row)
 
-        # --- INÍCIO DA NOVA SEÇÃO ADICIONADA ---
-        # --- Section 4: Doentes Confirmadas (Fourth, on a new page) ---
+        # --- INÍCIO DA NOVA SEÇÃO ADICIONADA (Mantida como estava) ---
+        # --- Section 4: Doentes Confirmados (Fourth, on a new page) ---
         pdf.add_page()
         pdf.add_doentes_confirmados_table(doencas_results)
         # --- FIM DA NOVA SEÇÃO ADICIONADA ---

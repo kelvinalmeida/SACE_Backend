@@ -38,6 +38,7 @@ def test_criar_registro_falha_como_supervisor(auth_client):
     })
     
     # A rota retorna 401 com a mensagem de erro específica
+    # print(">>>>>>>>>>>", response.json)
     assert response.status_code == 401
     assert "É nescessário ser agente" in response.json['error']
 
