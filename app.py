@@ -113,13 +113,25 @@ from routes.nudges import get_by_id
 
 
 
+# --- Criação do App ---
 app = Flask(__name__)
 
+# --- Configuração de CORS (Substituindo o CORS(app) antigo) ---
+origins = [
+    "https://sace-rosy.vercel.app",  # O site dos seus amigos
+    "http://localhost:3000",        # Para eles testarem localmente (React)
+    "http://localhost:5173",        # Para eles testarem localmente (Vite)
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    "http://localhost:5000",        # Permite testar localmente no navegador
+    "http://127.0.0.1:5000",        # Permite testar localmente no navegador
+    "null"                          # Permite testes com Postman ou arquivos file://
+]
+CORS(app, resources={r"/*": {"origins": origins}}, supports_credentials=True)
 
-CORS(app)
+# --- Fim da Correção ---
 
 API_URL = "/static/openapi.yaml"
-# API_URL = os.getenv('API_URL')
 SWAGGER_URL = "/api/docs"
 
 swaggerui_blueprint = get_swaggerui_blueprint(
