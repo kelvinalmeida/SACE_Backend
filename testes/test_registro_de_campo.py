@@ -1,29 +1,7 @@
 import pytest
 import json
 
-@pytest.fixture(scope='function')
-def agente_client(client):
-    """
-    Cria um fixture de cliente autenticado como um AGENTE.
-    Isso é necessário porque a rota de registro de campo exige um agente.
-    
-    Ele usa o usuário 'João da Silva' (agente_id=1) do seu arquivo backup.sql.
-    """
-    # Login como o Agente (cpf: '12345678901', senha: 'senhaSegura123')
-    response = client.post('/login', json={
-        "username": "12345678901",
-        "password": "senhaSegura123"
-    })
-    
-    if response.status_code != 200:
-        pytest.fail("Falha ao autenticar o cliente agente. Verifique os dados no backup.sql.")
 
-    token = response.json['token']
-    
-    # Adiciona o token de agente ao cabeçalho
-    client.environ_base['HTTP_AUTHORIZATION'] = f'Bearer {token}'
-    
-    return client
 
 def test_criar_registro_falha_como_supervisor(auth_client):
     """
@@ -40,7 +18,45 @@ def test_criar_registro_falha_como_supervisor(auth_client):
     # A rota retorna 401 com a mensagem de erro específica
     # print(">>>>>>>>>>>", response.json)
     assert response.status_code == 401
-    assert "É nescessário ser agente" in response.json['error']
+    assert "Invalid token: É nescessário ser agente para cadastrar registro de campo. Peça para um supervisor cadastrar você." in response.json['error']
+
+def test_registro_de_campo_usuario_nao_pertence_area(agente_client):
+    """
+    Testa se um AGENTE NÃO PODE criar um registro de campo em uma área que não pertence a ele.
+    Isso valida a proteção da sua rota.
+    """
+    # O 'agente_client' está logado como agente_id=1 (João da Silva)
+    # Vamos tentar criar um registro em uma area_de_visita_id=999 (inexistente ou não pertencente)
+    response = agente_client.post('/registro_de_campo', data={
+        'imovel_numero': '101-TESTE',
+        'imovel_lado': 'Par',
+        'imovel_categoria_da_localidade': 'Urbana',
+        'imovel_tipo': 'Residencial',
+        'imovel_status': 'inspecionado',
+        'imovel_complemento': 'Apto Teste',
+        'formulario_tipo': 'Dengue',
+        'li': 'false',  # Booleans são strings em forms
+        'pe': 'false',
+        't': 'true',
+        'df': 'true',
+        'pve': 'false',
+        'numero_da_amostra': 'T-001',
+        'quantiade_tubitos': '2',
+        'observacao': 'Teste de observação',
+        'area_de_visita_id': "999",  # Área que o agente não pertence
+        'a1': '1',
+        'a2': '2',
+        'b': '0',
+        'c': '1',
+        'd1': '0',
+        'd2': '3',
+        'e': '0',
+        # ... (outros dados mínimos)
+    })
+    
+    # A rota deve retornar 403 Forbidden
+    assert response.status_code == 403
+    assert "Agente não está associado a área de visita informada." in response.json['error']
 
 def test_registro_de_campo_workflow_completo(agente_client):
     """

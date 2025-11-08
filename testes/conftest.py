@@ -42,8 +42,9 @@ def auth_client(client):
     Logs in as the 'admin' supervisor user from your backup.sql.
     """
     response = client.post('/login', json={
-        "username": "admin",
-        "password": "123456"
+        # conta do supervisor do seu backup.sql
+        "username": "56789012345",
+        "password": "senhaFin159"
     })
     
     if response.status_code != 200:
@@ -52,6 +53,30 @@ def auth_client(client):
     token = response.json['token']
     
     # Set the Authorization header for future requests
+    client.environ_base['HTTP_AUTHORIZATION'] = f'Bearer {token}'
+    
+    return client
+
+@pytest.fixture(scope='function')
+def agente_client(client):
+    """
+    Cria um fixture de cliente autenticado como um AGENTE.
+    Isso é necessário porque a rota de registro de campo exige um agente.
+    
+    Ele usa o usuário 'João da Silva' (agente_id=1) do seu arquivo backup.sql.
+    """
+    # Login como o Agente (cpf: '12345678901', senha: 'senhaSegura123')
+    response = client.post('/login', json={
+        "username": "12345678901",
+        "password": "senhaSegura123"
+    })
+    
+    if response.status_code != 200:
+        pytest.fail("Falha ao autenticar o cliente agente. Verifique os dados no backup.sql.")
+
+    token = response.json['token']
+    
+    # Adiciona o token de agente ao cabeçalho
     client.environ_base['HTTP_AUTHORIZATION'] = f'Bearer {token}'
     
     return client

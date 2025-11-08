@@ -103,7 +103,7 @@ def send_registro_de_campo(current_user):
         area_de_visita_id = area_de_visita_id['area_de_visita_id']
 
     except Exception as e:
-        return jsonify({"error": "Agente não está associado a área de visita informada."}), 400
+        return jsonify({"error": "Agente não está associado a área de visita informada."}), 403
     
 
     # Inserir Depósito
@@ -289,7 +289,7 @@ def send_registro_de_campo(current_user):
             'ciclo_id': ciclo_atual,
             'registro_de_campo_id': registro_de_campo_id
         }
-    })
+    }), 201
 
 
 
