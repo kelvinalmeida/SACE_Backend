@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict zf48YZ2ZNA5GuR0SM5zalE52fFX5LMsTKgMSEIMhW1iFbVfhMcrpXEGarqhf7UU
+\restrict SZ8fgLauFP04ZbtrZEHunU04BW3m06aD4TnXBncMGFhDEaAKYSiMXjPSrt6m5fz
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -146,7 +146,7 @@ ALTER TABLE public.area_de_visita ALTER COLUMN area_de_visita_id ADD GENERATED A
 
 CREATE TABLE public.arquivos_denuncia (
     arquivo_denuncia_id integer NOT NULL,
-    arquivo_nome character varying(100) NOT NULL,
+    arquivo_nome character varying(300) NOT NULL,
     denuncia_id integer
 );
 
@@ -450,7 +450,7 @@ ALTER TABLE public.registro_de_campo OWNER TO "user";
 CREATE TABLE public.registro_de_campo_arquivos (
     registro_de_campo_arquivo_id integer CONSTRAINT registro_de_campo_arquivos_registro_de_campo_arquivo_i_not_null NOT NULL,
     registro_de_campo_id integer,
-    arquivo_nome character varying(100)
+    arquivo_nome character varying(300)
 );
 
 
@@ -671,16 +671,16 @@ COPY public.arquivos_denuncia (arquivo_denuncia_id, arquivo_nome, denuncia_id) F
 --
 
 COPY public.artigo (artigo_id, supervisor_id, link_artigo, titulo, data_criacao, descricao, imagem_nome) FROM stdin;
-1	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue	Dengue: O que é, causas e tratamento	2025-02-15	Página oficial do Ministério da Saúde com informações completas sobre a Dengue, incluindo sintomas, prevenção e manejo clínico da doença.	infografico-sintomas-dengue.jpg
-2	2	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/z/zika-virus	Zika Vírus: Informações Gerais	2025-02-28	Guia do Ministério da Saúde sobre o Zika Vírus, abordando a transmissão, sintomas, diagnóstico e a relação com a microcefalia.	mosquito-aedes-aegypti-zika.png
-3	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/c/chikungunya	Chikungunya: Sintomas e Prevenção	2025-03-10	Detalhes sobre a febre Chikungunya, com foco nos sintomas característicos de dores nas articulações, tratamento e formas de prevenção.	articulacoes-afetadas-chikungunya.jpg
-4	4	https://www.paho.org/pt/topicos/dengue	Dengue (OPAS/OMS)	2025-04-01	Portal da Organização Pan-Americana da Saúde com dados, estratégias de controle e informações técnicas sobre a dengue nas Américas.	mapa-americas-casos-dengue.png
-5	1	https://www.bio.fiocruz.br/index.php/br/dengue-zika-e-chikungunya-sintomas-e-prevencao	Diferenças entre Dengue, Zika e Chikungunya	2025-05-20	Artigo da Fiocruz que ajuda a diferenciar os sintomas das três principais arboviroses transmitidas pelo Aedes aegypti.	tabela-comparativa-dengue-zika-chikungunya.jpg
-6	2	https://www.gov.br/saude/pt-br/assuntos/combate-ao-aedes	Combate ao Aedes aegypti	2025-06-18	Página central do Ministério da Saúde com todas as campanhas, materiais e estratégias para a eliminação dos focos do mosquito transmissor.	agente-de-saude-visitando-casa.jpg
-7	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/monitoramento-das-arboviroses	Monitoramento de Arboviroses no Brasil	2025-07-25	Painel de dados interativo do Ministério da Saúde com números atualizados de casos de dengue, zika e chikungunya por região.	grafico-monitoramento-arboviroses.png
-8	4	https://agenciabrasil.ebc.com.br/saude/noticia/2024-02/saiba-diferenciar-os-sintomas-de-dengue-zika-e-chikungunya	Saiba diferenciar os sintomas (Agência Brasil)	2025-08-14	Reportagem que explica de forma clara e visual as principais diferenças entre os sintomas de dengue, zika e chikungunya.	medico-examinando-paciente.jpg
-9	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/boletins-epidemiologicos	Boletins Epidemiológicos de Arboviroses	2025-09-30	Acesso à página com os boletins epidemiológicos oficiais, com análises técnicas da situação das arboviroses no território nacional.	capa-boletim-epidemiologico.png
-10	2	https://www.gov.br/saude/pt-br/assuntos/protocolos-clinicos-e-diretrizes-terapeuticas-pcdt/arquivos/2024/portal-dengue-manejo-adulto-crianca-fluxo-2024.pdf	Protocolo de Manejo Clínico da Dengue (PDF)	2025-10-05	Documento técnico oficial (2024) do Ministério da Saúde para profissionais, detalhando o fluxo de atendimento e manejo de pacientes.	fluxograma-atendimento-medico.jpg
+1	1	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue	Dengue: O que é, causas e tratamento	2025-02-15	Página oficial do Ministério da Saúde com informações completas sobre a Dengue, incluindo sintomas, prevenção e manejo clínico da doença.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/infografico-sintomas-dengue.jpg
+2	2	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/z/zika-virus	Zika Vírus: Informações Gerais	2025-02-28	Guia do Ministério da Saúde sobre o Zika Vírus, abordando a transmissão, sintomas, diagnóstico e a relação com a microcefalia.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/mosquito-aedes-aegypti-zika.png
+3	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/c/chikungunya	Chikungunya: Sintomas e Prevenção	2025-03-10	Detalhes sobre a febre Chikungunya, com foco nos sintomas característicos de dores nas articulações, tratamento e formas de prevenção.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/articulacoes-afetadas-chikungunya.jpg
+4	4	https://www.paho.org/pt/topicos/dengue	Dengue (OPAS/OMS)	2025-04-01	Portal da Organização Pan-Americana da Saúde com dados, estratégias de controle e informações técnicas sobre a dengue nas Américas.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/mapa-americas-casos-dengue.png
+5	1	https://www.bio.fiocruz.br/index.php/br/dengue-zika-e-chikungunya-sintomas-e-prevencao	Diferenças entre Dengue, Zika e Chikungunya	2025-05-20	Artigo da Fiocruz que ajuda a diferenciar os sintomas das três principais arboviroses transmitidas pelo Aedes aegypti.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/tabela-comparativa-dengue-zika-chikungunya.jpg
+6	2	https://www.gov.br/saude/pt-br/assuntos/combate-ao-aedes	Combate ao Aedes aegypti	2025-06-18	Página central do Ministério da Saúde com todas as campanhas, materiais e estratégias para a eliminação dos focos do mosquito transmissor.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/agente-de-saude-visitando-casa.jpg
+7	3	https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/a/aedes-aegypti/monitoramento-das-arboviroses	Monitoramento de Arboviroses no Brasil	2025-07-25	Painel de dados interativo do Ministério da Saúde com números atualizados de casos de dengue, zika e chikungunya por região.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/grafico-monitoramento-arboviroses.png
+8	4	https://butantan.gov.br/noticias/saiba-diferenciar-os-sintomas-de-dengue-chikungunya-e-zika-e-conheca-as-possiveis-complicacoes-de-cada-doenca	Saiba diferenciar os sintomas (Agência Brasil)	2025-08-14	Reportagem que explica de forma clara e visual as principais diferenças entre os sintomas de dengue, zika e chikungunya.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/medico-examinando-paciente.avif
+9	1	https://www.gov.br/saude/pt-br/assuntos/noticias/2025/novembro/dia-d-nacional-contra-a-dengue-zika-e-chikungunya-acontece-neste-sabado-8	Dia D nacional contra a dengue, Zika e chikungunya acontece neste sábado (8)	2025-09-30	Ação intensifica ações de prevenção em estados e municípios e convoca a população a se unir no combate ao mosquito Aedes aegypti.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/Dia%20D%20nacional%20contra%20a%20dengue.jpeg
+10	2	https://maceio.al.gov.br/noticias/sms/acoes-mantem-numero-de-casos-de-dengue-sob-controle-em-maceio	Ações mantêm número de casos de dengue sob controle em Maceió	2025-10-05	Medidas de campo, educativas e de vacinação da Saúde resultam na redução de mais de 87% no número de casos confirmados, em relação ao mesmo período de 2024.	https://mrwk5vmcsjplujiu.public.blob.vercel-storage.com/artigo_img/Medidas%20de%20campo%2C%20educativas%20e%20de%20vacina%C3%A7%C3%A3o.jpeg
 \.
 
 
@@ -1785,5 +1785,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict zf48YZ2ZNA5GuR0SM5zalE52fFX5LMsTKgMSEIMhW1iFbVfhMcrpXEGarqhf7UU
+\unrestrict SZ8fgLauFP04ZbtrZEHunU04BW3m06aD4TnXBncMGFhDEaAKYSiMXjPSrt6m5fz
 

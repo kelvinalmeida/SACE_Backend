@@ -16,7 +16,7 @@ def get_one_registro_de_campo(current_user, registro_de_campo_id):
         cursor = conn.cursor()
 
         # Query para buscar todos os usuários agentes relacionando ao registro de campo
-        search_registros_de_campo = """SELECT reg_camp.registro_de_campo_id, reg_camp.imovel_numero, reg_camp.imovel_lado, reg_camp.imovel_categoria_da_localidade, reg_camp.imovel_tipo, reg_camp.imovel_status, reg_camp.imovel_complemento, reg_camp.formulario_tipo, reg_camp.li, reg_camp.pe, reg_camp.t, reg_camp.df, reg_camp.pve, reg_camp.numero_da_amostra, reg_camp.quantiade_tubitos, reg_camp.observacao, reg_camp.area_de_visita_id, reg_camp.agente_id, reg_camp.deposito_id, reg_camp.ciclo_id, usu.nome_completo agente_nome FROM registro_de_campo reg_camp INNER JOIN agente USING(agente_id) INNER JOIN usuario usu USING(usuario_id) WHERE registro_de_campo_id = %s;"""
+        search_registros_de_campo = """SELECT reg_camp.registro_de_campo_id, reg_camp.imovel_numero, reg_camp.imovel_lado, reg_camp.imovel_categoria_da_localidade, reg_camp.imovel_tipo, reg_camp.imovel_status, reg_camp.imovel_complemento, reg_camp.formulario_tipo, reg_camp.li, reg_camp.pe, reg_camp.t, reg_camp.df, reg_camp.pve, reg_camp.numero_da_amostra, reg_camp.quantiade_tubitos, reg_camp.observacao, reg_camp.area_de_visita_id, reg_camp.agente_id, reg_camp.deposito_id, reg_camp.ciclo_id, usu.nome_completo agente_nome, caso_comfirmado FROM registro_de_campo reg_camp INNER JOIN agente USING(agente_id) INNER JOIN usuario usu USING(usuario_id) WHERE registro_de_campo_id = %s;"""
 
         cursor.execute(search_registros_de_campo, (registro_de_campo_id,))
         registro_de_campo = cursor.fetchall()
@@ -183,4 +183,4 @@ def get_one_registro_de_campo(current_user, registro_de_campo_id):
         conn.close()
         cursor.close()
 
-        return jsonify(registro_de_campo[0]), 200
+    return jsonify(registro_de_campo[0]), 200
