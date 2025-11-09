@@ -117,6 +117,7 @@ def test_supervisor_workflow_denuncia_crud(auth_client):
         'tipo_imovel': 'Terreno Baldio (Teste)',
         'data_denuncia': '2025-11-01', # Alterado
         'hora_denuncia': '15:00:00', # Alterado
+        'status': 'Pendente', # Novo campo obrigatório
         'observacoes': 'Registro atualizado pelo teste.', # Alterado
         'agente_responsavel_id': 4, # Agente 'Carlos'
     }
@@ -133,6 +134,8 @@ def test_supervisor_workflow_denuncia_crud(auth_client):
     assert data_put['rua_avenida'] == 'Rua ATUALIZADA Pytest'
     assert data_put['numero'] == 888
     assert data_put['agente_responsavel_id'] == '4'
+    assert data_put['agente_responsavel_id'] == '4'
+    assert data_put['status'] == 'Pendente'
 
     # --- 3. DELETAR DENÚNCIA (DELETE) ---
     

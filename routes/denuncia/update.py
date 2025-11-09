@@ -31,17 +31,19 @@ def update_denuncia(current_user, denuncia_id):
     if(check_filds):
         return jsonify(check_filds), 400
     
-    # denuncia_id          | integer                |           | not null | generated always as identity
-    # supervisor_id        | integer                |           |          |
-    # deposito_id          | integer                |           |          |
-    # rua_avenida          | character varying(100) |           | not null |
-    # numero               | smallint               |           | not null |
-    # bairro               | character varying(50)  |           | not null |
-    # tipo_imovel          | character varying(100) |           | not null |
-    # endereco_complemento | character varying(200) |           |          |
-    # data_denuncia        | date                   |           |          |
-    # hora_denuncia        | time without time zone |           |          |
-    # observacoes          | character varying(255) |           |          |
+    # denuncia_id	integer Incremento Automático [GENERATED ALWAYS AS IDENTITY]	
+    # supervisor_id	integer NULL	
+    # deposito_id	integer NULL	
+    # agente_responsavel_id	integer NULL	
+    # rua_avenida	character varying(100)	
+    # numero	smallint	
+    # bairro	character varying(50)	
+    # tipo_imovel	character varying(100)	
+    # status	character varying(50)	
+    # endereco_complemento	character varying(200) NULL	
+    # data_denuncia	date NULL	
+    # hora_denuncia	time without time zone NULL	
+    # observacoes	character varying(255) NULL
 
     supervisor_id = current_user["supervisor_id"]
     rua_avenida = request.form.get('rua_avenida')
@@ -55,7 +57,12 @@ def update_denuncia(current_user, denuncia_id):
     tipo_imovel = request.form.get('tipo_imovel')
     endereco_complemento = request.form.get('endereco_complemento')
     observacoes = request.form.get('observacoes')
-    status = 'Em Análise'
+
+    # status required field
+    status = request.form.get('status')
+    if not status:
+        return jsonify({"error": "status is required"}), 400
+    
     agente_responsavel_id = request.form.get('agente_responsavel_id', None)
 
     data_denuncia = request.form.get('data_denuncia')
