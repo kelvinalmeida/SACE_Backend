@@ -98,7 +98,7 @@ def test_graficos_rotas_publicas(client):
     assert 'dados_grafico' in resp_doentes.json
     assert 'resumo_ciclo_atual' in resp_doentes.json
 
-def test_grafico_summary_pdf_permissoes(client, agente_client, auth_client):
+def test_grafico_summary_pdf_permissoes(public_client, agente_client, auth_client):
     """
     Testa a rota protegida do PDF.
     - 401 para PÚBLICO
@@ -107,7 +107,7 @@ def test_grafico_summary_pdf_permissoes(client, agente_client, auth_client):
     """
     
     # 1. Testar como PÚBLICO (sem login)
-    resp_public = client.get(f'/summary_pdf/{TEST_ANO}/{TEST_CICLO}')
+    resp_public = public_client.get(f'/summary_pdf/{TEST_ANO}/{TEST_CICLO}')
     # A rota é protegida por @token_required
     assert resp_public.status_code == 401
     assert "O token está faltando!" in resp_public.json['error']

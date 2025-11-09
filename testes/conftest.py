@@ -80,3 +80,10 @@ def agente_client(client):
     client.environ_base['HTTP_AUTHORIZATION'] = f'Bearer {token}'
     
     return client
+
+
+@pytest.fixture(scope='function')
+def public_client(app):
+    c = app.test_client()
+    c.environ_base.pop('HTTP_AUTHORIZATION', None)
+    return c

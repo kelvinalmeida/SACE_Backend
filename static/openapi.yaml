@@ -1590,6 +1590,61 @@ paths:
                     example: "Ciclo 2 do ano 2024 não encontrado."
         '500':
           description: Erro interno do servidor.
+
+  /registro_de_campo/arquivo/{arquivo_id}:
+    get:
+      summary: Busca um arquivo de registro de campo por ID do arquivo
+      description: |
+        Retorna o arquivo (imagem, etc.) associado a um registro de campo, 
+        identificado pelo ID do *arquivo* (da tabela 'registro_de_campo_arquivos').
+        
+        Requer autenticação.
+      tags:
+        - Registro de Campo
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: arquivo_id
+          in: path
+          required: true
+          description: O ID do arquivo a ser buscado.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Arquivo retornado com sucesso.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '404':
+          description: Arquivo não encontrado (seja no banco de dados ou no disco).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Arquivo não encontrado no banco de dados."
+        '500':
+          description: Erro interno do servidor.
     
   /casos_confirmado/{registro_de_campo_id}:
     put:
@@ -2578,6 +2633,61 @@ paths:
           description: Denúncia não encontrada com o ID especificado.
         '500':
           description: Erro interno do servidor (falha na transação do banco de dados).
+  
+  /denuncia/arquivo/{arquivo_id}:
+    get:
+      summary: Busca um arquivo de denúncia por ID do arquivo
+      description: |
+        Retorna o arquivo (imagem, etc.) associado a uma denúncia, 
+        identificado pelo ID do *arquivo* (da tabela 'arquivos_denuncia').
+        
+        Requer autenticação.
+      tags:
+        - Denúncia
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: arquivo_id
+          in: path
+          required: true
+          description: O ID do arquivo a ser buscado.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Arquivo retornado com sucesso.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Não autenticado (token JWT ausente ou inválido).
+        '404':
+          description: Arquivo não encontrado (seja no banco de dados ou no disco).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Arquivo físico não encontrado no servidor."
+        '500':
+          description: Erro interno do servidor.
 
   /artigo:
     post:

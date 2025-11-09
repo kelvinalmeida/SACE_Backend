@@ -63,6 +63,7 @@ from routes.registro_de_campo import delete_larvicida
 from routes.registro_de_campo import delete_adulticida
 from routes.registro_de_campo import casos_confirmados
 from routes.registro_de_campo import get_by_ciclo
+from routes.registro_de_campo import download_arquivo
 
 # area_de_visita
 from routes.area_de_visita.bluprint import area_para_visita
@@ -92,6 +93,7 @@ from routes.denuncia import get_all
 from routes.denuncia import by_id
 from routes.denuncia import update
 from routes.denuncia import delete
+from routes.denuncia import download_arquivo
 
 # artigo
 from routes.artigo.bluprint import blu_artigo
