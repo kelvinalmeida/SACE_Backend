@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict Zap67rAn5KylOVoxeUuzeexQdEBvldTHqJe8gYkLIO41CLlhA3A8bfF3nvgecHq
+\restrict SZ8fgLauFP04ZbtrZEHunU04BW3m06aD4TnXBncMGFhDEaAKYSiMXjPSrt6m5fz
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -1785,5 +1785,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Zap67rAn5KylOVoxeUuzeexQdEBvldTHqJe8gYkLIO41CLlhA3A8bfF3nvgecHq
+\unrestrict SZ8fgLauFP04ZbtrZEHunU04BW3m06aD4TnXBncMGFhDEaAKYSiMXjPSrt6m5fz
 
