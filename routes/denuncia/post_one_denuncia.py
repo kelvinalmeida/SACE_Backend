@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, request, jsonify, Blueprint, current_app, session
 from db import create_connection
 from routes.login.token_required import token_required
@@ -5,6 +6,7 @@ import json
 from werkzeug.utils import secure_filename
 from .bluprint import denuncia
 from datetime import datetime
+from vercel_blob import put
 
 
 
@@ -33,17 +35,6 @@ def create_denuncia(current_user):
     if(check_filds):
         return jsonify(check_filds), 400
     
-    # denuncia_id          | integer                |           | not null | generated always as identity
-    # supervisor_id        | integer                |           |          |
-    # deposito_id          | integer                |           |          |
-    # rua_avenida          | character varying(100) |           | not null |
-    # numero               | smallint               |           | not null |
-    # bairro               | character varying(50)  |           | not null |
-    # tipo_imovel          | character varying(100) |           | not null |
-    # endereco_complemento | character varying(200) |           |          |
-    # data_denuncia        | date                   |           |          |
-    # hora_denuncia        | time without time zone |           |          |
-    # observacoes          | character varying(255) |           |          |
 
     supervisor_id = current_user["supervisor_id"]
     rua_avenida = request.form.get('rua_avenida')
@@ -86,53 +77,12 @@ def create_denuncia(current_user):
             }), 400
     
 
-    # try:
-    #     a1 = int(request.form.get('a1'))
-    #     a2 = int(request.form.get('a2'))
-    #     b = int(request.form.get('b'))
-    #     c = int(request.form.get('c'))
-    #     d1 = int(request.form.get('d1'))
-    #     d2 = int(request.form.get('d2'))
-    #     e = int(request.form.get('e'))
-    # except (TypeError, ValueError):
-    #     return jsonify({"error": "Invalid input for a1, a2, b, c, d1, d2, or e. They must be integers."}), 400
-    
-
     # Conexão com o banco de dados
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
 
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
-    
-    
 
-    # # Inserir Depósito
-    # try:
-    #     
-    #     insir_deposito = """
-    #         INSERT INTO depositos(a1, a2, b, c, d1, d2, e) 
-    #         VALUES (%s, %s, %s, %s, %s, %s, %s) 
-    #         RETURNING deposito_id; 
-    #     """
-
-    #     # 1. Executa a inserção e a requisição do ID
-    #     # O comando 'execute' retorna None, não o resultado.
-    #     cursor.execute(insir_deposito, (a1, a2, b, c, d1, d2, e))
-
-    #     # 2. Usa fetchone() para obter a linha de resultado (que contém o ID)
-    #     # Como RETURNING retorna uma única linha com uma única coluna (deposito_id),
-    #     # fetchone() retorna uma tupla ou lista, dependendo do driver.
-    #     resultado = cursor.fetchone()
-
-    #     # 4. Extrai o ID
-    #     if resultado:
-    #         deposito_id = resultado["deposito_id"]
-    #     else:
-    #         conn.rollback()
-    #         raise Exception("Falha ao obter o ID do depósito após a inserção.")
-    # except Exception as e:
-    #     conn.rollback()
-    #     return jsonify({"error": str(e)}), 500
     
     #Inserir Registro de Campo
     try:
@@ -154,23 +104,35 @@ def create_denuncia(current_user):
 
     # Inserir Arquivos
     try:
-
         files = {}
         count = 1
         for file in request.files.getlist('files'):
-            files[f"Arquivo {count}"] = secure_filename(file.filename)
-            count += 1
-
             arquivo_nome = secure_filename(file.filename)
+            # Define o caminho/nome do arquivo no Vercel Blob
+            nome_no_blob = f"denuncia_arquivos/denuncia_id_{denuncia_id}_{arquivo_nome}"
 
+            try:
+                # CORREÇÃO: 'nome_no_blob' é o primeiro argumento, sem 'pathname='
+                blob = put(
+                    nome_no_blob,    # 1º argumento: O nome/caminho do arquivo no blob
+                    file.read(),     # 2º argumento: O conteúdo do arquivo (sem keyword)
+                    options={'access': 'public', 'allowOverwrite': True}
+                )
+
+                # Salva a URL completa retornada pelo blob
+                url_para_db = blob['url']
+
+            except Exception as e:
+                conn.rollback()
+                logging.error(f"Falha ao salvar arquivo no storage: {e}", exc_info=True)
+                return jsonify({"error": f"Falha ao salvar arquivo no storage: {str(e)}"}), 500
+
+            # Salva a URL no banco de dados
             inserir_arquivos = """INSERT INTO arquivos_denuncia(arquivo_nome, denuncia_id) VALUES (%s, %s);""" 
+            cursor.execute(inserir_arquivos, (url_para_db, denuncia_id))
 
-            print("inserir_arquivos: ", arquivo_nome, denuncia_id)
-
-            cursor.execute(inserir_arquivos, (arquivo_nome, denuncia_id))
-
-            file.save(f'uploads/denuncia_arquivos/denuncia_id_{denuncia_id}_{arquivo_nome}')
-        
+            files[f"Arquivo {count}"] = url_para_db
+            count += 1
         
         conn.commit()
 

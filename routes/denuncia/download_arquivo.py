@@ -1,10 +1,10 @@
-from flask import jsonify, current_app, send_from_directory
+# Import 'redirect' e remova 'send_from_directory' e 'os'
+from flask import jsonify, current_app, redirect
 from db import create_connection
 from routes.login.token_required import token_required
 from .bluprint import denuncia
-import os
 import logging
-from werkzeug.exceptions import NotFound # <-- 1. IMPORTAR A EXCEÇÃO CORRETA
+# 'os' e 'NotFound' não são mais necessários aqui
 
 # Configuração básica de log
 logging.basicConfig(level=logging.INFO)
@@ -13,50 +13,40 @@ logging.basicConfig(level=logging.INFO)
 @token_required
 def get_arquivo_denuncia(current_user, arquivo_id):
     """
-    Busca um arquivo de 'denuncia' pelo ID do arquivo
-    e retorna o arquivo para download/visualização.
+    Busca a URL de um arquivo de 'denuncia' pelo ID
+    e redireciona o usuário para a URL do Blob.
     """
-    # Define o diretório base onde os arquivos de denúncia estão salvos
-    directory = os.path.join(current_app.root_path, 'uploads', 'denuncia_arquivos')
     
     conn = None
     cursor = None
-    nome_arquivo_no_disco = "[desconhecido]" # Para logs de erro mais claros
 
     try:
         conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
         cursor = conn.cursor()
 
-        # 1. Buscar o nome original e o ID da denúncia pai
+        # 1. Buscar a URL completa que está salva no banco de dados.
+        # (O campo 'arquivo_nome' agora armazena a URL completa do blob)
         query = """
-            SELECT arquivo_nome, denuncia_id 
+            SELECT arquivo_nome 
             FROM arquivos_denuncia 
             WHERE arquivo_denuncia_id = %s;
         """
         cursor.execute(query, (arquivo_id,))
         result = cursor.fetchone()
 
-        if not result:
+        # 2. Verificar se a URL foi encontrada
+        if not result or not result.get('arquivo_nome'):
             return jsonify({"error": "Arquivo não encontrado no banco de dados."}), 404
 
-        arquivo_nome_original = result['arquivo_nome']
-        denuncia_id = result['denuncia_id']
+        # O campo 'arquivo_nome' contém a URL completa
+        arquivo_url_no_blob = result['arquivo_nome']
         
-        # 2. Montar o nome do arquivo como ele foi salvo no disco
-        nome_arquivo_no_disco = f"denuncia_id_{denuncia_id}_{arquivo_nome_original}"
+        # 3. Redirecionar o usuário para a URL do Blob
+        # O navegador do usuário cuidará de exibir a imagem/arquivo.
+        return redirect(arquivo_url_no_blob)
 
-        # 3. Servir o arquivo
-        return send_from_directory(
-            directory, 
-            nome_arquivo_no_disco, 
-            as_attachment=False
-        )
-
-    except NotFound: # <-- 2. CAPTURAR A EXCEÇÃO CORRETA
-        logging.error(f"Arquivo não encontrado no disco: {nome_arquivo_no_disco} (ID: {arquivo_id})")
-        return jsonify({"error": "Arquivo físico não encontrado no servidor."}), 404
     except Exception as e:
-        logging.error(f"Erro ao buscar arquivo de denúncia {arquivo_id}: {e}", exc_info=True)
+        logging.error(f"Erro ao buscar URL do arquivo de denúncia {arquivo_id}: {e}", exc_info=True)
         return jsonify({"error": "Erro interno ao buscar arquivo.", "details": str(e)}), 500
     
     finally:

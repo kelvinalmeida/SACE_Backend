@@ -5,6 +5,7 @@ import json
 from werkzeug.utils import secure_filename
 from .bluprint import denuncia
 from datetime import datetime
+from vercel_blob import put
 
 
 def check_required_filds(required_fild):
@@ -91,51 +92,11 @@ def update_denuncia(current_user, denuncia_id):
             }), 400
     
 
-    # try:
-    #     a1 = int(request.form.get('a1'))
-    #     a2 = int(request.form.get('a2'))
-    #     b = int(request.form.get('b'))
-    #     c = int(request.form.get('c'))
-    #     d1 = int(request.form.get('d1'))
-    #     d2 = int(request.form.get('d2'))
-    #     e = int(request.form.get('e'))
-    # except (TypeError, ValueError):
-    #     return jsonify({"error": "Invalid input for a1, a2, b, c, d1, d2, or e. They must be integers."}), 400
-    
-
     # Conexão com o banco de dados
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
 
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
-    
-    # # Inserir Depósito
-    # try:
-    #     
-    #     insir_deposito = """
-    #         INSERT INTO depositos(a1, a2, b, c, d1, d2, e) 
-    #         VALUES (%s, %s, %s, %s, %s, %s, %s) 
-    #         RETURNING deposito_id; 
-    #     """
-
-    #     # 1. Executa a inserção e a requisição do ID
-    #     # O comando 'execute' retorna None, não o resultado.
-    #     cursor.execute(insir_deposito, (a1, a2, b, c, d1, d2, e))
-
-    #     # 2. Usa fetchone() para obter a linha de resultado (que contém o ID)
-    #     # Como RETURNING retorna uma única linha com uma única coluna (deposito_id),
-    #     # fetchone() retorna uma tupla ou lista, dependendo do driver.
-    #     resultado = cursor.fetchone()
-
-    #     # 4. Extrai o ID
-    #     if resultado:
-    #         deposito_id = resultado["deposito_id"]
-    #     else:
-    #         conn.rollback()
-    #         raise Exception("Falha ao obter o ID do depósito após a inserção.")
-    # except Exception as e:
-    #     conn.rollback()
-    #     return jsonify({"error": str(e)}), 500
     
 
     #Inserir Registro de Campo
@@ -173,34 +134,52 @@ def update_denuncia(current_user, denuncia_id):
     
 
     # Inserir Arquivos
+    files = {} # Para o JSON de retorno
     try:
-
-        files = {}
         count = 1
         for file in request.files.getlist('files'):
-            files[f"Arquivo {count}"] = secure_filename(file.filename)
-            count += 1
-
             arquivo_nome = secure_filename(file.filename)
+            # Define o caminho/nome do arquivo no Vercel Blob
+            nome_no_blob = f"denuncia_arquivos/denuncia_id_{denuncia_id}_{arquivo_nome}"
 
+            try:
+                # Faz o upload para o Vercel Blob
+                blob = put(
+                    nome_no_blob,                # 1. Caminho/Nome
+                    file.read(),                 # 2. Conteúdo (bytes)
+                    options={'access': 'public', 'allowOverwrite': True} # 3. Dicionário de Opções
+                )
+                
+                # ****** ESTA É A CORREÇÃO ******
+                # Acessa a URL como um dicionário
+                url_para_db = blob['url']
+                # **********************************
+
+            except Exception as e:
+                conn.rollback()
+                logging.error(f"Falha ao salvar arquivo no storage: {e}", exc_info=True)
+                return jsonify({"error": f"Falha ao salvar arquivo no storage: {str(e)}"}), 500
+            
+            # Salva a URL no banco de dados
             inserir_arquivos = """INSERT INTO arquivos_denuncia(arquivo_nome, denuncia_id) VALUES (%s, %s);""" 
+            cursor.execute(inserir_arquivos, (url_para_db, denuncia_id))
 
-            print("inserir_arquivos: ", arquivo_nome, denuncia_id)
-
-            cursor.execute(inserir_arquivos, (arquivo_nome, denuncia_id))
-
-            file.save(f'uploads/denuncia_arquivos/denuncia_id_{denuncia_id}_{arquivo_nome}')
+            files[f"Arquivo {count}"] = url_para_db
+            count += 1
         
-        
+        # Commit final (só se tudo deu certo)
         conn.commit()
 
     except Exception as e:
-        conn.rollback()
+        if conn: conn.rollback()
         return jsonify({"error": str(e)}), 500
     
     finally:
-        conn.close()
-        cursor.close()
+        # Garante que o cursor e a conexão sejam fechados
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 
     return jsonify({
@@ -219,14 +198,6 @@ def update_denuncia(current_user, denuncia_id):
             'observacoes': observacoes,
             'status': status,
             'agente_responsavel_id': agente_responsavel_id,
-            # 'a1': a1,
-            # 'a2': a2,
-            # 'b': b,
-            # 'c': c,
-            # 'd1': d1,
-            # 'd2': d2,
-            # 'e': e,
-            # 'deposito_id': deposito_id,
             'files': files
         }
     }), 201

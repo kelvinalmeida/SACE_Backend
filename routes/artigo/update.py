@@ -1,3 +1,4 @@
+import logging  # 1. Adicionado import
 from flask import request, jsonify, Blueprint, current_app, session
 from db import create_connection
 from routes.login.token_required import token_required
@@ -5,16 +6,12 @@ import json
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from .bluprint import blu_artigo
+from vercel_blob import put, delete  # 2. Importado 'put' e 'delete'
 
-# --- NOVAS IMPORTAÇÕES ---
-import os
-import os.path
-# -------------------------
+# 3. Importações de 'os' e 'UPLOAD_FOLDER' removidas (não são mais necessárias)
 
-# --- CAMINHO DE UPLOAD (para evitar repetição) ---
-# Garanta que esta pasta exista
-UPLOAD_FOLDER = "uploads/artigo_img/"
-# ------------------------------------------------
+# Configuração de log
+logging.basicConfig(level=logging.INFO)
 
 
 def check_required_filds(required_filds):
@@ -32,37 +29,30 @@ def update_artigo(current_user, artigo_id):
     # 1. Validação de Acesso (Supervisor)
     if current_user.get("nivel_de_acesso") != "supervisor":
         return jsonify({"error": "Acesso negado: É necessário ser supervisor para editar artigos."}), 403
-    
+
     # 2. Validação de Campos Obrigatórios
-    # (PUT geralmente atualiza tudo, então mantemos a checagem)
     check_errors = check_required_filds(['titulo', 'descricao', 'link_artigo'])
     if check_errors:
         return jsonify(check_errors), 400
-    
+
     # 3. Coleta de Dados
     supervisor_id = current_user.get("supervisor_id")
     titulo = request.form.get('titulo')
     descricao = request.form.get('descricao')
     link_artigo = request.form.get('link_artigo')
-    
-    # Pega a nova imagem, se houver
     nova_imagem = request.files.get('imagem')
-    
-    # Gera data de atualização
-    # (Assumindo que sua tabela 'artigo' tem a coluna 'data_atualizacao')
-    # data_criacao = datetime.now().strftime('%Y-%m-%d')
-    
+
     # 4. Conexão e Transação
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
-    cursor = None 
-    
+    cursor = None
+
     if conn is None:
         return jsonify({"error": "Database connection failed"}), 500
 
     try:
         cursor = conn.cursor()
 
-        # 5. Buscar Artigo Antigo (Para autorização e nome da imagem antiga)
+        # 5. Buscar Artigo Antigo (Para pegar a URL da imagem antiga)
         sql_get_old = "SELECT supervisor_id, imagem_nome FROM artigo WHERE artigo_id = %s"
         cursor.execute(sql_get_old, (artigo_id,))
         artigo_existente = cursor.fetchone()
@@ -70,36 +60,43 @@ def update_artigo(current_user, artigo_id):
         if not artigo_existente:
             return jsonify({"error": "Artigo não encontrado."}), 404
 
-        # # 6. Validação de "Dono"
-        # if artigo_existente['supervisor_id'] != supervisor_id:
-        #     return jsonify({"error": "Acesso negado: Você não tem permissão para editar este artigo."}), 403
+        # 'imagem_nome' no DB agora é a URL completa do blob
+        url_imagem_antiga = artigo_existente.get('imagem_nome')
+        url_imagem_para_db = url_imagem_antiga  # Valor padrão (manter a imagem antiga)
 
-        imagem_antiga_nome = artigo_existente.get('imagem_nome')
-        imagem_nome_para_db = imagem_antiga_nome # Valor padrão
-
-        # 7. Lógica de Substituição de Imagem
+        # 7. Lógica de Substituição de Imagem no Blob
         if nova_imagem:
-            # Salva a nova imagem
-            imagem_nome_para_db = secure_filename(nova_imagem.filename)
-            
-            # Garanta que a pasta UPLOAD_FOLDER exista
-            if not os.path.exists(UPLOAD_FOLDER):
-                os.makedirs(UPLOAD_FOLDER)
-            
-            caminho_nova_imagem = os.path.join(UPLOAD_FOLDER, imagem_nome_para_db)
-            nova_imagem.save(caminho_nova_imagem)
+            # Salva a nova imagem no Blob
+            imagem_nome_seguro = secure_filename(nova_imagem.filename)
+            nome_no_blob = f"artigo_img/{imagem_nome_seguro}"
 
-            # Deleta a imagem antiga, se ela existir e for diferente da nova
-            if imagem_antiga_nome and imagem_antiga_nome != imagem_nome_para_db:
-                caminho_antigo = os.path.join(UPLOAD_FOLDER, imagem_antiga_nome)
-                if os.path.exists(caminho_antigo):
-                    try:
-                        os.remove(caminho_antigo)
-                    except Exception as e:
-                        # Logar o erro, mas não parar a transação
-                        print(f"Erro ao deletar imagem antiga: {e}") 
+            try:
+                # Faz o upload da nova imagem
+                blob = put(
+                    nome_no_blob,
+                    nova_imagem.read(),
+                    options={'access': 'public', 'allowOverwrite': True},
+                )
+                # Pega a URL da nova imagem para salvar no DB
+                url_imagem_para_db = blob['url']
 
+            except Exception as e:
+                conn.rollback()
+                logging.error(f"Falha ao salvar NOVA imagem do artigo no storage: {e}", exc_info=True)
+                return jsonify({"error": f"Falha ao salvar nova imagem do artigo no storage: {str(e)}"}), 500
 
+            # Se o upload da nova foi bem-sucedido, deleta a imagem antiga do Blob
+            if url_imagem_antiga and url_imagem_antiga != url_imagem_para_db:
+                try:
+                    # A função delete() do vercel-blob recebe a URL completa
+                    delete(url_imagem_antiga)
+                    logging.info(f"Imagem antiga do blob deletada: {url_imagem_antiga}")
+                except Exception as e_del:
+                    # Se falhar ao deletar a antiga, apenas registramos o aviso.
+                    # A transação principal (atualizar para a nova URL) continua.
+                    logging.warning(f"Erro ao deletar imagem antiga do blob ({url_imagem_antiga}): {e_del}")
+
+        # Atualiza o banco de dados com os novos dados e a URL da imagem (nova ou antiga)
         sql_update = """
             UPDATE artigo
             SET 
@@ -109,12 +106,12 @@ def update_artigo(current_user, artigo_id):
                 imagem_nome = %s
             WHERE artigo_id = %s;
         """
-        
+
         cursor.execute(sql_update, (
-            titulo, 
-            descricao, 
-            link_artigo, 
-            imagem_nome_para_db,
+            titulo,
+            descricao,
+            link_artigo,
+            url_imagem_para_db,  # Salva a URL correta
             artigo_id
         ))
 
@@ -127,14 +124,15 @@ def update_artigo(current_user, artigo_id):
             "titulo": titulo,
             "descricao": descricao,
             "link_artigo": link_artigo,
-            "imagem_nome": imagem_nome_para_db
+            "imagem_nome": url_imagem_para_db  # Retorna a URL
         }), 200
 
     except Exception as e:
         if conn:
             conn.rollback()
+        logging.error(f"Erro ao atualizar o artigo: {e}", exc_info=True)
         return jsonify({"error": f"Erro ao atualizar o artigo: {str(e)}"}), 500
-    
+
     finally:
         if cursor:
             cursor.close()

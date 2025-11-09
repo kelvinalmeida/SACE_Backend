@@ -4,6 +4,8 @@ from routes.login.token_required import token_required
 import json
 from werkzeug.utils import secure_filename
 from .bluprint import registro_de_campo
+from vercel_blob import put
+import logging
 
 
 def check_required_filds(required_fild):
@@ -223,33 +225,45 @@ def update_registro_de_campo(current_user, registro_de_campo_id):
         conn.rollback()
         return jsonify({"error": "Database error: " + str(e)}), 500
     
-    try:
-        # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
-        # cursor = conn.cursor()
-        # arquivos = json.loads(request.form.get('arquivos', '[]'))
-        files = {}
-        count = 1
-        for file in request.files.getlist('files'):
-            files[f"Arquivo {count}"] = secure_filename(file.filename)
-            count += 1
-
-            arquivo_nome = secure_filename(file.filename)
-
-            inserir_arquivos = """INSERT INTO registro_de_campo_arquivos(arquivo_nome, registro_de_campo_id) VALUES (%s, %s);""" 
-
-            print("inserir_arquivos: ", arquivo_nome, registro_de_campo_id)
-
-            cursor.execute(inserir_arquivos, (arquivo_nome, registro_de_campo_id))
-
-            file.save(f'uploads/registro_de_campo_arquivos/reg_de_campo_id_{registro_de_campo_id}_{arquivo_nome}')
+    # 8. Inserir NOVOS Arquivos (usando Vercel Blob)
+        # Nota: Esta lógica apenas *adiciona* novos arquivos. 
+        # Para *substituir* arquivos, você precisaria de uma lógica de exclusão primeiro.
+    files = {}
+    count = 1
+    for file in request.files.getlist('files'):
         
+        # Pula "arquivos" vazios (quando nada é selecionado)
+        if not file.filename:
+            continue
+
+        arquivo_nome = secure_filename(file.filename)
+        nome_no_blob = f"registro_de_campo_arquivos/reg_de_campo_id_{registro_de_campo_id}_{arquivo_nome}"
+
+        try:
+            # Faz o upload para o Vercel Blob
+            blob = put(
+                nome_no_blob,
+                file.read(),
+                options={'access': 'public', 'allowOverwrite': True}
+            )
+            url_para_db = blob['url'] # Pega a URL
+        
+        except Exception as e:
+            # Se o upload falhar, desfaz a transação inteira
+            logging.error(f"Falha ao salvar arquivo no storage: {e}", exc_info=True)
+            conn.rollback() 
+            return jsonify({"error": f"Falha ao salvar arquivo no storage: {str(e)}"}), 500
+        
+        # Salva a URL no banco de dados
+        inserir_arquivos = """INSERT INTO registro_de_campo_arquivos(arquivo_nome, registro_de_campo_id) VALUES (%s, %s);""" 
+        cursor.execute(inserir_arquivos, (url_para_db, registro_de_campo_id))
+
+        files[f"Arquivo {count}"] = url_para_db
+        count += 1
+        
+        # 9. COMMIT FINAL
+        # Se tudo deu certo, salva todas as alterações no banco
         conn.commit()
-    except Exception as e:
-        conn.rollback()
-        return jsonify({"error": "Database error: " + str(e)}), 500
-    finally:
-        conn.close()
-        cursor.close()
 
 
     return jsonify({
