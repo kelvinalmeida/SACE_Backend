@@ -1348,7 +1348,7 @@ paths:
         '401':
           description: Não autenticado (token ausente ou inválido).
         '403':
-          description: Acesso proibido (usuário não é um agente).
+          description: Acesso proibido (usuário não é um agente) ou tentado criar registro em area de visita que ele nao foi cadastrado.
         '409':
           description: Erro É nescessário ter um ciclo ativo! Algum supervisor FINALIZOU UM CICLO e não ativou um novo! Peça para um supervisor criar um novo ciclo
         '500':

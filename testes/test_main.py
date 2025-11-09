@@ -14,6 +14,7 @@ def test_login_success(client):
     data = response.json
     assert data['username'] == 'admin'
     assert data['nivel_de_acesso'] == 'supervisor'
+    assert data['supervisor_id'] == 1
     assert 'token' in data
 
 def test_login_failure(client):
