@@ -152,7 +152,7 @@ def test_supervisor_artigo_crud_workflow(auth_client, public_client, mocker):
         assert response_delete.json['artigo_id_deletado'] == artigo_id_criado
 
         # O mock 'del' foi chamado 1 vez com a URL correta?
-        mock_blob_del.assert_called_once_with([url_imagem_criada])
+        mock_blob_del.assert_called_once_with(url_imagem_criada)
 
         # --- 5. VERIFICAR (GET) ---
         # Usamos o cliente público para garantir que o artigo foi deletado

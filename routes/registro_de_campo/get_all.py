@@ -191,4 +191,5 @@ def get_registro_de_campo(current_user):
         conn.close()
         cursor.close()
 
-        return jsonify(registro_de_campo), 200
+    
+    return jsonify(registro_de_campo), 200

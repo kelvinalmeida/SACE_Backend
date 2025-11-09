@@ -1,3 +1,4 @@
+# testes/test_registro_de_campo.py
 import pytest
 import io
 import json
@@ -30,19 +31,19 @@ def test_registro_de_campo_crud_workflow(agente_client, mocker):
     
     # Mock 'put' na sua rota POST
     mock_put_post = mocker.patch(
-        'routes.registro_de_campo.post_one_registro_de_campo.put', # <--- Este caminho estava correto
+        'routes.registro_de_campo.post_one_registro_de_campo.put', # Caminho para a função 'put' usada no POST
         side_effect=mock_put_side_effect
     )
     
     # Mock 'put' na sua rota PUT (Update)
     mock_put_update = mocker.patch(
-        'routes.registro_de_campo.update.put', # <--- CAMINHO CORRIGIDO
+        'routes.registro_de_campo.update.put', # Caminho para a função 'put' usada no UPDATE
         side_effect=mock_put_side_effect
     )
 
     # Mock 'del_blob' na sua rota DELETE
     mock_del = mocker.patch(
-        'routes.registro_de_campo.delete.delete', # <--- CAMINHO CORRIGIDO (o nome da função é 'delete')
+        'routes.registro_de_campo.delete.delete', # Caminho para a função 'delete' usada no DELETE
         return_value=None
     )
     
@@ -73,7 +74,7 @@ def test_registro_de_campo_crud_workflow(agente_client, mocker):
             'numero_da_amostra': 'A123',
             'quantiade_tubitos': 2,
             'observacao': 'Observação do teste POST.',
-            'area_de_visita_id': 1, # ID válido do backup.sql
+            'area_de_visita_id': 1, # ID válido do backup.sql (agente_client tem acesso)
             'a1': 5, 'a2': 0, 'b': 2, 'c': 0, 'd1': 0, 'd2': 0, 'e': 0,
             'larvicidas': json.dumps(larvicidas_post),
             'adulticidas': json.dumps([]),
@@ -139,7 +140,7 @@ def test_registro_de_campo_crud_workflow(agente_client, mocker):
         assert response_put.status_code == 200, f"Erro no PUT: {response_put.json}"
         data_put = response_put.json['data']
         
-        assert data_put['imovel_numero'] == 456
+        assert data_put['imovel_numero'] == '456'
         assert data_put['observacao'] == 'Observação ATUALIZADA pelo PUT.'
         assert len(data_put['files']) == 1 # Resposta do PUT mostra só o novo arquivo
         assert data_put['files']['Arquivo 1'].endswith('relatorio.pdf')
@@ -173,10 +174,10 @@ def test_registro_de_campo_crud_workflow(agente_client, mocker):
 
         # 4.3 VERIFICAR MOCKS (A parte mais importante)
         
-        # Garantir que a função 'del_blob' foi chamada exatamente 1 vez
+        # Garantir que a função 'delete' (do blob) foi chamada exatamente 1 vez
         mock_del.assert_called_once()
         
-        # Pegar a lista de URLs que foi passada para 'del_blob'
+        # Pegar a lista de URLs que foi passada para 'delete'
         # 'call_args[0]' é uma tupla de argumentos. [0] é o primeiro argumento.
         urls_deletadas = mock_del.call_args[0][0]
         
@@ -184,4 +185,171 @@ def test_registro_de_campo_crud_workflow(agente_client, mocker):
         # com as URLs que a rota *realmente* tentou deletar.
         # Usamos 'set' para ignorar a ordem da lista.
         assert set(urls_deletadas) == set(urls_criadas_no_blob)
-        assert len(urls_deletadas) == 2 # Garante que as 2 foram deletadas
+        assert len(urls_deletadas) == 3 # Garante que as 3 foram deletadas
+
+
+# --- Testes de Segurança e Permissões ---
+
+def test_seguranca_supervisor_nao_pode_criar_registro(auth_client):
+    """
+    TESTE DE SEGURANÇA:
+    Verifica se um SUPERVISOR (auth_client) NÃO PODE criar um registro de campo.
+    A rota '/registro_de_campo' (POST) exige um 'agente_id' no token,
+    que o supervisor não possui.
+    """
+    payload_post = {
+        'imovel_numero': '777',
+        'imovel_lado': 'A',
+        'imovel_categoria_da_localidade': 'L',
+        'imovel_tipo': 'C',
+        'imovel_status': 'N',
+        'area_de_visita_id': 1,
+        'a1': 1, 'a2': 0, 'b': 0, 'c': 0, 'd1': 0, 'd2': 0, 'e': 0,
+        'larvicidas': json.dumps([]),
+        'adulticidas': json.dumps([])
+    }
+    
+    response_post = auth_client.post('/registro_de_campo', data=payload_post)
+    
+    # A rota deve retornar 401 (Unauthorized) ou 403 (Forbidden) 
+    # pois o token do supervisor não contém 'agente_id'.
+    assert response_post.status_code == 401
+    assert "É nescessário ser agente" in response_post.json['error']
+
+def test_seguranca_agente_nao_pode_registrar_em_area_nao_associada(agente_client):
+    """
+    TESTE DE LÓGICA DE NEGÓCIO (403):
+    Verifica se o Agente 1 (do 'agente_client') NÃO PODE registrar um 
+    imóvel na Área de Visita 2, pois ele não está associado a ela no backup.sql.
+    """
+    payload_post = {
+        'imovel_numero': '888',
+        'imovel_lado': 'B',
+        'imovel_categoria_da_localidade': 'U',
+        'imovel_tipo': 'R',
+        'imovel_status': 'F',
+        'area_de_visita_id': 2, # <-- Área 2 (Jatiúca), agente 1 não tem acesso
+        'a1': 1, 'a2': 0, 'b': 0, 'c': 0, 'd1': 0, 'd2': 0, 'e': 0,
+        'larvicidas': json.dumps([]),
+        'adulticidas': json.dumps([])
+    }
+    
+    response_post = agente_client.post('/registro_de_campo', data=payload_post)
+    
+    # A rota deve retornar 403 (Forbidden)
+    assert response_post.status_code == 403
+    assert "Agente não está associado" in response_post.json['error']
+
+
+# --- Testes de Validação de Entrada (Erros 400) ---
+
+def test_falha_post_campos_obrigatorios_ausentes(agente_client):
+    """
+    TESTE DE VALIDAÇÃO (400):
+    Verifica se a API retorna 400 Bad Request se um campo obrigatório
+    (como 'imovel_status') estiver faltando.
+    """
+    payload_post = {
+        'imovel_numero': '999',
+        'imovel_lado': 'A',
+        'imovel_categoria_da_localidade': 'L',
+        'imovel_tipo': 'C',
+        # 'imovel_status': 'N', <-- CAMPO FALTANDO
+        'area_de_visita_id': 1,
+        'a1': 1, 'a2': 0, 'b': 0, 'c': 0, 'd1': 0, 'd2': 0, 'e': 0,
+        'larvicidas': json.dumps([]),
+        'adulticidas': json.dumps([])
+    }
+    
+    response_post = agente_client.post('/registro_de_campo', data=payload_post)
+    
+    assert response_post.status_code == 400
+    assert "imovel_status is required" in response_post.json['error']
+
+def test_falha_post_tipo_de_dado_invalido(agente_client):
+    """
+    TESTE DE VALIDAÇÃO (400):
+    Verifica se a API retorna 400 Bad Request se um campo numérico
+    (como 'a1') for enviado como texto não-numérico.
+    """
+    payload_post = {
+        'imovel_numero': '1000',
+        'imovel_lado': 'A',
+        'imovel_categoria_da_localidade': 'L',
+        'imovel_tipo': 'C',
+        'imovel_status': 'N',
+        'area_de_visita_id': 1,
+        'a1': "texto_invalido", # <-- TIPO INVÁLIDO (deveria ser int)
+        'a2': 0, 'b': 0, 'c': 0, 'd1': 0, 'd2': 0, 'e': 0,
+        'larvicidas': json.dumps([]),
+        'adulticidas': json.dumps([])
+    }
+    
+    response_post = agente_client.post('/registro_de_campo', data=payload_post)
+    
+    assert response_post.status_code == 400
+    assert "Invalid input for" in response_post.json['error']
+
+
+# --- Testes de Rotas Auxiliares e 404 ---
+
+def test_rotas_nao_encontrado_404(agente_client):
+    """
+    TESTE DE 404:
+    Verifica se as rotas GET, PUT e DELETE retornam 404 (Not Found)
+    ao tentar acessar um ID que não existe.
+    """
+    id_inexistente = 999999
+    
+    # GET /registro_de_campo/<id>
+    response_get = agente_client.get(f'/registro_de_campo/{id_inexistente}')
+    assert response_get.status_code == 404
+    assert response_get.json['error'] == "Registro de campo not found"
+
+    # PUT /registro_de_campo/<id>
+    # (Envia um payload mínimo apenas para a rota de PUT ser atingida)
+    payload_put = {
+        'imovel_numero': '1', 'imovel_lado': 'A', 'imovel_categoria_da_localidade': 'L',
+        'imovel_tipo': 'C', 'imovel_status': 'N', 'area_de_visita_id': 1,
+        'a1': 0, 'a2': 0, 'b': 0, 'c': 0, 'd1': 0, 'd2': 0, 'e': 0,
+        'larvicidas': '[]', 'adulticidas': '[]'
+    }
+    response_put = agente_client.put(f'/registro_de_campo/{id_inexistente}', data=payload_put)
+    assert response_put.status_code == 404
+    assert "não encontrado" in response_put.json['error']
+
+    # DELETE /registro_de_campo/<id>
+    response_delete = agente_client.delete(f'/registro_de_campo/{id_inexistente}')
+    assert response_delete.status_code == 404
+    assert response_delete.json['error'] == "Registro de campo not found"
+
+def test_marcar_caso_confirmado(agente_client):
+    """
+    Testa a rota auxiliar 'PUT /casos_confirmado/<id>'.
+    
+    1. Busca o registro ID 1 (do backup) e verifica se 'caso_comfirmado' é 'true'.
+       (No backup, o registro 1 já é 'true', então vamos verificar isso).
+    2. Busca o registro ID 2 (do backup) e verifica se 'caso_comfirmado' é 'false'.
+    3. Chama a rota PUT para marcar o ID 2.
+    4. Busca o registro ID 2 novamente e verifica se 'caso_comfirmado' agora é 'true'.
+    """
+    
+    # 1. Verifica o estado inicial do Registro 1 (já é true no backup)
+    resp_get_1 = agente_client.get('/registro_de_campo/1')
+    assert resp_get_1.status_code == 200
+    assert resp_get_1.json['caso_comfirmado'] == True
+
+    # 2. Verifica o estado inicial do Registro 2 (é false no backup)
+    resp_get_2_antes = agente_client.get('/registro_de_campo/2')
+    assert resp_get_2_antes.status_code == 200
+    assert resp_get_2_antes.json['caso_comfirmado'] == False
+    
+    # 3. Chama a rota PUT para marcar o Registro 2
+    resp_put = agente_client.put('/casos_confirmado/2')
+    assert resp_put.status_code == 200
+    assert "Caso confirmado com sucesso" in resp_put.json['message']
+    
+    # 4. Verifica se o Registro 2 foi atualizado
+    resp_get_2_depois = agente_client.get('/registro_de_campo/2')
+    assert resp_get_2_depois.status_code == 200
+    assert resp_get_2_depois.json['caso_comfirmado'] == True

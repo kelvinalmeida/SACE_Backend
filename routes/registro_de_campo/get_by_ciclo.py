@@ -196,4 +196,5 @@ def get_registro_de_campo_by_ciclo(current_user, ano, ciclo):
         if conn:
             conn.close()
 
-        return jsonify(registro_de_campo), 200
+    
+    return jsonify(registro_de_campo), 200
