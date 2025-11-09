@@ -20,4 +20,5 @@ flask_cors==6.0.1
 fpdf2
 requests
 pytest
+pytest-mock
 vercel-blob
