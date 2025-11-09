@@ -1,8 +1,8 @@
-from flask import request, jsonify, Blueprint, current_app, send_from_directory
+import logging
+from flask import request, jsonify, Blueprint, current_app, redirect
 from db import create_connection
 from .bluprint import blu_artigo
-import os
-import logging
+# 'os' e 'send_from_directory' não são mais necessários
 
 # Configuração básica de log
 logging.basicConfig(level=logging.INFO)
@@ -10,6 +10,10 @@ logging.basicConfig(level=logging.INFO)
 
 @blu_artigo.route('/artigo/img/<int:artigo_id>', methods=['GET'])
 def get_img(artigo_id):
+    """
+    Busca a URL da imagem de um artigo pelo ID
+    e redireciona o usuário para a URL do Blob.
+    """
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
     cursor = None # Inicializa o cursor fora do try
     if conn is None:
@@ -18,32 +22,24 @@ def get_img(artigo_id):
     try:
         cursor = conn.cursor()
 
-        # 1. Buscar o nome da imagem no DB
+        # 1. Buscar a URL da imagem no DB (o campo 'imagem_nome' agora armazena a URL)
         search_artigo = """SELECT imagem_nome FROM artigo WHERE artigo_id = %s;"""
         cursor.execute(search_artigo, (artigo_id,))
-        artigo = cursor.fetchone() # Usamos fetchone() pois esperamos apenas um resultado
+        artigo = cursor.fetchone()
         
-        if not artigo or not artigo['imagem_nome']:
+        # 2. Verificar se a URL foi encontrada
+        if not artigo or not artigo.get('imagem_nome'):
             return jsonify({"error": "Imagem do Artigo não encontrada ou não cadastrada"}), 404
         
-        imagem_name = artigo['imagem_nome']
+        imagem_url = artigo['imagem_nome']
         
-        # 2. Configurar o caminho do diretório e do arquivo
-        # O diretório base onde as imagens estão salvas
-        directory = os.path.join(current_app.root_path, 'uploads', 'artigo_img')
-        
-        # return jsonify(imagem_name)
-        # 3. Retornar o arquivo usando send_from_directory
-        # Esta função busca o arquivo no diretório especificado e o envia para o cliente.
-        return send_from_directory(directory, imagem_name)
-
-    # except FileNotFoundError:
-    #     # Erro específico se o arquivo existir no DB mas não no disco
+        # 3. Redirecionar o usuário para a URL do Blob
+        # O navegador do usuário cuidará de exibir a imagem.
+        return redirect(imagem_url)
         
     except Exception as e:
-        return jsonify({"error": f"Arquivo '{imagem_name}' não encontrado no servidor."}), 404
         # Erro genérico (DB ou outro)
-        logging.error(f"Erro ao buscar imagem: {e}")
+        logging.error(f"Erro ao buscar URL da imagem do artigo {artigo_id}: {e}", exc_info=True)
         return jsonify({"error": f"Erro interno do servidor: {str(e)}"}), 500
 
     finally:

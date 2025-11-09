@@ -1,9 +1,11 @@
+import logging
 from flask import Flask, request, jsonify, Blueprint, current_app, session
 from db import create_connection
 from routes.login.token_required import token_required
 import json
 from werkzeug.utils import secure_filename
 from .bluprint import registro_de_campo
+from vercel_blob import put
 
 
 
@@ -227,33 +229,61 @@ def send_registro_de_campo(current_user):
         conn.rollback()
         return jsonify({"error": "Database error: " + str(e)}), 500
     
+    # --- INÍCIO DA SEÇÃO DE UPLOAD DE ARQUIVOS ATUALIZADA ---
+    files = {} # Para o JSON de retorno
     try:
-        # [{"tipo": "temefos", "forma": "g", "quant": 10}, {"tipo": "adulti", ...}]
-        # cursor = conn.cursor()
-        # arquivos = json.loads(request.form.get('arquivos', '[]'))
-        files = {}
         count = 1
+
         for file in request.files.getlist('files'):
-            files[f"Arquivo {count}"] = secure_filename(file.filename)
-            count += 1
+            
+            # --- CORREÇÃO AQUI ---
+            # Se 'file.filename' for uma string vazia, significa que
+            # o campo de arquivo foi enviado, mas nenhum arquivo foi selecionado.
+            # Devemos pular este "arquivo" e não tentar fazer o upload.
+            if not file.filename:
+                continue
+            # --- FIM DA CORREÇÃO ---
+
 
             arquivo_nome = secure_filename(file.filename)
+            # Define o caminho/nome do arquivo no Vercel Blob
+            nome_no_blob = f"registro_de_campo_arquivos/reg_de_campo_id_{registro_de_campo_id}_{arquivo_nome}"
 
+            try:
+                # Faz o upload para o Vercel Blob
+                blob = put(
+                    nome_no_blob,                # 1. Caminho/Nome
+                    file.read(),                 # 2. Conteúdo (bytes)
+                    options={'access': 'public', 'allowOverwrite': True} # 3. Dicionário de Opções
+                )
+                
+                # Acessa a URL como um dicionário
+                url_para_db = blob['url']
+
+            except Exception as e:
+                conn.rollback() # Desfaz tudo (depósito, registro, etc.)
+                logging.error(f"Falha ao salvar arquivo no storage: {e}", exc_info=True)
+                return jsonify({"error": f"Falha ao salvar arquivo no storage: {str(e)}"}), 500
+            
+            # Salva a URL no banco de dados
             inserir_arquivos = """INSERT INTO registro_de_campo_arquivos(arquivo_nome, registro_de_campo_id) VALUES (%s, %s);""" 
+            cursor.execute(inserir_arquivos, (url_para_db, registro_de_campo_id))
 
-            print("inserir_arquivos: ", arquivo_nome, registro_de_campo_id)
-
-            cursor.execute(inserir_arquivos, (arquivo_nome, registro_de_campo_id))
-
-            file.save(f'uploads/registro_de_campo_arquivos/reg_de_campo_id_{registro_de_campo_id}_{arquivo_nome}')
+            files[f"Arquivo {count}"] = url_para_db
+            count += 1
         
+        # 8. COMMIT FINAL DE TODA A TRANSAÇÃO
         conn.commit()
+        
     except Exception as e:
-        conn.rollback()
+        if conn: conn.rollback()
         return jsonify({"error": "Database error: " + str(e)}), 500
+    
     finally:
-        conn.close()
-        cursor.close()
+        # 9. Fecha o cursor e a conexão no final
+        if cursor: cursor.close()
+        if conn: conn.close()
+    # --- FIM DA SEÇÃO DE UPLOAD DE ARQUIVOS ---
 
 
     return jsonify({
