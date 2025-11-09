@@ -109,7 +109,7 @@ def test_grafico_summary_pdf_permissoes(client, agente_client, auth_client):
     # 1. Testar como PÚBLICO (sem login)
     resp_public = client.get(f'/summary_pdf/{TEST_ANO}/{TEST_CICLO}')
     # A rota é protegida por @token_required
-    assert resp_public.data == 401
+    assert resp_public.status_code == 401
     assert "O token está faltando!" in resp_public.json['error']
 
     # 2. Testar como AGENTE (agente_client)
