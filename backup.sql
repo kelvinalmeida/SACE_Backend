@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict AJBiLixsu9QUAy5JkueheXU4zZR1lPHQ2P7QdbbkyoViGRWN9quZr6ybXdtBAxy
+\restrict qHIrnBNJEzgmn4KThcfox0JX0oYE2vduERMr7fo5hExNvwTEYL9lqlbh2Hc8hD4
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -648,16 +648,16 @@ COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_
 --
 
 COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, status, logadouro, latitude, longitude) FROM stdin;
-1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Visitado	Avenida Álvaro Otacílio	-9.66790000	-35.70220000
-2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Visitado	Avenida Doutor Antônio Gomes de Barros	-9.65860000	-35.70320000
-3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Visitado	Rua Jangadeiros Alagoanos	-9.67130000	-35.71180000
-4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Visitado	Avenida Fernandes Lima	-9.64330000	-35.73350000
-5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Visitado	Avenida Brigadeiro Eduardo Gomes de Brito	-9.63870000	-35.69890000
-6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Não Visitado	Rua Cleto Campelo	-9.64530000	-35.72080000
-7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Visitado	Avenida Cachoeira do Meirim	-9.57140000	-35.78910000
-8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Não Visitado	Avenida Menino Marcelo	-9.59360000	-35.75160000
-9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Visitado	Rua Artur Vital da Silva	-9.63580000	-35.73880000
-10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Visitado	Rua Professora Maria Esther da Costa Barros	-9.65590000	-35.71070000
+1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Visitado	Avenida Álvaro Otacílio	-9.66150000	-35.70090000
+2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Visitado	Avenida Doutor Antônio Gomes de Barros	-9.65080000	-35.70840000
+3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Visitado	Rua Jangadeiros Alagoanos	-9.66720000	-35.70770000
+4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Visitado	Avenida Fernandes Lima	-9.64210000	-35.73500000
+5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Visitado	Avenida Brigadeiro Eduardo Gomes de Brito	-9.62550000	-35.70750000
+6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Não Visitado	Rua Cleto Campelo	-9.64970000	-35.72030000
+7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Visitado	Avenida Cachoeira do Meirim	-9.54130000	-35.73560000
+8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Não Visitado	Avenida Menino Marcelo	-9.58590000	-35.75540000
+9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Visitado	Rua Artur Vital da Silva	-9.62910000	-35.73890000
+10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Visitado	Rua Professora Maria Esther da Costa Barros	-9.65620000	-35.70890000
 \.
 
 
@@ -1083,13 +1083,13 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 284	0	0	0	0	0	0	0
 285	0	0	0	0	0	0	0
 286	0	0	0	0	0	0	0
-287	0	0	0	0	0	0	0
+287	0	30	0	0	0	0	0
 288	0	0	0	0	0	0	0
 289	0	0	0	0	0	0	0
 290	0	0	0	0	0	0	0
 291	0	1	0	0	0	0	0
 292	0	0	0	0	0	0	0
-293	0	0	0	0	0	0	0
+293	0	0	20	0	0	0	0
 294	0	0	0	0	0	0	0
 295	0	0	0	0	0	0	0
 296	0	0	0	0	0	0	0
@@ -1101,7 +1101,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 302	0	0	0	0	0	0	0
 303	1	0	0	0	0	0	0
 304	0	0	0	0	0	0	0
-305	0	0	0	0	0	0	0
+305	0	0	0	33	0	0	0
 306	0	0	0	0	0	0	0
 307	0	0	0	0	0	0	0
 308	0	0	0	0	0	0	0
@@ -1145,6 +1145,38 @@ COPY public.doentes_confirmados (doente_confirmado_id, nome, tipo_da_doenca, rua
 18	Thiago Santos	Chikungunya	Rua Cleto Campelo	88	Jacintinho	5	\N
 19	Vanessa Oliveira	Dengue	Rua Jangadeiros Alagoanos	1010	Pajuçara	6	\N
 20	William Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	6	\N
+21	Ana Lúcia Barbosa	Dengue	Rua Prof. Sandoval Arroxelas	120	Ponta Verde	1	\N
+22	Bruno Costa	Chikungunya	Rua B. de Atalaia	45	Jacintinho	1	\N
+23	Carla Dias Ferreira	Zica	Av. Garça Torta	1100	Benedito Bentes	1	\N
+24	Danilo Menezes	Dengue	Rua Dr. Lessa de Azevedo	330	Pajuçara	2	\N
+25	Elisa Correia	Dengue	Rua Adolfo Gustavo	50	Serraria	2	\N
+26	Fábio Henrique Lima	Dengue	Rua D. Antônio Brandão	789	Farol	2	\N
+27	Gabriela Peixoto	Dengue	Rua Prof. Sandoval Arroxelas	210	Ponta Verde	3	\N
+28	Heitor Vasconcelos	Chikungunya	Rua D. Antônio Brandão	800	Farol	3	\N
+29	Isabela Ramos	Zica	Rua A, Cj. Santo Dumont	15	Gruta de Lourdes	3	\N
+30	José Carlos Almeida	Dengue	Rua B. de Atalaia	125	Jacintinho	4	\N
+31	Larissa Farias	Dengue	Rua Bancário Rady Gusmão	220	Jatiúca	4	\N
+32	Marcos Vinícius	Chikungunya	Av. Garça Torta	1500	Benedito Bentes	4	\N
+33	Natalia Gusmão	Zica	Rua Prof. Sandoval Arroxelas	505	Ponta Verde	5	\N
+34	Otávio Lins	Dengue	Rua Adolfo Gustavo	130	Serraria	5	\N
+35	Patrícia Vilela	Dengue	Rua Dr. Lessa de Azevedo	410	Pajuçara	5	\N
+36	Ricardo Alves	Dengue	Av. Menino Marcelo	1500	Serraria	6	\N
+37	Sofia Lima	Dengue	Rua das Acácias	305	Gruta de Lourdes	6	\N
+38	Thiago Santos	Chikungunya	Rua Cleto Campelo	88	Jacintinho	6	\N
+39	Ulisses Costa	Zica	Av. Brigadeiro E. Gomes	310	Cruz das Almas	7	\N
+40	Vitória Mendonça	Dengue	Rua D. Antônio Brandão	620	Farol	7	\N
+41	Walter Nogueira	Dengue	Rua H, Cj. Castelo Branco	70	Jatiúca	7	\N
+42	Vanessa Oliveira	Dengue	Rua Jangadeiros Alagoanos	1010	Pajuçara	8	\N
+43	Silvia Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+44	Maria Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+45	Fabricio Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+46	Ana Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+47	Pedro Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+48	Carlos Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+49	Pedro Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+50	Fabiana Santos	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+51	Lucas Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+52	Yasmin Farias	Chikungunya	Rua H, Cj. Castelo Branco	75	Jatiúca	8	\N
 \.
 
 
@@ -1631,27 +1663,27 @@ COPY public.supervisor (supervisor_id, usuario_id) FROM stdin;
 --
 
 COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email, telefone_ddd, telefone_numero, estado, municipio, bairro, logradouro, numero, registro_do_servidor, cargo, situacao_atual, data_de_admissao, senha, nivel_de_acesso) FROM stdin;
-1	João da Silva	12345678901	1234567	1985-06-15	joao.silva@example.com	11	987654321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	senhaSegura123	agente
-2	Pedro Cavalcante	admin	212324567	1983-06-15	pedro.silva@example.com	11	987354321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	123456	supervisor
-3	Maria Oliveira Santos	23456789012	2345678	1990-03-22	maria.santos@example.com	21	912345678	RJ	Rio de Janeiro	Copacabana	Avenida Atlântica	1702	RS-2025-002	Gerente de Projetos	t	2024-05-20	outrasenha456	agente
-4	Carlos Pereira Costa	34567890123	3456789	1988-11-01	carlos.costa@example.com	31	988776655	MG	Belo Horizonte	Savassi	Rua Fernandes Tourinho	500	RS-2025-003	Desenvolvedor Sênior	t	2023-08-15	senhaDev321	agente
-5	Ana Clara Ferreira	45678901234	4567890	1995-09-10	ana.ferreira@example.com	41	977665544	PR	Curitiba	Batel	Avenida do Batel	1868	RS-2025-004	Analista de RH	f	2024-02-01	senhaRH987	agente
-6	Pedro Rodrigues Alves	56789012345	5678901	1982-01-30	pedro.alves@example.com	51	966554433	RS	Porto Alegre	Moinhos de Vento	Rua Padre Chagas	415	RS-2025-005	Coordenador Financeiro	t	2022-11-25	senhaFin159	supervisor
-7	Juliana Souza Lima	67890123456	6789012	1998-07-12	juliana.lima@example.com	61	955443322	DF	Brasília	Asa Sul	SCS Quadra 07	10	RS-2025-006	Estagiária	t	2025-07-01	senhaEstagio753	agente
-8	Lucas Martins	78901234567	7890123	1992-04-25	lucas.martins@example.com	71	944332211	BA	Salvador	Barra	Avenida Oceânica	2400	RS-2025-007	Analista de Marketing	t	2023-03-18	senhaMkt357	agente
-9	Fernanda Gonçalves	89012345678	8901234	1986-12-08	fernanda.g@example.com	81	933221100	PE	Recife	Boa Viagem	Avenida Boa Viagem	97	RS-2025-008	Designer Gráfico	t	2024-09-02	senhaDesign123	agente
-10	Ricardo Almeida	90123456789	9012345	1979-05-19	ricardo.a@example.com	11	922110099	SP	São Paulo	Pinheiros	Rua dos Pinheiros	1000	RS-2025-009	Diretor de TI	t	2020-01-15	senhaDiretorTop	supervisor
-11	Beatriz Rocha	01234567890	0123456	2000-02-28	beatriz.rocha@example.com	21	911009988	RJ	Niterói	Icaraí	Rua Gavião Peixoto	30	RS-2025-010	Assistente Administrativo	t	2025-06-11	senhaAdmin456	agente
-12	Guilherme Barbosa	11223344556	1122334	1993-10-03	guilherme.b@example.com	31	988887777	MG	Contagem	Eldorado	Avenida João César de Oliveira	1275	RS-2025-011	Técnico de Suporte	t	2024-04-10	senhaSup555	agente
-13	Larissa Azevedo	22334455667	2233445	1991-08-14	larissa.azevedo@example.com	48	977776666	SC	Florianópolis	Centro	Rua Felipe Schmidt	515	RS-2025-012	Analista de Negócios	t	2023-10-09	senhaNegocios333	agente
-14	Rafael Ribeiro	33445566778	3344556	1987-03-29	rafael.r@example.com	85	966665555	CE	Fortaleza	Meireles	Avenida Beira Mar	4260	RS-2025-013	Desenvolvedor Pleno	t	2025-02-20	senhaPleno777	agente
-15	Camila Nogueira	44556677889	4455667	1999-01-05	camila.n@example.com	92	955554444	AM	Manaus	Adrianópolis	Rua Teresina	151	RS-2025-014	Desenvolvedor Júnior	t	2025-08-12	senhaJunior888	agente
-16	Felipe Monteiro	55667788990	5566778	1984-06-07	felipe.m@example.com	62	944443333	GO	Goiânia	Setor Bueno	Avenida T-10	100	RS-2025-015	Contador	t	2021-07-22	senhaContador999	agente
-17	Vanessa Dias	66778899001	6677889	1996-09-21	vanessa.dias@example.com	27	933332222	ES	Vitória	Jardim da Penha	Rua da Lama	50	RS-2025-016	Assistente de Marketing	f	2024-01-30	senhaAssistMkt111	agente
-18	Bruno Medeiros	77889900112	7788990	1990-11-18	bruno.m@example.com	11	922221111	SP	Guarulhos	Macedo	Avenida Paulo Faccini	1500	RS-2025-017	Analista de Logística	t	2023-05-16	senhaLog222	agente
-19	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	41	911110000	PR	São José dos Pinhais	Centro	Rua XV de Novembro	210	RS-2025-018	Gerente de RH	t	2019-12-05	senhaGerenteRH321	supervisor
-20	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	21	999998888	RJ	Duque de Caxias	Vila São Luís	Rua Genaro Lomba	15	RS-2025-019	Recrutador	t	2025-03-03	senhaRecrutador444	agente
-21	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	11	988887777	SP	Campinas	Cambuí	Rua Coronel Quirino	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	senhaArquiteto555	agente
+1	João da Silva	12345678901	1234567	1985-06-15	joao.silva@example.com	82	987654321	AL	Maceió	Ponta Verde	Rua Engenheiro Mário de Gusmão	123	RS-2025-001	Analista	t	2025-01-10	senhaSegura123	agente
+2	Pedro Cavalcante	admin	212324567	1983-06-15	pedro.silva@example.com	82	987354321	AL	Maceió	Jatiúca	Avenida Doutor Antônio Gomes de Barros	123	RS-2025-001	Analista	t	2025-01-10	123456	supervisor
+3	Maria Oliveira Santos	23456789012	2345678	1990-03-22	maria.santos@example.com	82	912345678	AL	Maceió	Pajuçara	Rua Jangadeiros Alagoanos	1702	RS-2025-002	Gerente de Projetos	t	2024-05-20	outrasenha456	agente
+4	Carlos Pereira Costa	34567890123	3456789	1988-11-01	carlos.costa@example.com	82	988776655	AL	Maceió	Farol	Avenida Fernandes Lima	500	RS-2025-003	Desenvolvedor Sênior	t	2023-08-15	senhaDev321	agente
+5	Ana Clara Ferreira	45678901234	4567890	1995-09-10	ana.ferreira@example.com	82	977665544	AL	Maceió	Gruta de Lourdes	Rua Artur Vital da Silva	1868	RS-2025-004	Analista de RH	f	2024-02-01	senhaRH987	agente
+6	Pedro Rodrigues Alves	56789012345	5678901	1982-01-30	pedro.alves@example.com	82	966554433	AL	Maceió	Mangabeiras	Rua Professora Maria Esther da Costa Barros	415	RS-2025-005	Coordenador Financeiro	t	2022-11-25	senhaFin159	supervisor
+7	Juliana Souza Lima	67890123456	6789012	1998-07-12	juliana.lima@example.com	82	955443322	AL	Maceió	Serraria	Avenida Menino Marcelo	10	RS-2025-006	Estagiária	t	2025-07-01	senhaEstagio753	agente
+8	Lucas Martins	78901234567	7890123	1992-04-25	lucas.martins@example.com	82	944332211	AL	Maceió	Cruz das Almas	Avenida Brigadeiro Eduardo Gomes de Brito	2400	RS-2025-007	Analista de Marketing	t	2023-03-18	senhaMkt357	agente
+9	Fernanda Gonçalves	89012345678	8901234	1986-12-08	fernanda.g@example.com	82	933221100	AL	Maceió	Benedito Bentes	Avenida Cachoeira do Meirim	97	RS-2025-008	Designer Gráfico	t	2024-09-02	senhaDesign123	agente
+10	Ricardo Almeida	90123456789	9012345	1979-05-19	ricardo.a@example.com	82	922110099	AL	Maceió	Jacintinho	Rua Cleto Campelo	1000	RS-2025-009	Diretor de TI	t	2020-01-15	senhaDiretorTop	supervisor
+11	Beatriz Rocha	01234567890	0123456	2000-02-28	beatriz.rocha@example.com	82	911009988	AL	Maceió	Centro	Rua Buarque de Macedo	30	RS-2025-010	Assistente Administrativo	t	2025-06-11	senhaAdmin456	agente
+12	Guilherme Barbosa	11223344556	1122334	1993-10-03	guilherme.b@example.com	82	988887777	AL	Maceió	Jatiúca	Rua Bancário Rady Gusmão do Nascimento	1275	RS-2025-011	Técnico de Suporte	t	2024-04-10	senhaSup555	agente
+13	Larissa Azevedo	22334455667	2233445	1991-08-14	larissa.azevedo@example.com	82	977776666	AL	Maceió	Ponta Verde	Avenida Álvaro Otacílio	515	RS-2025-012	Analista de Negócios	t	2023-10-09	senhaNegocios333	agente
+14	Rafael Ribeiro	33445566778	3344556	1987-03-29	rafael.r@example.com	82	966665555	AL	Maceió	Pajuçara	Rua Doutor Lessa de Azevedo	4260	RS-2025-013	Desenvolvedor Pleno	t	2025-02-20	senhaPleno777	agente
+15	Camila Nogueira	44556677889	4455667	1999-01-05	camila.n@example.com	82	955554444	AL	Maceió	Farol	Rua Doutor José de Castro Azevedo	151	RS-2025-014	Desenvolvedor Júnior	t	2025-08-12	senhaJunior888	agente
+16	Felipe Monteiro	55667788990	5566778	1984-06-07	felipe.m@example.com	82	944443333	AL	Maceió	Serraria	Rua Adolfo Gustavo	100	RS-2025-015	Contador	t	2021-07-22	senhaContador999	agente
+17	Vanessa Dias	66778899001	6677889	1996-09-21	vanessa.dias@example.com	82	933332222	AL	Maceió	Benedito Bentes	Avenida Garça Torta	50	RS-2025-016	Assistente de Marketing	f	2024-01-30	senhaAssistMkt111	agente
+18	Bruno Medeiros	77889900112	7788990	1990-11-18	bruno.m@example.com	82	922221111	AL	Maceió	Gruta de Lourdes	Rua Elói de Lemos	1500	RS-2025-017	Analista de Logística	t	2023-05-16	senhaLog222	agente
+19	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	82	911110000	AL	Maceió	Jacintinho	Rua B, Cj. José da Silva Peixoto	210	RS-2025-018	Gerente de RH	t	2019-12-05	senhaGerenteRH321	supervisor
+20	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	82	999998888	AL	Maceió	Ponta Verde	Rua Desportista Humberto Guimarães	15	RS-2025-019	Recrutador	t	2025-03-03	senhaRecrutador444	agente
+21	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	82	988887777	AL	Maceió	Jatiúca	Rua Santa Acácia	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	senhaArquiteto555	agente
 \.
 
 
@@ -1659,42 +1691,42 @@ COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email,
 -- Name: adulticida_adulticida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 33, true);
+SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 22, true);
 
 
 --
 -- Name: agente_agente_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_agente_id_seq', 33, true);
+SELECT pg_catalog.setval('public.agente_agente_id_seq', 17, true);
 
 
 --
 -- Name: agente_area_de_visita_agente_area_de_visita_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 33, true);
+SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 26, true);
 
 
 --
 -- Name: area_de_visita_area_de_visita_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.area_de_visita_area_de_visita_id_seq', 33, true);
+SELECT pg_catalog.setval('public.area_de_visita_area_de_visita_id_seq', 10, true);
 
 
 --
 -- Name: arquivos_denuncia_arquivo_denuncia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.arquivos_denuncia_arquivo_denuncia_id_seq', 33, true);
+SELECT pg_catalog.setval('public.arquivos_denuncia_arquivo_denuncia_id_seq', 8, true);
 
 
 --
 -- Name: artigo_artigo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.artigo_artigo_id_seq', 33, true);
+SELECT pg_catalog.setval('public.artigo_artigo_id_seq', 10, true);
 
 
 --
@@ -1708,70 +1740,70 @@ SELECT pg_catalog.setval('public.ciclo_area_de_visita_ciclo_area_de_visita_id_se
 -- Name: ciclos_ciclo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 33, true);
+SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 8, true);
 
 
 --
 -- Name: denuncia_denuncia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.denuncia_denuncia_id_seq', 33, true);
+SELECT pg_catalog.setval('public.denuncia_denuncia_id_seq', 5, true);
 
 
 --
 -- Name: depositos_deposito_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 330, true);
+SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 320, true);
 
 
 --
 -- Name: doentes_confirmados_doente_confirmado_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 33, true);
+SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 52, true);
 
 
 --
 -- Name: larvicida_larvicida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 66, true);
+SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 48, true);
 
 
 --
 -- Name: nudges_nudges_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.nudges_nudges_id_seq', 33, true);
+SELECT pg_catalog.setval('public.nudges_nudges_id_seq', 6, true);
 
 
 --
 -- Name: registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq', 66, true);
+SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq', 60, true);
 
 
 --
 -- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 330, true);
+SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 320, true);
 
 
 --
 -- Name: supervisor_supervisor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 33, true);
+SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 4, true);
 
 
 --
 -- Name: usuario_usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 33, true);
+SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 21, true);
 
 
 --
@@ -2090,5 +2122,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict AJBiLixsu9QUAy5JkueheXU4zZR1lPHQ2P7QdbbkyoViGRWN9quZr6ybXdtBAxy
+\unrestrict qHIrnBNJEzgmn4KThcfox0JX0oYE2vduERMr7fo5hExNvwTEYL9lqlbh2Hc8hD4
 

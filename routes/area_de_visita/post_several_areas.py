@@ -9,32 +9,30 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 coordenadas_bairros_maceio = {
-    # Bairros da sua lista original
-    "Ponta Verde": {"latitude": -9.6679, "longitude": -35.7022},
-    "Jatiúca": {"latitude": -9.6586, "longitude": -35.7032},
-    "Pajuçara": {"latitude": -9.6713, "longitude": -35.7118},
-    "Farol": {"latitude": -9.6433, "longitude": -35.7335},
-    "Cruz das Almas": {"latitude": -9.6387, "longitude": -35.6989},
-    "Jacintinho": {"latitude": -9.6453, "longitude": -35.7208},
-    "Benedito Bentes": {"latitude": -9.5714, "longitude": -35.7891},
-    "Serraria": {"latitude": -9.5936, "longitude": -35.7516},
-    "Gruta de Lourdes": {"latitude": -9.6358, "longitude": -35.7388},
-    "Mangabeiras": {"latitude": -9.6559, "longitude": -35.7107},
+    # --- Bairros da sua lista original ---
+    "Ponta Verde": {"latitude": -9.6615, "longitude": -35.7009},
+    "Jatiúca": {"latitude": -9.6508, "longitude": -35.7084},
+    "Pajuçara": {"latitude": -9.6672, "longitude": -35.7077},
+    "Farol": {"latitude": -9.6421, "longitude": -35.7350},
+    "Cruz das Almas": {"latitude": -9.6255, "longitude": -35.7075},
+    "Jacintinho": {"latitude": -9.6497, "longitude": -35.7203},
+    "Benedito Bentes": {"latitude": -9.5413, "longitude": -35.7356},
+    "Serraria": {"latitude": -9.5859, "longitude": -35.7554},
+    "Gruta de Lourdes": {"latitude": -9.6291, "longitude": -35.7389},
+    "Mangabeiras": {"latitude": -9.6562, "longitude": -35.7089},
 
-    # --- Novos bairros adicionados ---
-    
-    # Bairros da Orla e Parte Baixa
-    "Poço": {"latitude": -9.6580, "longitude": -35.7190},
-    "Jaraguá": {"latitude": -9.6725, "longitude": -35.7222},
-    "Centro": {"latitude": -9.6658, "longitude": -35.7350},
-    "Vergel do Lago": {"latitude": -9.6546, "longitude": -35.7593},
-    "Pontal da Barra": {"latitude": -9.7131, "longitude": -35.7967},
-    
-    # Bairros da Parte Alta
-    "Barro Duro": {"latitude": -9.6221, "longitude": -35.7154},
-    "Tabuleiro do Martins": {"latitude": -9.5581, "longitude": -35.7803},
-    "Antares": {"latitude": -9.5763, "longitude": -35.7368},
-    "Clima Bom": {"latitude": -9.5750, "longitude": -35.7890},
+    # --- Bairros da Orla e Parte Baixa ---
+    "Poço": {"latitude": -9.6570, "longitude": -35.7182},
+    "Jaraguá": {"latitude": -9.6669, "longitude": -35.7250},
+    "Centro": {"latitude": -9.6650, "longitude": -35.7358},
+    "Vergel do Lago": {"latitude": -9.6583, "longitude": -35.7445},
+    "Pontal da Barra": {"latitude": -9.7092, "longitude": -35.7671},
+
+    # --- Bairros da Parte Alta ---
+    "Barro Duro": {"latitude": -9.6229, "longitude": -35.7275},
+    "Tabuleiro do Martins": {"latitude": -9.5738, "longitude": -35.7499},
+    "Antares": {"latitude": -9.5787, "longitude": -35.7401},
+    "Clima Bom": {"latitude": -9.5815, "longitude": -35.7546},
 }
 
 

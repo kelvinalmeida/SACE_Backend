@@ -48,7 +48,7 @@ def create_denuncia(current_user):
     tipo_imovel = request.form.get('tipo_imovel')
     endereco_complemento = request.form.get('endereco_complemento')
     observacoes = request.form.get('observacoes')
-    status = 'Em Análise'
+    status = 'Pendente'
     agente_responsavel_id = request.form.get('agente_responsavel_id', None)
 
     data_denuncia = request.form.get('data_denuncia')

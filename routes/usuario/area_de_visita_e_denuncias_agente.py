@@ -42,7 +42,10 @@ def get_area_de_visita_e_denuncias_agente(current_user, agente_id):
     try:
         cursor = conn.cursor()
 
-        search_user = """SELECT * FROM usuario INNER JOIN agente USING(usuario_id) WHERE usuario_id = %s;"""
+        # --- CORREÇÃO AQUI ---
+        # A busca deve ser feita pelo 'agente_id' da URL, e não pelo 'usuario_id'
+        search_user = """SELECT * FROM usuario INNER JOIN agente USING(usuario_id) WHERE agente_id = %s;"""
+        # --- FIM DA CORREÇÃO ---
 
         cursor.execute(search_user, (agente_id,))
 
@@ -104,4 +107,9 @@ def get_area_de_visita_e_denuncias_agente(current_user, agente_id):
     except Exception as e:
         return jsonify({"error": str(e)})
     
-    
+    finally:
+        # Adicionado fechamento do cursor e conexão no finally
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
