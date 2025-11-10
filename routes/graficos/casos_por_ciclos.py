@@ -13,7 +13,7 @@ def get_casos_por_ciclo(ano):
     """
     Endpoint para obter dados para o gráfico de 'Casos por Ciclos'.
 
-    Esta rota busca a quantidade de casos confirmados (caso_comfirmado = True)
+    Esta rota busca a quantidade de casos confirmados (da tabela doentes_confirmados)
     para cada bairro, agrupados por ciclo, dentro de um ano específico.
     """
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
@@ -24,25 +24,25 @@ def get_casos_por_ciclo(ano):
     try:
         cursor = conn.cursor()
 
-        # Query SQL para buscar os casos confirmados por bairro e ciclo
+        # --- ATUALIZAÇÃO DA QUERY ---
+        # Busca contagem da tabela 'doentes_confirmados'
+        # Junta com 'ciclos' para filtrar pelo ano e obter o número do ciclo
         query = """
             SELECT
-                av.bairro,
+                dc.bairro,
                 c.ciclo,
-                COUNT(rc.registro_de_campo_id) AS quantidade
+                COUNT(dc.doente_confirmado_id) AS quantidade
             FROM
-                registro_de_campo rc
+                doentes_confirmados dc
             JOIN
-                area_de_visita av ON rc.area_de_visita_id = av.area_de_visita_id
-            JOIN
-                ciclos c ON rc.ciclo_id = c.ciclo_id
+                ciclos c ON dc.ciclo_id = c.ciclo_id
             WHERE
-                rc.caso_comfirmado = True
-                AND EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s
+                EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s
+                AND dc.bairro IS NOT NULL
             GROUP BY
-                av.bairro, c.ciclo
+                dc.bairro, c.ciclo
             ORDER BY
-                av.bairro, c.ciclo;
+                dc.bairro, c.ciclo;
         """
         cursor.execute(query, (ano,))
         resultados = cursor.fetchall()
@@ -54,7 +54,7 @@ def get_casos_por_ciclo(ano):
                 "datasets": []
             }), 200
 
-        # --- Processamento dos dados para o formato do gráfico ---
+        # --- Processamento dos dados para o formato do gráfico (Lógica inalterada) ---
         max_ciclo = 0
         if resultados:
             max_ciclo = max(row['ciclo'] for row in resultados)

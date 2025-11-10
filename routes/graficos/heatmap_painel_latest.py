@@ -1,28 +1,12 @@
-# ⚠️ Ponto Importante sobre as Cores (Níveis de Risco):
-
-# Sua base de dados atual não armazena diretamente o nível de risco (Preta, Vermelha, Laranja, Amarela) para cada area_de_visita. Para calcular isso, precisamos definir os critérios.
-
-#     Como exemplo, vou usar a seguinte lógica hipotética baseada nas contagens por area_de_visita dentro do ciclo:
-
-#         Preta (Emergência): >= 5 casos confirmados E >= 10 focos encontrados
-
-#         Vermelha (Perigo): >= 3 casos confirmados E >= 5 focos encontrados
-
-#         Laranja (Alerta): >= 1 caso confirmado OU >= 3 focos encontrados
-
-#         Amarela (Atenção): >= 1 foco encontrado (e não se encaixa nas anteriores)
-
-#         (Implícito) Normal/Sem Risco: 0 casos e 0 focos
-
+# routes/graficos/heatmap_painel_latest.py
 
 from flask import jsonify, current_app
 from db import create_connection
-# from routes.login.token_required import token_required # Descomente se precisar de autenticação
+# from routes.login.token_required import token_required
 from .bluprint import graficos
 import logging
-from collections import Counter # Usaremos Counter para contar as cores
+from collections import Counter 
 
-# Configuração básica de log
 logging.basicConfig(level=logging.INFO)
 
 def calculate_risk_level(casos, focos):
@@ -39,21 +23,13 @@ def calculate_risk_level(casos, focos):
     elif focos >= 1:
         return "Amarela"
     else:
-        return "Normal" # Ou None, se não quiser contar áreas sem risco
+        return "Normal"
     
-# ... (importações, função calculate_risk_level, rota get_dashboard_summary) ...
-
-# --- NOVA ROTA PARA O CICLO MAIS RECENTE ---
-# Descomente o decorator se precisar de autenticação
-# @token_required
-# def get_latest_dashboard_summary(current_user):
 @graficos.route('/dashboard_summary/latest', methods=['GET'])
 def get_latest_dashboard_summary():
     """
     Endpoint para obter um resumo de dados para o dashboard do CICLO MAIS RECENTE.
-
-    Retorna contagem de depósitos por tipo, casos confirmados por doença e
-    contagem de áreas de visita por nível de risco (cores) para o último ciclo registrado.
+    Utiliza 'doentes_confirmados' para contagem de casos.
     """
     conn = None
     cursor = None
@@ -83,68 +59,87 @@ def get_latest_dashboard_summary():
 
         if not latest_ciclo_result:
             logging.warning("Nenhum ciclo encontrado no banco de dados.")
-            # Retorna dados zerados ou um erro, dependendo do que fizer mais sentido
-            # return jsonify(summary_data), 200 # Opção 1: Retorna zerado
-            return jsonify({"error": "Nenhum ciclo encontrado no sistema."}), 404 # Opção 2: Retorna erro
+            return jsonify({"error": "Nenhum ciclo encontrado no sistema."}), 404
 
         ciclo_id = latest_ciclo_result['ciclo_id']
-        latest_ano = latest_ciclo_result['ano']
-        latest_ciclo_num = latest_ciclo_result['ciclo']
-        logging.info(f"Ciclo ID mais recente encontrado: {ciclo_id} (Ano: {latest_ano}, Ciclo: {latest_ciclo_num})")
-        
-        # Adiciona informação sobre qual ciclo foi usado na resposta
-        # summary_data["ciclo_info"] = {"ano": latest_ano, "ciclo": latest_ciclo_num, "id": ciclo_id}
+        logging.info(f"Ciclo ID mais recente encontrado: {ciclo_id}")
 
-
-        # --- 2. Query para Depósitos e Casos Confirmados (Agregado Total) ---
-        # (A query é a mesma da rota anterior, só muda o parâmetro ciclo_id)
-        counts_query = """
+        # --- 2. ATUALIZAÇÃO: Query de Depósitos (Somente de registro_de_campo) ---
+        deposits_query = """
             SELECT
                 COALESCE(SUM(d.a1), 0) AS total_a1, COALESCE(SUM(d.a2), 0) AS total_a2,
                 COALESCE(SUM(d.b), 0) AS total_b, COALESCE(SUM(d.c), 0) AS total_c,
                 COALESCE(SUM(d.d1), 0) AS total_d1, COALESCE(SUM(d.d2), 0) AS total_d2,
-                COALESCE(SUM(d.e), 0) AS total_e,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Dengue' THEN 1 ELSE 0 END) AS casos_dengue,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Zica' THEN 1 ELSE 0 END) AS casos_zika,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Chikungunya' THEN 1 ELSE 0 END) AS casos_chikungunya
+                COALESCE(SUM(d.e), 0) AS total_e
             FROM registro_de_campo rc
             LEFT JOIN depositos d ON rc.deposito_id = d.deposito_id
             WHERE rc.ciclo_id = %s;
         """
-        cursor.execute(counts_query, (ciclo_id,))
-        counts_result = cursor.fetchone()
+        cursor.execute(deposits_query, (ciclo_id,))
+        deposits_result = cursor.fetchone()
 
-        if counts_result:
-             summary_data["depositos"]["a1"] = int(counts_result["total_a1"])
-             summary_data["depositos"]["a2"] = int(counts_result["total_a2"])
-             summary_data["depositos"]["b"] = int(counts_result["total_b"])
-             summary_data["depositos"]["c"] = int(counts_result["total_c"])
-             summary_data["depositos"]["d1"] = int(counts_result["total_d1"])
-             summary_data["depositos"]["d2"] = int(counts_result["total_d2"])
-             summary_data["depositos"]["e"] = int(counts_result["total_e"])
-             summary_data["casos_confirmados"]["dengue"] = int(counts_result["casos_dengue"])
-             summary_data["casos_confirmados"]["zika"] = int(counts_result["casos_zika"])
-             summary_data["casos_confirmados"]["chikungunya"] = int(counts_result["casos_chikungunya"])
+        if deposits_result:
+             summary_data["depositos"]["a1"] = int(deposits_result["total_a1"])
+             summary_data["depositos"]["a2"] = int(deposits_result["total_a2"])
+             summary_data["depositos"]["b"] = int(deposits_result["total_b"])
+             summary_data["depositos"]["c"] = int(deposits_result["total_c"])
+             summary_data["depositos"]["d1"] = int(deposits_result["total_d1"])
+             summary_data["depositos"]["d2"] = int(deposits_result["total_d2"])
+             summary_data["depositos"]["e"] = int(deposits_result["total_e"])
 
-
-        # --- 3. Query para calcular Níveis de Risco por PONTO GEOGRÁFICO ---
-        # (A query é a mesma da rota anterior, só muda o parâmetro ciclo_id)
-        risk_level_query = """
+        # --- 3. ATUALIZAÇÃO: Query de Casos Confirmados (Somente de doentes_confirmados) ---
+        cases_query = """
             SELECT
-                av.latitude, av.longitude, av.bairro,
-                COALESCE(SUM(d.a1 + d.a2 + d.b + d.c + d.d1 + d.d2 + d.e), 0) AS focos_encontrados_agg,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE THEN 1 ELSE 0 END) AS total_casos_confirmados_agg
-            FROM area_de_visita av
-            LEFT JOIN registro_de_campo rc ON av.area_de_visita_id = rc.area_de_visita_id AND rc.ciclo_id = %s
-            LEFT JOIN depositos d ON rc.deposito_id = d.deposito_id
-            WHERE av.latitude IS NOT NULL AND av.longitude IS NOT NULL
-            GROUP BY av.latitude, av.longitude, av.bairro;
+                SUM(CASE WHEN tipo_da_doenca ILIKE 'Dengue' THEN 1 ELSE 0 END) AS casos_dengue,
+                SUM(CASE WHEN tipo_da_doenca ILIKE 'Zica' THEN 1 ELSE 0 END) AS casos_zika,
+                SUM(CASE WHEN tipo_da_doenca ILIKE 'Chikungunya' THEN 1 ELSE 0 END) AS casos_chikungunya
+            FROM doentes_confirmados
+            WHERE ciclo_id = %s;
         """
-        cursor.execute(risk_level_query, (ciclo_id,))
+        cursor.execute(cases_query, (ciclo_id,))
+        cases_result = cursor.fetchone()
+
+        if cases_result:
+             summary_data["casos_confirmados"]["dengue"] = int(cases_result["casos_dengue"] or 0)
+             summary_data["casos_confirmados"]["zika"] = int(cases_result["casos_zika"] or 0)
+             summary_data["casos_confirmados"]["chikungunya"] = int(cases_result["casos_chikungunya"] or 0)
+
+
+        # --- 4. ATUALIZAÇÃO: Query de Nível de Risco (Usando CTEs) ---
+        risk_level_query = """
+            WITH FocosPorArea AS (
+                -- CTE 1: Agrega focos (de registro_de_campo) por ponto geográfico
+                SELECT
+                    av.latitude, av.longitude, av.bairro,
+                    COALESCE(SUM(d.a1 + d.a2 + d.b + d.c + d.d1 + d.d2 + d.e), 0) AS focos_encontrados_agg
+                FROM area_de_visita av
+                LEFT JOIN registro_de_campo rc ON av.area_de_visita_id = rc.area_de_visita_id AND rc.ciclo_id = %s
+                LEFT JOIN depositos d ON rc.deposito_id = d.deposito_id
+                WHERE av.latitude IS NOT NULL AND av.longitude IS NOT NULL
+                GROUP BY av.latitude, av.longitude, av.bairro
+            ),
+            CasosPorBairro AS (
+                -- CTE 2: Agrega casos (de doentes_confirmados) por bairro
+                SELECT
+                    bairro,
+                    COUNT(doente_confirmado_id) AS total_casos_confirmados_agg
+                FROM doentes_confirmados
+                WHERE ciclo_id = %s AND bairro IS NOT NULL
+                GROUP BY bairro
+            )
+            -- Junção final: Junta focos (ponto geográfico) com casos (por bairro)
+            SELECT
+                f.latitude, f.longitude, f.bairro,
+                f.focos_encontrados_agg,
+                COALESCE(c.total_casos_confirmados_agg, 0) AS total_casos_confirmados_agg
+            FROM FocosPorArea f
+            LEFT JOIN CasosPorBairro c ON f.bairro = c.bairro;
+        """
+        # Passa o ciclo_id duas vezes (uma para cada CTE)
+        cursor.execute(risk_level_query, (ciclo_id, ciclo_id))
         area_results = cursor.fetchall()
 
-        # --- 4. Calcular e Contar os Níveis de Risco ---
-        # (A lógica é a mesma da rota anterior)
+        # --- 5. Calcular e Contar os Níveis de Risco ---
         risk_counts = Counter()
         for area_agg in area_results:
             casos = int(area_agg['total_casos_confirmados_agg'])

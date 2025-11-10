@@ -10,7 +10,8 @@ logging.basicConfig(level=logging.INFO)
 @graficos.route('/grafico/casos_confirmados/<int:ano>/<int:ciclo>', methods=['GET'])
 def get_casos_confirmados(ano, ciclo):
     """
-    Endpoint para obter dados históricos de casos confirmados para um gráfico.
+    Endpoint para obter dados históricos de casos confirmados (da tabela doentes_confirmados)
+    para um gráfico.
 
     Esta rota busca todos os dados de casos confirmados desde o início até o ano e ciclo especificados.
     Ela retorna uma lista de pontos de dados para o gráfico e um resumo comparando
@@ -24,17 +25,18 @@ def get_casos_confirmados(ano, ciclo):
     try:
         cursor = conn.cursor()
 
-        # Query SQL otimizada para buscar todos os dados históricos de uma vez
-        # A condição para contar os casos confirmados está no LEFT JOIN
+        # --- ATUALIZAÇÃO DA QUERY ---
+        # Agora faz LEFT JOIN com 'doentes_confirmados' e conta 'doente_confirmado_id'
+        # em vez de 'registro_de_campo.caso_comfirmado'.
         query_grafico = """
             SELECT
                 EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER AS ano,
                 c.ciclo,
-                COUNT(rc.registro_de_campo_id) AS casos_confirmados
+                COUNT(dc.doente_confirmado_id) AS casos_confirmados
             FROM
                 ciclos c
             LEFT JOIN
-                registro_de_campo rc ON c.ciclo_id = rc.ciclo_id AND rc.caso_comfirmado = True
+                doentes_confirmados dc ON c.ciclo_id = dc.ciclo_id
             WHERE
                 EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER < %s OR
                 (EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s AND c.ciclo <= %s)
@@ -58,7 +60,7 @@ def get_casos_confirmados(ano, ciclo):
                 }
             }), 200
 
-        # Lógica para calcular o resumo com base nos dois últimos ciclos da lista retornada
+        # Lógica para calcular o resumo (permanece a mesma, pois o nome da coluna 'casos_confirmados' foi mantido)
         casos_confirmados_atual = 0
         casos_confirmados_anterior = 0
 

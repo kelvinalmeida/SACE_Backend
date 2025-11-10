@@ -22,8 +22,8 @@ def update_denuncia(current_user, denuncia_id):
     # print("current_user token data:", current_user)
     # Pega o agente_id do token
 
-    if(current_user["nivel_de_acesso"] not in ["supervisor"]):
-        return jsonify({"error": "Invalid token: É nescessário ser supervisor para cadastrar denuncia."}), 403
+    # if(current_user["nivel_de_acesso"] not in ["supervisor"]):
+    #     return jsonify({"error": "Invalid token: É nescessário ser supervisor para cadastrar denuncia."}), 403
     
 
 

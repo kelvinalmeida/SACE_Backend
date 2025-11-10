@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict fRUtNkYaJiEdjIL4rJQCqPqCbsGtWbggzMuAFZHfxxc61BTwPae4233rESnANiu
+\restrict AJBiLixsu9QUAy5JkueheXU4zZR1lPHQ2P7QdbbkyoViGRWN9quZr6ybXdtBAxy
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -575,6 +575,12 @@ COPY public.adulticida (adulticida_id, registro_de_campo_id, tipo, quantidade) F
 14	197	Adulticida de Borrifação Residual (Piretróide)	25
 15	231	Adulticida de Borrifação Residual (Piretróide)	20
 16	235	Adulticida de Borrifação Residual (Piretróide)	30
+17	250	Adulticida de Borrifação Residual (Piretróide)	20
+18	271	Adulticida de Borrifação Residual (Piretróide)	25
+19	275	Adulticida de Borrifação Residual (Piretróide)	30
+20	280	Adulticida de Borrifação Residual (Piretróide)	20
+21	311	Adulticida de Borrifação Residual (Piretróide)	25
+22	315	Adulticida de Borrifação Residual (Piretróide)	30
 \.
 
 
@@ -762,12 +768,14 @@ COPY public.ciclo_area_de_visita (ciclo_area_de_visita_id, ciclo_id, area_de_vis
 --
 
 COPY public.ciclos (ciclo_id, supervisor_id, ano_de_criacao, encerramento, ativo, ciclo) FROM stdin;
-1	3	2024-01-16	2024-06-16	f	1
-2	1	2024-06-18	2024-12-18	f	2
-3	2	2025-01-18	2025-06-18	f	1
-4	3	2025-06-19	2025-12-18	f	2
-5	3	2026-01-19	2026-06-16	f	1
-6	3	2026-06-19	\N	t	2
+1	3	2024-01-16	2024-02-16	f	1
+2	1	2024-03-18	2024-04-18	f	2
+3	2	2024-05-18	2024-07-18	f	3
+4	3	2024-08-19	2024-12-18	f	4
+5	3	2025-01-19	2025-03-16	f	1
+6	3	2025-03-19	2025-05-16	f	2
+7	3	2025-05-19	2025-07-16	f	3
+8	3	2025-08-19	\N	t	4
 \.
 
 
@@ -1029,6 +1037,86 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 238	0	0	0	0	0	0	0
 239	0	0	0	0	0	0	0
 240	0	0	0	0	0	3	0
+241	0	0	0	0	0	0	0
+242	0	0	0	0	0	0	0
+243	0	0	0	0	0	0	0
+244	0	0	0	0	0	0	0
+245	0	0	0	0	0	0	0
+246	0	0	0	0	0	0	0
+247	0	0	0	0	0	0	0
+248	0	0	0	0	0	0	0
+249	0	0	0	0	0	0	0
+250	0	1	0	0	0	0	0
+251	0	0	0	0	0	0	0
+252	0	0	0	0	0	0	0
+253	0	0	0	0	0	0	0
+254	0	0	0	0	0	0	0
+255	0	0	0	0	0	0	0
+256	0	0	0	0	0	0	0
+257	0	0	0	0	0	0	0
+258	0	0	0	0	0	0	0
+259	0	0	0	0	0	0	0
+260	0	0	0	0	0	0	0
+261	0	0	0	0	0	0	0
+262	0	0	0	0	0	0	0
+263	0	0	0	0	0	0	0
+264	0	0	0	0	0	0	0
+265	0	0	0	0	0	0	0
+266	0	0	0	0	0	0	0
+267	0	0	0	0	0	0	0
+268	0	0	0	0	0	0	0
+269	0	0	0	0	0	0	0
+270	0	0	0	0	0	0	0
+271	0	0	0	1	0	0	0
+272	0	0	0	0	0	0	0
+273	0	0	0	0	0	0	0
+274	0	0	0	0	0	0	0
+275	0	0	0	0	0	5	0
+276	0	0	0	0	0	0	0
+277	0	0	0	0	0	0	0
+278	0	0	0	0	0	0	0
+279	0	0	0	0	0	0	0
+280	0	0	0	0	0	3	0
+281	0	0	0	0	0	0	0
+282	0	0	0	0	0	0	1
+283	0	0	0	0	0	0	0
+284	0	0	0	0	0	0	0
+285	0	0	0	0	0	0	0
+286	0	0	0	0	0	0	0
+287	0	0	0	0	0	0	0
+288	0	0	0	0	0	0	0
+289	0	0	0	0	0	0	0
+290	0	0	0	0	0	0	0
+291	0	1	0	0	0	0	0
+292	0	0	0	0	0	0	0
+293	0	0	0	0	0	0	0
+294	0	0	0	0	0	0	0
+295	0	0	0	0	0	0	0
+296	0	0	0	0	0	0	0
+297	0	0	0	0	0	0	0
+298	0	0	0	0	0	0	0
+299	0	0	0	0	0	0	0
+300	0	0	0	0	0	0	0
+301	0	0	0	0	0	0	0
+302	0	0	0	0	0	0	0
+303	1	0	0	0	0	0	0
+304	0	0	0	0	0	0	0
+305	0	0	0	0	0	0	0
+306	0	0	0	0	0	0	0
+307	0	0	0	0	0	0	0
+308	0	0	0	0	0	0	0
+309	0	0	0	0	0	0	0
+310	0	0	0	0	0	0	0
+311	0	0	0	1	0	0	0
+312	0	0	0	0	0	0	0
+313	0	0	0	0	0	0	0
+314	0	0	0	0	0	0	0
+315	0	0	0	0	0	5	0
+316	0	0	0	0	0	0	0
+317	0	0	0	0	0	0	0
+318	0	0	0	0	0	0	0
+319	0	0	0	0	0	0	0
+320	0	0	0	0	0	3	0
 \.
 
 
@@ -1103,6 +1191,16 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 36	231	Spinosad	Tablete	2
 37	235	Pyriproxyfen	Granulado	8
 38	240	Bti (Bacillus thuringiensis israelensis)	Granulado	5
+39	250	Methoprene	Líquido	10
+40	271	Spinosad	Tablete	2
+41	275	Bti (Bacillus thuringiensis israelensis)	Granulado	15
+42	280	Pyriproxyfen	Granulado	5
+43	282	Pyriproxyfen	Líquido	5
+44	291	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+45	303	Spinosad	Granulado	5
+46	311	Methoprene	Líquido	20
+47	315	Pyriproxyfen	Granulado	10
+48	320	Bti (Bacillus thuringiensis israelensis)	Granulado	5
 \.
 
 
@@ -1365,6 +1463,86 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 238	1002	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	238	6
 239	1003	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	239	6
 240	1004	Par	Urbana	Terreno Baldio	Inspecionados	t	\N	Zica	f	t	t	t	f	\N	\N	Pequeno foco em lixo acumulado.	10	16	240	6
+241	101	Ímpar	Urbana	Residência	Inspecionados	f	Casa A	Dengue	f	f	f	f	f	\N	\N	Revisita. Ok.	1	1	241	7
+242	102	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Sem focos.	1	11	242	7
+243	103	Ímpar	Urbana	Comércio	Fechados	f	Loja 3	\N	f	f	f	f	f	\N	\N	Fechado para reforma.	1	1	243	7
+244	104	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador orientado.	1	11	244	7
+245	201	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 02	Dengue	f	t	f	f	f	\N	\N	Ok.	2	2	245	7
+246	202	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Caixa d'água ok.	2	3	246	7
+247	203	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Morador não atendeu, mas estava em casa.	2	7	247	7
+248	204	Par	Urbana	Comércio	Inspecionados	f	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Sem focos.	2	12	248	7
+249	301	Ímpar	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ausente.	3	4	249	7
+250	302	Par	Urbana	Residência	Inspecionados	t	Apto 101	Dengue	t	f	t	t	t	A005	1	Coletada amostra. Ralo tratado novamente.	3	13	250	7
+251	303	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	3	4	251	7
+252	304	Par	Urbana	Comércio	Inspecionados	f	Borracharia	Dengue	f	t	f	f	f	\N	\N	Pneus ok.	3	13	252	7
+253	401	Ímpar	Urbana	Terreno Baldio	Inspecionados	f	\N	Zica	f	t	f	f	f	\N	\N	Limpo.	4	5	253	7
+254	402	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Ok.	4	9	254	7
+255	403	Ímpar	Urbana	Comércio	Fechados	f	Supermercado	\N	f	f	f	f	f	\N	\N	Fechado.	4	14	255	7
+256	404	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	5	256	7
+257	501	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	5	1	257	7
+258	502	Par	Urbana	Terreno Baldio	Inspecionados	f	Murado	Dengue	f	t	f	f	f	\N	\N	Ok.	5	7	258	7
+259	503	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	259	7
+260	504	Par	Urbana	Outros	Inspecionados	f	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Ok.	5	15	260	7
+261	601	Ímpar	Urbana	Residência	Inspecionados	f	Apto 202	Zica	f	f	f	f	f	\N	\N	Ok.	6	8	261	7
+262	602	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	6	16	262	7
+263	603	Ímpar	Urbana	Residência	Inspecionados	f	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Piscina ok.	6	15	263	7
+264	604	Par	Urbana	Comércio	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	264	7
+265	701	Ímpar	Urbana	Comércio	Inspecionados	f	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Ok.	7	9	265	7
+266	702	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	7	16	266	7
+267	703	Ímpar	Urbana	Comércio	Inspecionados	f	Clínica	Dengue	f	t	f	f	f	\N	\N	Ok.	7	15	267	7
+268	704	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	7	16	268	7
+269	801	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	11	269	7
+270	802	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Ok.	8	16	270	7
+271	803	Ímpar	Urbana	Residência	Ações de bloqueio	t	Cond. Fechado	Chikungunya	f	f	t	t	t	\N	\N	Foco em fonte desativada.	8	11	271	7
+272	804	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	16	272	7
+273	901	Ímpar	Urbana	Outros	Inspecionados	f	Escola	Dengue	f	t	f	f	f	\N	\N	Ok.	9	1	273	7
+274	902	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	9	12	274	7
+275	903	Ímpar	Urbana	Terreno Baldio	Ações de bloqueio	t	Aberto	Chikungunya	f	t	t	t	t	\N	\N	Entulho com água empoçada.	9	1	275	7
+276	904	Par	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	276	7
+277	1001	Ímpar	Urbana	Residência	Inspecionados	f	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Ok.	10	13	277	7
+278	1002	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	278	7
+279	1003	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	279	7
+280	1004	Par	Urbana	Terreno Baldio	Ações de bloqueio	t	\N	Zica	f	t	t	t	t	\N	\N	Pequeno foco em lixo acumulado.	10	16	280	7
+281	101	Ímpar	Urbana	Residência	Inspecionados	f	Casa A	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	1	281	8
+282	102	Par	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Foco residual encontrado em bromélia.	1	11	282	8
+283	103	Ímpar	Urbana	Comércio	Fechados	f	Loja 3	\N	f	f	f	f	f	\N	\N	Ainda em reforma.	1	1	283	8
+284	104	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	11	284	8
+285	201	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 02	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	2	2	285	8
+286	202	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	3	286	8
+287	203	Ímpar	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	7	287	8
+288	204	Par	Urbana	Comércio	Inspecionados	f	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	2	12	288	8
+289	301	Ímpar	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Morador ausente.	3	4	289	8
+290	302	Par	Urbana	Residência	Inspecionados	f	Apto 101	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	290	8
+291	303	Ímpar	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Pequeno foco em ralo de quintal.	3	4	291	8
+292	304	Par	Urbana	Comércio	Inspecionados	f	Borracharia	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	292	8
+293	401	Ímpar	Urbana	Terreno Baldio	Inspecionados	f	\N	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	293	8
+294	402	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	9	294	8
+295	403	Ímpar	Urbana	Comércio	Fechados	f	Supermercado	\N	f	f	f	f	f	\N	\N	Fechado.	4	14	295	8
+296	404	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	296	8
+297	501	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	5	1	297	8
+298	502	Par	Urbana	Terreno Baldio	Inspecionados	f	Murado	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	5	7	298	8
+299	503	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	299	8
+300	504	Par	Urbana	Outros	Inspecionados	f	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	5	15	300	8
+301	601	Ímpar	Urbana	Residência	Inspecionados	f	Apto 202	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	6	8	301	8
+302	602	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	6	16	302	8
+303	603	Ímpar	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Água empoçada na laje.	6	15	303	8
+304	604	Par	Urbana	Comércio	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	304	8
+305	701	Ímpar	Urbana	Comércio	Inspecionados	f	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	7	9	305	8
+306	702	Par	Urbana	Residência	Inspecionados	f	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	306	8
+307	703	Ímpar	Urbana	Comércio	Fechados	f	Clínica	\N	f	f	f	f	f	\N	\N	Fechado.	7	15	307	8
+308	704	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	308	8
+309	801	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	11	309	8
+310	802	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	310	8
+311	803	Ímpar	Urbana	Residência	Ações de bloqueio	t	\N	Chikungunya	f	f	t	t	t	\N	\N	Foco em fonte desativada.	8	11	311	8
+312	804	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	312	8
+313	901	Ímpar	Urbana	Outros	Inspecionados	f	Escola	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	9	1	313	8
+314	902	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	9	12	314	8
+315	903	Ímpar	Urbana	Terreno Baldio	Ações de bloqueio	t	Aberto	Chikungunya	f	t	t	t	t	\N	\N	Entulho com água empoçada.	9	1	315	8
+316	904	Par	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	316	8
+317	1001	Ímpar	Urbana	Residência	Inspecionados	f	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	10	13	317	8
+318	1002	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	318	8
+319	1003	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	319	8
+320	1004	Par	Urbana	Terreno Baldio	Inspecionados	t	\N	Zica	f	t	t	t	f	\N	\N	Pequeno foco em lixo acumulado.	10	16	320	8
 \.
 
 
@@ -1415,6 +1593,24 @@ COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, registro_d
 40	142	comercio_fechado_ciclo6.jpg
 41	111	recusa_final_ciclo6.jpg
 42	123	recusa_final_ciclo6.jpg
+43	243	comercio_fechado_reforma_c7.jpg
+44	247	recusa_morador_203_c7.jpg
+45	250	amostra_A005_ralo.jpg
+46	259	recusa_persistente_503_c7.jpg
+47	271	foco_fonte_condominio_c7.jpg
+48	275	entulho_terreno_903_c7.jpg
+49	276	recusa_904_c7.jpg
+50	279	recusa_1003_c7.jpg
+51	282	foco_bromelia_c8.jpg
+52	283	comercio_ainda_fechado_c8.jpg
+53	291	ralo_quintal_tratado_c8.jpg
+54	299	recusa_503_c8.jpg
+55	303	laje_agua_parada_c8.jpg
+56	311	fonte_tratada_c8.jpg
+57	315	entulho_tratado_c8.jpg
+58	316	recusa_904_c8.jpg
+59	319	recusa_1003_c8.jpg
+60	320	lixo_foco_terreno_c8.jpg
 \.
 
 
@@ -1463,42 +1659,42 @@ COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email,
 -- Name: adulticida_adulticida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 16, true);
+SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 33, true);
 
 
 --
 -- Name: agente_agente_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_agente_id_seq', 17, true);
+SELECT pg_catalog.setval('public.agente_agente_id_seq', 33, true);
 
 
 --
 -- Name: agente_area_de_visita_agente_area_de_visita_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 26, true);
+SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 33, true);
 
 
 --
 -- Name: area_de_visita_area_de_visita_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.area_de_visita_area_de_visita_id_seq', 10, true);
+SELECT pg_catalog.setval('public.area_de_visita_area_de_visita_id_seq', 33, true);
 
 
 --
 -- Name: arquivos_denuncia_arquivo_denuncia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.arquivos_denuncia_arquivo_denuncia_id_seq', 8, true);
+SELECT pg_catalog.setval('public.arquivos_denuncia_arquivo_denuncia_id_seq', 33, true);
 
 
 --
 -- Name: artigo_artigo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.artigo_artigo_id_seq', 10, true);
+SELECT pg_catalog.setval('public.artigo_artigo_id_seq', 33, true);
 
 
 --
@@ -1512,70 +1708,70 @@ SELECT pg_catalog.setval('public.ciclo_area_de_visita_ciclo_area_de_visita_id_se
 -- Name: ciclos_ciclo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 6, true);
+SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 33, true);
 
 
 --
 -- Name: denuncia_denuncia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.denuncia_denuncia_id_seq', 5, true);
+SELECT pg_catalog.setval('public.denuncia_denuncia_id_seq', 33, true);
 
 
 --
 -- Name: depositos_deposito_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 240, true);
+SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 330, true);
 
 
 --
 -- Name: doentes_confirmados_doente_confirmado_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 20, true);
+SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 33, true);
 
 
 --
 -- Name: larvicida_larvicida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 38, true);
+SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 66, true);
 
 
 --
 -- Name: nudges_nudges_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.nudges_nudges_id_seq', 6, true);
+SELECT pg_catalog.setval('public.nudges_nudges_id_seq', 33, true);
 
 
 --
 -- Name: registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq', 42, true);
+SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq', 66, true);
 
 
 --
 -- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 240, true);
+SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 330, true);
 
 
 --
 -- Name: supervisor_supervisor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 4, true);
+SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 33, true);
 
 
 --
 -- Name: usuario_usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 21, true);
+SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 33, true);
 
 
 --
@@ -1894,5 +2090,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict fRUtNkYaJiEdjIL4rJQCqPqCbsGtWbggzMuAFZHfxxc61BTwPae4233rESnANiu
+\unrestrict AJBiLixsu9QUAy5JkueheXU4zZR1lPHQ2P7QdbbkyoViGRWN9quZr6ybXdtBAxy
 

@@ -2552,7 +2552,6 @@ paths:
       summary: Atualiza uma denúncia por ID
       description: |
         Atualiza as informações de uma denúncia existente. Esta rota permite adicionar novos arquivos.
-        **Atenção:** Apenas usuários com nível de acesso "supervisor" podem executar esta ação.
       tags:
         - Denúncia
       security:
