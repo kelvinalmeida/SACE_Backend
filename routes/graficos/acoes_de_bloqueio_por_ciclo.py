@@ -38,7 +38,7 @@ def get_acoes_bloqueio(ano):
             JOIN
                 ciclos c ON rc.ciclo_id = c.ciclo_id
             WHERE
-                rc.imovel_status = 'bloqueado'
+                (rc.imovel_status = 'bloqueado' OR rc.imovel_status = 'Ações de bloqueio')
                 AND EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s
             GROUP BY
                 av.bairro, c.ciclo
