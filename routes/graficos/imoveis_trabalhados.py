@@ -57,17 +57,21 @@ def get_imoveis_trabalhados(ano, ciclo):
         # return jsonify(registros_status_ciclo_precurado)
 
         for status in registros_status_ciclo_precurado:
+            
+            # Pega o valor do status e converte para minúsculas
+            status_val = status["imovel_status"].lower()
+            quantidade = status["quantidade"]
 
-            if status["imovel_status"] == 'inspecionado':
-                imoveis_trabalhados['inspecionados'] = status["quantidade"]
-            elif status["imovel_status"] == 'bloqueado':
-                imoveis_trabalhados['bloqueados'] = status["quantidade"]
-            elif status["imovel_status"] == 'fechado':
-                imoveis_trabalhados['fechados'] = status["quantidade"]
-            elif status["imovel_status"] == 'recusado':
-                imoveis_trabalhados['recusados'] = status["quantidade"]
-            elif status["imovel_status"] == 'nao_inspecionado':
-                imoveis_trabalhados['nao_inspecionados'] = status["quantidade"]
+            if status_val in ['inspecionado', 'inspecionados']:
+                imoveis_trabalhados['inspecionados'] += quantidade
+            elif status_val in ['bloqueado', 'ações de bloqueio']:
+                imoveis_trabalhados['bloqueados'] += quantidade
+            elif status_val in ['fechado', 'fechados']:
+                imoveis_trabalhados['fechados'] += quantidade
+            elif status_val in ['recusado', 'recusados']:
+                imoveis_trabalhados['recusados'] += quantidade
+            elif status_val == 'nao_inspecionado':
+                imoveis_trabalhados['nao_inspecionados'] += quantidade
 
         return jsonify(imoveis_trabalhados), 200
 
