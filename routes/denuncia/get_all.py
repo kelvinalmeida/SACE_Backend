@@ -110,4 +110,4 @@ def get_all_denuncias(current_user):
         conn.close()
         cursor.close()
             
-        return jsonify(serializable_denuncias), 200
+    return jsonify(serializable_denuncias), 200
