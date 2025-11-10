@@ -144,7 +144,7 @@ def test_get_registros_por_area_visita(agente_client, auth_client):
     Esta rota busca os registros de campo (imóveis) APENAS do ciclo ATIVO.
     """
     
-    # No backup.sql, o ciclo ATIVO é o 4 (2025/2).
+    # No backup.sql, o ciclo ATIVO é o 8 (2025/2).
     # A area_de_visita_id=1 (Ponta Verde) tem 4 registros nesse ciclo
     # (IDs 121, 122, 123, 124).
     
@@ -155,7 +155,7 @@ def test_get_registros_por_area_visita(agente_client, auth_client):
     assert isinstance(resp_agente.json, list)
     assert len(resp_agente.json) == 4
     # Verifica se os dados estão corretos (status, número, etc.)
-    assert resp_agente.json[0]['registro_de_campo_id'] == 121
+    assert resp_agente.json[0]['registro_de_campo_id'] == 281
     assert resp_agente.json[0]['imovel_numero'] == '101'
     assert resp_agente.json[0]['imovel_status'] == 'bloqueado'
 

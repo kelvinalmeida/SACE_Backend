@@ -1,28 +1,12 @@
-# ⚠️ Ponto Importante sobre as Cores (Níveis de Risco):
-
-# Sua base de dados atual não armazena diretamente o nível de risco (Preta, Vermelha, Laranja, Amarela) para cada area_de_visita. Para calcular isso, precisamos definir os critérios.
-
-#     Como exemplo, vou usar a seguinte lógica hipotética baseada nas contagens por area_de_visita dentro do ciclo:
-
-#         Preta (Emergência): >= 5 casos confirmados E >= 10 focos encontrados
-
-#         Vermelha (Perigo): >= 3 casos confirmados E >= 5 focos encontrados
-
-#         Laranja (Alerta): >= 1 caso confirmado OU >= 3 focos encontrados
-
-#         Amarela (Atenção): >= 1 foco encontrado (e não se encaixa nas anteriores)
-
-#         (Implícito) Normal/Sem Risco: 0 casos e 0 focos
-
+# routes/graficos/heatmap_data_latest.py
 
 from flask import jsonify, current_app
 from db import create_connection
-# from routes.login.token_required import token_required # Descomente se precisar de autenticação
+# from routes.login.token_required import token_required
 from .bluprint import graficos
 import logging
-from collections import Counter # Usaremos Counter para contar as cores
+from collections import Counter
 
-# Configuração básica de log
 logging.basicConfig(level=logging.INFO)
 
 def calculate_risk_level(casos, focos):
@@ -39,20 +23,14 @@ def calculate_risk_level(casos, focos):
     elif focos >= 1:
         return "Amarela"
     else:
-        return "Normal" # Ou None, se não quiser contar áreas sem risco
-    
+        return "Normal"
 
-# ... (importações, função calculate_risk_level, rota get_heatmap_data) ...
-
-# --- NOVA ROTA PARA O CICLO MAIS RECENTE ---
-# Descomente o decorator se precisar de autenticação
-# @token_required
-# def get_latest_heatmap_data(current_user):
 @graficos.route('/heatmap_data/latest', methods=['GET'])
 def get_latest_heatmap_data():
     """
     Endpoint para obter dados agregados por área de visita para um mapa de calor
     para o CICLO MAIS RECENTE.
+    Utiliza 'doentes_confirmados' para contagem de casos.
     """
     conn = None
     cursor = None
@@ -81,30 +59,53 @@ def get_latest_heatmap_data():
         ciclo_id = latest_ciclo_result['ciclo_id']
         logging.info(f"Ciclo ID mais recente encontrado: {ciclo_id}")
 
-        # --- 2. Query principal para agregar dados por COORDENADAS E BAIRRO ---
-        # (A query é a mesma da rota anterior, só muda o parâmetro ciclo_id)
+        # --- 2. ATUALIZAÇÃO DA QUERY: Usando CTEs para buscar focos e casos separadamente ---
+        # A contagem de casos agora vem de 'doentes_confirmados'
         heatmap_query = """
+            WITH FocosPorArea AS (
+                -- CTE 1: Agrega focos (de registro_de_campo) por ponto geográfico
+                SELECT
+                    av.latitude, av.longitude, av.bairro,
+                    COALESCE(SUM(d.a1 + d.a2 + d.b + d.c + d.d1 + d.d2 + d.e), 0) AS focos_encontrados
+                FROM area_de_visita av
+                LEFT JOIN registro_de_campo rc ON av.area_de_visita_id = rc.area_de_visita_id AND rc.ciclo_id = %s
+                LEFT JOIN depositos d ON rc.deposito_id = d.deposito_id
+                WHERE av.latitude IS NOT NULL AND av.longitude IS NOT NULL
+                GROUP BY av.latitude, av.longitude, av.bairro
+            ),
+            CasosPorBairro AS (
+                -- CTE 2: Agrega casos (de doentes_confirmados) por bairro
+                SELECT
+                    bairro,
+                    SUM(CASE WHEN tipo_da_doenca ILIKE 'Dengue' THEN 1 ELSE 0 END) AS casos_dengue,
+                    SUM(CASE WHEN tipo_da_doenca ILIKE 'Zica' THEN 1 ELSE 0 END) AS casos_zika,
+                    SUM(CASE WHEN tipo_da_doenca ILIKE 'Chikungunya' THEN 1 ELSE 0 END) AS casos_chikungunya,
+                    COUNT(doente_confirmado_id) AS total_casos_confirmados
+                FROM doentes_confirmados
+                WHERE ciclo_id = %s AND bairro IS NOT NULL
+                GROUP BY bairro
+            )
+            -- Junção final: Junta focos (ponto geográfico) com casos (por bairro)
             SELECT
-                av.latitude, av.longitude, av.bairro,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Dengue' THEN 1 ELSE 0 END) AS casos_dengue,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Zica' THEN 1 ELSE 0 END) AS casos_zika,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE AND rc.formulario_tipo ILIKE 'Chikungunya' THEN 1 ELSE 0 END) AS casos_chikungunya,
-                COALESCE(SUM(d.a1 + d.a2 + d.b + d.c + d.d1 + d.d2 + d.e), 0) AS focos_encontrados,
-                SUM(CASE WHEN rc.caso_comfirmado = TRUE THEN 1 ELSE 0 END) AS total_casos_confirmados
-            FROM area_de_visita av
-            LEFT JOIN registro_de_campo rc ON av.area_de_visita_id = rc.area_de_visita_id AND rc.ciclo_id = %s
-            LEFT JOIN depositos d ON rc.deposito_id = d.deposito_id
-            WHERE av.latitude IS NOT NULL AND av.longitude IS NOT NULL
-            GROUP BY av.latitude, av.longitude, av.bairro
-            ORDER BY av.bairro;
+                f.latitude,
+                f.longitude,
+                f.bairro,
+                f.focos_encontrados,
+                COALESCE(c.casos_dengue, 0) AS casos_dengue,
+                COALESCE(c.casos_zika, 0) AS casos_zika,
+                COALESCE(c.casos_chikungunya, 0) AS casos_chikungunya,
+                COALESCE(c.total_casos_confirmados, 0) AS total_casos_confirmados
+            FROM FocosPorArea f
+            LEFT JOIN CasosPorBairro c ON f.bairro = c.bairro
+            ORDER BY f.bairro;
         """
-        cursor.execute(heatmap_query, (ciclo_id,))
+        # Passa o ciclo_id duas vezes (uma para cada CTE)
+        cursor.execute(heatmap_query, (ciclo_id, ciclo_id))
         results = cursor.fetchall()
 
         logging.info(f"Consulta para heatmap (latest) retornou {len(results)} pontos/bairros agregados.")
 
         # --- 3. Processa os resultados para adicionar o nível de risco ---
-        # (A lógica é a mesma da rota anterior)
         processed_results = []
         for row in results:
             casos_total = int(row['total_casos_confirmados'])
@@ -124,7 +125,6 @@ def get_latest_heatmap_data():
             }
             processed_results.append(processed_row)
             
-        # Adiciona informação sobre qual ciclo foi usado na resposta (opcional, mas útil)
         response_data = {
              "ciclo_info": {
                  "ano": latest_ciclo_result['ano'], 
@@ -134,9 +134,8 @@ def get_latest_heatmap_data():
              "heatmap_points": processed_results
          }
 
-        return jsonify(processed_results), 200 # Retorna só a lista
-        # return jsonify(response_data), 200 # Retorna a lista dentro de um objeto com info do ciclo
-
+        # Retorna só a lista (ou response_data se preferir incluir o ciclo_info)
+        return jsonify(processed_results), 200
 
     except Exception as e:
         logging.error(f"Erro ao buscar dados para heatmap (latest): {e}", exc_info=True)

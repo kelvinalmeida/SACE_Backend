@@ -83,7 +83,7 @@ def test_supervisor_workflow_crud_doentes_confirmados(auth_client):
     data_post = resp_post.json
     assert "registros de doenças confirmadas criados com sucesso" in data_post['message']
     assert len(data_post['ids_criados']) == 2
-    assert data_post['ciclo_id_associado'] == 5 # Verifica se associou ao ciclo ativo
+    assert data_post['ciclo_id_associado'] == 8 # Verifica se associou ao ciclo ativo
     
     # Armazena os IDs para os próximos testes
     ids_criados_no_teste = data_post['ids_criados']

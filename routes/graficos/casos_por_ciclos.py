@@ -1,6 +1,6 @@
 from flask import jsonify, current_app
 from db import create_connection
-# from routes.login.token_required import token_required # Mantenha se for usar autenticação
+# from routes.login.token_required import token_required
 from .bluprint import graficos
 import logging
 from collections import defaultdict
@@ -13,7 +13,7 @@ def get_casos_por_ciclo(ano):
     """
     Endpoint para obter dados para o gráfico de 'Casos por Ciclos'.
 
-    Esta rota busca a quantidade de casos confirmados (caso_comfirmado = True)
+    Esta rota busca a quantidade de casos confirmados (da tabela doentes_confirmados)
     para cada bairro, agrupados por ciclo, dentro de um ano específico.
     """
     conn = create_connection(current_app.config['SQLALCHEMY_DATABASE_URI'])
@@ -24,45 +24,59 @@ def get_casos_por_ciclo(ano):
     try:
         cursor = conn.cursor()
 
-        # Query SQL para buscar os casos confirmados por bairro e ciclo
+        # --- CORREÇÃO: ETAPA 1 ---
+        # Primeiro, descobrimos qual é o número máximo de ciclo para o ano selecionado,
+        # independentemente de ter tido casos ou não.
+        get_max_ciclo_query = """
+            SELECT MAX(ciclo) AS max_ciclo
+            FROM ciclos
+            WHERE EXTRACT(YEAR FROM ano_de_criacao)::INTEGER = %s;
+        """
+        cursor.execute(get_max_ciclo_query, (ano,))
+        max_ciclo_result = cursor.fetchone()
+
+        max_ciclo = 0
+        if max_ciclo_result and max_ciclo_result['max_ciclo'] is not None:
+            max_ciclo = int(max_ciclo_result['max_ciclo'])
+        
+        # Se não há ciclos para este ano (max_ciclo = 0), retorna vazio.
+        if max_ciclo == 0:
+            return jsonify({"labels": [], "datasets": []}), 200
+
+
+        # --- ETAPA 2: Query original (para buscar apenas os dados que existem) ---
+        # Não precisamos alterar esta query, pois a lógica Python agora
+        # vai preencher os "buracos" (ciclos sem casos).
         query = """
             SELECT
-                av.bairro,
+                dc.bairro,
                 c.ciclo,
-                COUNT(rc.registro_de_campo_id) AS quantidade
+                COUNT(dc.doente_confirmado_id) AS quantidade
             FROM
-                registro_de_campo rc
+                doentes_confirmados dc
             JOIN
-                area_de_visita av ON rc.area_de_visita_id = av.area_de_visita_id
-            JOIN
-                ciclos c ON rc.ciclo_id = c.ciclo_id
+                ciclos c ON dc.ciclo_id = c.ciclo_id
             WHERE
-                rc.caso_comfirmado = True
-                AND EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s
+                EXTRACT(YEAR FROM c.ano_de_criacao)::INTEGER = %s
+                AND dc.bairro IS NOT NULL
             GROUP BY
-                av.bairro, c.ciclo
+                dc.bairro, c.ciclo
             ORDER BY
-                av.bairro, c.ciclo;
+                dc.bairro, c.ciclo;
         """
         cursor.execute(query, (ano,))
         resultados = cursor.fetchall()
 
-        # Se não houver dados, retorna uma estrutura vazia
-        if not resultados:
-            return jsonify({
-                "labels": [],
-                "datasets": []
-            }), 200
-
-        # --- Processamento dos dados para o formato do gráfico ---
-        max_ciclo = 0
-        if resultados:
-            max_ciclo = max(row['ciclo'] for row in resultados)
+        # --- Processamento (Agora funciona corretamente) ---
         
+        # 'labels' agora usa o 'max_ciclo' real (ex: 4 para 2025)
         labels = [f"Ciclo {i}" for i in range(1, max_ciclo + 1)]
 
+        # 'dados_por_bairro' cria listas com o tamanho correto (ex: [0, 0, 0, 0])
         dados_por_bairro = defaultdict(lambda: [0] * max_ciclo)
 
+        # O loop 'resultados' (que para 2025, só tem ciclos 1 e 2)
+        # preenche apenas as posições [0] e [1] dos bairros encontrados.
         for row in resultados:
             bairro = row['bairro']
             ciclo = row['ciclo']
@@ -70,7 +84,8 @@ def get_casos_por_ciclo(ano):
             # O índice na lista é ciclo - 1 (ex: Ciclo 1 -> índice 0)
             dados_por_bairro[bairro][ciclo - 1] = quantidade
         
-        # Formata a saída no padrão de datasets para bibliotecas de gráficos
+        # Formata a saída. Bairros com dados nos ciclos 1 e 2
+        # agora aparecerão com [X, Y, 0, 0] para 2025.
         datasets = []
         for bairro, data in dados_por_bairro.items():
             datasets.append({

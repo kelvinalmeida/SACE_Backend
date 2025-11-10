@@ -19,7 +19,7 @@ def test_permissoes_agente_ciclos(agente_client):
     assert '2024' in resp_anos.json
     assert '2025' in resp_anos.json
     # Verifica o estado inicial do backup (2025 tem ciclos 1 e 2)
-    assert resp_anos.json['2025'] == [1, 2] 
+    assert resp_anos.json['2025'] == [1, 2, 3, 4]
 
     # 3. Agente NÃO PODE /finalizar_ciclo
     resp_finalizar = agente_client.post('/finalizar_ciclo')
@@ -53,9 +53,9 @@ def test_workflow_supervisor_ciclo_completo(auth_client):
     assert resp_status_1.status_code == 200
     assert resp_status_1.json['status'] == 'ativo'
     detalhes_1 = resp_status_1.json['detalhes']
-    assert detalhes_1['ciclo_id'] == 4
+    assert detalhes_1['ciclo_id'] == 8
     assert detalhes_1['ano'] == 2025
-    assert detalhes_1['ciclo_numero'] == 2
+    assert detalhes_1['ciclo_numero'] == 4
 
     # --- 2. Tentar criar ciclo (deve falhar, pois o 4 está ativo) ---
     # (Baseado na lógica de 'routes/ciclo/criar_ciclo.py')

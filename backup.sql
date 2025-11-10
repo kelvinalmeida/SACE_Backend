@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict SZ8fgLauFP04ZbtrZEHunU04BW3m06aD4TnXBncMGFhDEaAKYSiMXjPSrt6m5fz
+\restrict qHIrnBNJEzgmn4KThcfox0JX0oYE2vduERMr7fo5hExNvwTEYL9lqlbh2Hc8hD4
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -335,7 +335,8 @@ CREATE TABLE public.doentes_confirmados (
     rua character varying(30) NOT NULL,
     numero character varying(10),
     bairro character varying(30),
-    ciclo_id integer
+    ciclo_id integer,
+    area_de_visita_id integer
 );
 
 
@@ -570,6 +571,16 @@ COPY public.adulticida (adulticida_id, registro_de_campo_id, tipo, quantidade) F
 10	134	Adulticida de Borrifação Residual (Piretróide)	20
 11	138	Adulticida de Borrifação Residual (Piretróide)	30
 12	160	Adulticida de Borrifação Residual (Piretróide)	15
+13	181	Adulticida de Borrifação Residual (Piretróide)	20
+14	197	Adulticida de Borrifação Residual (Piretróide)	25
+15	231	Adulticida de Borrifação Residual (Piretróide)	20
+16	235	Adulticida de Borrifação Residual (Piretróide)	30
+17	250	Adulticida de Borrifação Residual (Piretróide)	20
+18	271	Adulticida de Borrifação Residual (Piretróide)	25
+19	275	Adulticida de Borrifação Residual (Piretróide)	30
+20	280	Adulticida de Borrifação Residual (Piretróide)	20
+21	311	Adulticida de Borrifação Residual (Piretróide)	25
+22	315	Adulticida de Borrifação Residual (Piretróide)	30
 \.
 
 
@@ -637,16 +648,16 @@ COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_
 --
 
 COPY public.area_de_visita (area_de_visita_id, supervisor_id, cep, setor, numero_quarteirao, estado, municipio, bairro, status, logadouro, latitude, longitude) FROM stdin;
-1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Visitado	Avenida Álvaro Otacílio	-9.66790000	-35.70220000
-2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Visitado	Avenida Doutor Antônio Gomes de Barros	-9.65860000	-35.70320000
-3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Visitado	Rua Jangadeiros Alagoanos	-9.67130000	-35.71180000
-4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Visitado	Avenida Fernandes Lima	-9.64330000	-35.73350000
-5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Visitado	Avenida Brigadeiro Eduardo Gomes de Brito	-9.63870000	-35.69890000
-6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Não Visitado	Rua Cleto Campelo	-9.64530000	-35.72080000
-7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Visitado	Avenida Cachoeira do Meirim	-9.57140000	-35.78910000
-8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Não Visitado	Avenida Menino Marcelo	-9.59360000	-35.75160000
-9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Visitado	Rua Artur Vital da Silva	-9.63580000	-35.73880000
-10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Visitado	Rua Professora Maria Esther da Costa Barros	-9.65590000	-35.71070000
+1	1	57035-180	Setor Ponta Verde 01	15	AL	Maceió	Ponta Verde	Visitado	Avenida Álvaro Otacílio	-9.66150000	-35.70090000
+2	1	57036-000	Setor Jatiúca 03	42	AL	Maceió	Jatiúca	Visitado	Avenida Doutor Antônio Gomes de Barros	-9.65080000	-35.70840000
+3	2	57030-170	Setor Pajuçara 02	28	AL	Maceió	Pajuçara	Visitado	Rua Jangadeiros Alagoanos	-9.66720000	-35.70770000
+4	2	57051-500	Setor Farol 05	112	AL	Maceió	Farol	Visitado	Avenida Fernandes Lima	-9.64210000	-35.73500000
+5	3	57036-540	Setor Cruz das Almas 01	67	AL	Maceió	Cruz das Almas	Visitado	Avenida Brigadeiro Eduardo Gomes de Brito	-9.62550000	-35.70750000
+6	3	57040-000	Setor Jacintinho 11	153	AL	Maceió	Jacintinho	Não Visitado	Rua Cleto Campelo	-9.64970000	-35.72030000
+7	4	57085-000	Setor Benedito Bentes 24	201	AL	Maceió	Benedito Bentes	Visitado	Avenida Cachoeira do Meirim	-9.54130000	-35.73560000
+8	4	57046-140	Setor Serraria 08	95	AL	Maceió	Serraria	Não Visitado	Avenida Menino Marcelo	-9.58590000	-35.75540000
+9	2	57052-480	Setor Gruta 04	78	AL	Maceió	Gruta de Lourdes	Visitado	Rua Artur Vital da Silva	-9.62910000	-35.73890000
+10	1	57035-160	Setor Mangabeiras 02	33	AL	Maceió	Mangabeiras	Visitado	Rua Professora Maria Esther da Costa Barros	-9.65620000	-35.70890000
 \.
 
 
@@ -757,10 +768,14 @@ COPY public.ciclo_area_de_visita (ciclo_area_de_visita_id, ciclo_id, area_de_vis
 --
 
 COPY public.ciclos (ciclo_id, supervisor_id, ano_de_criacao, encerramento, ativo, ciclo) FROM stdin;
-1	3	2024-01-16	2024-06-16	f	1
-2	1	2024-06-18	2024-12-18	f	2
-3	2	2025-01-18	2025-06-18	f	1
-4	3	2025-06-19	\N	t	2
+1	3	2024-01-16	2024-02-16	f	1
+2	1	2024-03-18	2024-04-18	f	2
+3	2	2024-05-18	2024-07-18	f	3
+4	3	2024-08-19	2024-12-18	f	4
+5	3	2025-01-19	2025-03-16	f	1
+6	3	2025-03-19	2025-05-16	f	2
+7	3	2025-05-19	2025-07-16	f	3
+8	3	2025-08-19	\N	t	4
 \.
 
 
@@ -962,7 +977,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 178	0	0	0	0	0	0	0
 179	0	0	0	0	0	0	0
 180	0	0	0	0	0	0	0
-181	0	0	0	0	0	0	0
+181	0	0	3	0	0	0	0
 182	0	0	0	0	0	0	0
 183	0	0	0	0	0	0	0
 184	0	0	0	0	0	0	0
@@ -978,12 +993,12 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 194	0	0	0	0	0	0	0
 195	0	0	0	0	0	0	0
 196	0	0	0	0	0	0	0
-197	0	0	0	0	0	0	0
+197	0	0	1	0	0	1	0
 198	0	0	0	0	0	0	0
 199	0	0	0	0	0	0	0
 200	0	0	0	0	0	0	0
 201	0	0	0	0	0	0	0
-202	0	0	0	0	0	0	0
+202	0	0	0	0	0	0	1
 203	0	0	0	0	0	0	0
 204	0	0	0	0	0	0	0
 205	0	0	0	0	0	0	0
@@ -992,7 +1007,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 208	0	0	0	0	0	0	0
 209	0	0	0	0	0	0	0
 210	0	0	0	0	0	0	0
-211	0	0	0	0	0	0	0
+211	0	1	0	0	0	0	0
 212	0	0	0	0	0	0	0
 213	0	0	0	0	0	0	0
 214	0	0	0	0	0	0	0
@@ -1004,7 +1019,7 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 220	0	0	0	0	0	0	0
 221	0	0	0	0	0	0	0
 222	0	0	0	0	0	0	0
-223	0	0	0	0	0	0	0
+223	0	1	0	0	0	0	0
 224	0	0	0	0	0	0	0
 225	0	0	0	0	0	0	0
 226	0	0	0	0	0	0	0
@@ -1012,16 +1027,96 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 228	0	0	0	0	0	0	0
 229	0	0	0	0	0	0	0
 230	0	0	0	0	0	0	0
-231	0	0	0	0	0	0	0
+231	0	0	0	1	0	0	0
 232	0	0	0	0	0	0	0
 233	0	0	0	0	0	0	0
 234	0	0	0	0	0	0	0
-235	0	0	0	0	0	0	0
+235	0	0	0	0	0	5	0
 236	0	0	0	0	0	0	0
 237	0	0	0	0	0	0	0
 238	0	0	0	0	0	0	0
 239	0	0	0	0	0	0	0
-240	0	0	0	0	0	0	0
+240	0	0	0	0	0	3	0
+241	0	0	0	0	0	0	0
+242	0	0	0	0	0	0	0
+243	0	0	0	0	0	0	0
+244	0	0	0	0	0	0	0
+245	0	0	0	0	0	0	0
+246	0	0	0	0	0	0	0
+247	0	0	0	0	0	0	0
+248	0	0	0	0	0	0	0
+249	0	0	0	0	0	0	0
+250	0	1	0	0	0	0	0
+251	0	0	0	0	0	0	0
+252	0	0	0	0	0	0	0
+253	0	0	0	0	0	0	0
+254	0	0	0	0	0	0	0
+255	0	0	0	0	0	0	0
+256	0	0	0	0	0	0	0
+257	0	0	0	0	0	0	0
+258	0	0	0	0	0	0	0
+259	0	0	0	0	0	0	0
+260	0	0	0	0	0	0	0
+261	0	0	0	0	0	0	0
+262	0	0	0	0	0	0	0
+263	0	0	0	0	0	0	0
+264	0	0	0	0	0	0	0
+265	0	0	0	0	0	0	0
+266	0	0	0	0	0	0	0
+267	0	0	0	0	0	0	0
+268	0	0	0	0	0	0	0
+269	0	0	0	0	0	0	0
+270	0	0	0	0	0	0	0
+271	0	0	0	1	0	0	0
+272	0	0	0	0	0	0	0
+273	0	0	0	0	0	0	0
+274	0	0	0	0	0	0	0
+275	0	0	0	0	0	5	0
+276	0	0	0	0	0	0	0
+277	0	0	0	0	0	0	0
+278	0	0	0	0	0	0	0
+279	0	0	0	0	0	0	0
+280	0	0	0	0	0	3	0
+281	0	0	0	0	0	0	0
+282	0	0	0	0	0	0	1
+283	0	0	0	0	0	0	0
+284	0	0	0	0	0	0	0
+285	0	0	0	0	0	0	0
+286	0	0	0	0	0	0	0
+287	0	30	0	0	0	0	0
+288	0	0	0	0	0	0	0
+289	0	0	0	0	0	0	0
+290	0	0	0	0	0	0	0
+291	0	1	0	0	0	0	0
+292	0	0	0	0	0	0	0
+293	0	0	20	0	0	0	0
+294	0	0	0	0	0	0	0
+295	0	0	0	0	0	0	0
+296	0	0	0	0	0	0	0
+297	0	0	0	0	0	0	0
+298	0	0	0	0	0	0	0
+299	0	0	0	0	0	0	0
+300	0	0	0	0	0	0	0
+301	0	0	0	0	0	0	0
+302	0	0	0	0	0	0	0
+303	1	0	0	0	0	0	0
+304	0	0	0	0	0	0	0
+305	0	0	0	33	0	0	0
+306	0	0	0	0	0	0	0
+307	0	0	0	0	0	0	0
+308	0	0	0	0	0	0	0
+309	0	0	0	0	0	0	0
+310	0	0	0	0	0	0	0
+311	0	0	0	1	0	0	0
+312	0	0	0	0	0	0	0
+313	0	0	0	0	0	0	0
+314	0	0	0	0	0	0	0
+315	0	0	0	0	0	5	0
+316	0	0	0	0	0	0	0
+317	0	0	0	0	0	0	0
+318	0	0	0	0	0	0	0
+319	0	0	0	0	0	0	0
+320	0	0	0	0	0	3	0
 \.
 
 
@@ -1029,22 +1124,59 @@ COPY public.depositos (deposito_id, a1, a2, b, c, d1, d2, e) FROM stdin;
 -- Data for Name: doentes_confirmados; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY public.doentes_confirmados (doente_confirmado_id, nome, tipo_da_doenca, rua, numero, bairro, ciclo_id) FROM stdin;
-1	Ana Lúcia Barbosa	Dengue	Rua Prof. Sandoval Arroxelas	120	Ponta Verde	1
-2	Bruno Costa	Chikungunya	Rua B. de Atalaia	45	Jacintinho	1
-3	Carla Dias Ferreira	Zica	Av. Garça Torta	1100	Benedito Bentes	1
-4	Danilo Menezes	Dengue	Rua Dr. Lessa de Azevedo	330	Pajuçara	2
-5	Elisa Correia	Dengue	Rua Adolfo Gustavo	50	Serraria	2
-6	Fábio Henrique Lima	Dengue	Rua D. Antônio Brandão	789	Farol	2
-7	Gabriela Peixoto	Dengue	Rua Prof. Sandoval Arroxelas	210	Ponta Verde	3
-8	Heitor Vasconcelos	Chikungunya	Rua D. Antônio Brandão	800	Farol	3
-9	Isabela Ramos	Zica	Rua A, Cj. Santo Dumont	15	Gruta de Lourdes	3
-10	José Carlos Almeida	Dengue	Rua B. de Atalaia	125	Jacintinho	3
-11	Larissa Farias	Dengue	Rua Bancário Rady Gusmão	220	Jatiúca	3
-12	Marcos Vinícius	Chikungunya	Av. Garça Torta	1500	Benedito Bentes	4
-13	Natalia Gusmão	Zica	Rua Prof. Sandoval Arroxelas	505	Ponta Verde	4
-14	Otávio Lins	Dengue	Rua Adolfo Gustavo	130	Serraria	4
-15	Patrícia Vilela	Dengue	Rua Dr. Lessa de Azevedo	410	Pajuçara	4
+COPY public.doentes_confirmados (doente_confirmado_id, nome, tipo_da_doenca, rua, numero, bairro, ciclo_id, area_de_visita_id) FROM stdin;
+1	Ana Lúcia Barbosa	Dengue	Rua Prof. Sandoval Arroxelas	120	Ponta Verde	1	\N
+2	Bruno Costa	Chikungunya	Rua B. de Atalaia	45	Jacintinho	1	\N
+3	Carla Dias Ferreira	Zica	Av. Garça Torta	1100	Benedito Bentes	1	\N
+4	Danilo Menezes	Dengue	Rua Dr. Lessa de Azevedo	330	Pajuçara	2	\N
+5	Elisa Correia	Dengue	Rua Adolfo Gustavo	50	Serraria	2	\N
+6	Fábio Henrique Lima	Dengue	Rua D. Antônio Brandão	789	Farol	2	\N
+7	Gabriela Peixoto	Dengue	Rua Prof. Sandoval Arroxelas	210	Ponta Verde	3	\N
+8	Heitor Vasconcelos	Chikungunya	Rua D. Antônio Brandão	800	Farol	3	\N
+9	Isabela Ramos	Zica	Rua A, Cj. Santo Dumont	15	Gruta de Lourdes	3	\N
+10	José Carlos Almeida	Dengue	Rua B. de Atalaia	125	Jacintinho	3	\N
+11	Larissa Farias	Dengue	Rua Bancário Rady Gusmão	220	Jatiúca	3	\N
+12	Marcos Vinícius	Chikungunya	Av. Garça Torta	1500	Benedito Bentes	4	\N
+13	Natalia Gusmão	Zica	Rua Prof. Sandoval Arroxelas	505	Ponta Verde	4	\N
+14	Otávio Lins	Dengue	Rua Adolfo Gustavo	130	Serraria	4	\N
+15	Patrícia Vilela	Dengue	Rua Dr. Lessa de Azevedo	410	Pajuçara	4	\N
+16	Ricardo Alves	Dengue	Av. Menino Marcelo	1500	Serraria	5	\N
+17	Sofia Lima	Dengue	Rua das Acácias	305	Gruta de Lourdes	5	\N
+18	Thiago Santos	Chikungunya	Rua Cleto Campelo	88	Jacintinho	5	\N
+19	Vanessa Oliveira	Dengue	Rua Jangadeiros Alagoanos	1010	Pajuçara	6	\N
+20	William Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	6	\N
+21	Ana Lúcia Barbosa	Dengue	Rua Prof. Sandoval Arroxelas	120	Ponta Verde	1	\N
+22	Bruno Costa	Chikungunya	Rua B. de Atalaia	45	Jacintinho	1	\N
+23	Carla Dias Ferreira	Zica	Av. Garça Torta	1100	Benedito Bentes	1	\N
+24	Danilo Menezes	Dengue	Rua Dr. Lessa de Azevedo	330	Pajuçara	2	\N
+25	Elisa Correia	Dengue	Rua Adolfo Gustavo	50	Serraria	2	\N
+26	Fábio Henrique Lima	Dengue	Rua D. Antônio Brandão	789	Farol	2	\N
+27	Gabriela Peixoto	Dengue	Rua Prof. Sandoval Arroxelas	210	Ponta Verde	3	\N
+28	Heitor Vasconcelos	Chikungunya	Rua D. Antônio Brandão	800	Farol	3	\N
+29	Isabela Ramos	Zica	Rua A, Cj. Santo Dumont	15	Gruta de Lourdes	3	\N
+30	José Carlos Almeida	Dengue	Rua B. de Atalaia	125	Jacintinho	4	\N
+31	Larissa Farias	Dengue	Rua Bancário Rady Gusmão	220	Jatiúca	4	\N
+32	Marcos Vinícius	Chikungunya	Av. Garça Torta	1500	Benedito Bentes	4	\N
+33	Natalia Gusmão	Zica	Rua Prof. Sandoval Arroxelas	505	Ponta Verde	5	\N
+34	Otávio Lins	Dengue	Rua Adolfo Gustavo	130	Serraria	5	\N
+35	Patrícia Vilela	Dengue	Rua Dr. Lessa de Azevedo	410	Pajuçara	5	\N
+36	Ricardo Alves	Dengue	Av. Menino Marcelo	1500	Serraria	6	\N
+37	Sofia Lima	Dengue	Rua das Acácias	305	Gruta de Lourdes	6	\N
+38	Thiago Santos	Chikungunya	Rua Cleto Campelo	88	Jacintinho	6	\N
+39	Ulisses Costa	Zica	Av. Brigadeiro E. Gomes	310	Cruz das Almas	7	\N
+40	Vitória Mendonça	Dengue	Rua D. Antônio Brandão	620	Farol	7	\N
+41	Walter Nogueira	Dengue	Rua H, Cj. Castelo Branco	70	Jatiúca	7	\N
+42	Vanessa Oliveira	Dengue	Rua Jangadeiros Alagoanos	1010	Pajuçara	8	\N
+43	Silvia Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+44	Maria Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+45	Fabricio Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+46	Ana Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+47	Pedro Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+48	Carlos Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+49	Pedro Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+50	Fabiana Santos	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+51	Lucas Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+52	Yasmin Farias	Chikungunya	Rua H, Cj. Castelo Branco	75	Jatiúca	8	\N
 \.
 
 
@@ -1082,6 +1214,25 @@ COPY public.larvicida (larvicida_id, registro_de_campo_id, tipo, forma, quantida
 27	134	Pyriproxyfen	Granulado	4
 28	138	Spinosad	Tablete	1
 29	160	Pyriproxyfen	Granulado	2
+30	164	Pyriproxyfen	Granulado	2
+31	181	Spinosad	Tablete	1
+32	197	Bti (Bacillus thuringiensis israelensis)	Líquido	10
+33	202	Pyriproxyfen	Granulado	1
+34	211	Methoprene	Líquido	15
+35	223	Bti (Bacillus thuringiensis israelensis)	Granulado	5
+36	231	Spinosad	Tablete	2
+37	235	Pyriproxyfen	Granulado	8
+38	240	Bti (Bacillus thuringiensis israelensis)	Granulado	5
+39	250	Methoprene	Líquido	10
+40	271	Spinosad	Tablete	2
+41	275	Bti (Bacillus thuringiensis israelensis)	Granulado	15
+42	280	Pyriproxyfen	Granulado	5
+43	282	Pyriproxyfen	Líquido	5
+44	291	Bti (Bacillus thuringiensis israelensis)	Tablete	1
+45	303	Spinosad	Granulado	5
+46	311	Methoprene	Líquido	20
+47	315	Pyriproxyfen	Granulado	10
+48	320	Bti (Bacillus thuringiensis israelensis)	Granulado	5
 \.
 
 
@@ -1264,6 +1415,166 @@ COPY public.registro_de_campo (registro_de_campo_id, imovel_numero, imovel_lado,
 158	1002	Par	Urbana	Residência	inspecionado	f	\N	Dengue	f	f	f	f	f	\N	\N	Morador atendeu. Ok.	10	16	158	4
 159	1003	Ímpar	Urbana	Residência	nao_inspecionado	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	159	4
 160	1004	Par	Urbana	Terreno Baldio	inspecionado	t	\N	Zica	f	t	t	t	f	\N	\N	Água parada em lona. Tratado.	10	16	160	4
+161	101	Ímpar	Urbana	Residência	Inspecionados	f	Casa A	Dengue	f	f	f	f	f	\N	\N	Revisita, local limpo.	1	1	161	5
+162	102	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	1	11	162	5
+163	103	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 3	Dengue	f	t	f	f	f	\N	\N	Ok.	1	1	163	5
+164	104	Par	Urbana	Residência	Inspecionados	t	\N	Chikungunya	f	f	t	t	f	\N	\N	Foco em balde.	1	11	164	5
+165	201	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 02	Dengue	f	t	f	f	f	\N	\N	Ok.	2	2	165	5
+166	202	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	2	3	166	5
+167	203	Ímpar	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Morador permitiu entrada. Ok.	2	7	167	5
+168	204	Par	Urbana	Comércio	Inspecionados	f	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Ok.	2	12	168	5
+169	301	Ímpar	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador encontrado. Ok.	3	4	169	5
+170	302	Par	Urbana	Residência	Inspecionados	f	Apto 101	Dengue	f	f	f	f	f	\N	\N	Ok.	3	13	170	5
+171	303	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	3	4	171	5
+172	304	Par	Urbana	Comércio	Inspecionados	f	Borracharia	Dengue	f	t	f	f	f	\N	\N	Ok.	3	13	172	5
+173	401	Ímpar	Urbana	Terreno Baldio	Inspecionados	f	\N	Zica	f	t	f	f	f	\N	\N	Ok.	4	5	173	5
+174	402	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Ok.	4	9	174	5
+175	403	Ímpar	Urbana	Comércio	Inspecionados	f	Supermercado	Dengue	f	t	f	f	f	\N	\N	Ok.	4	14	175	5
+176	404	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador retornou. Ok.	4	5	176	5
+177	501	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	5	1	177	5
+178	502	Par	Urbana	Terreno Baldio	Inspecionados	f	Murado	Dengue	f	t	f	f	f	\N	\N	Ok.	5	7	178	5
+179	503	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	179	5
+180	504	Par	Urbana	Outros	Inspecionados	f	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Ok.	5	15	180	5
+181	601	Ímpar	Urbana	Residência	Ações de bloqueio	t	Apto 202	Zica	f	f	t	t	t	\N	\N	Caso suspeito na vizinhança. Foco em vaso.	6	8	181	5
+182	602	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Morador viajando.	6	16	182	5
+183	603	Ímpar	Urbana	Residência	Inspecionados	f	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Ok.	6	15	183	5
+184	604	Par	Urbana	Comércio	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	184	5
+185	701	Ímpar	Urbana	Comércio	Inspecionados	f	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Ok.	7	9	185	5
+186	702	Par	Urbana	Residência	Inspecionados	f	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Ok.	7	16	186	5
+187	703	Ímpar	Urbana	Comércio	Inspecionados	f	Clínica	Dengue	f	t	f	f	f	\N	\N	Ok.	7	15	187	5
+188	704	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	7	16	188	5
+189	801	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	11	189	5
+190	802	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ausente.	8	16	190	5
+191	803	Ímpar	Urbana	Residência	Inspecionados	f	Cond. Fechado	Chikungunya	f	f	f	f	f	\N	\N	Ok.	8	11	191	5
+192	804	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	16	192	5
+193	901	Ímpar	Urbana	Outros	Inspecionados	f	Escola	Dengue	f	t	f	f	f	\N	\N	Ok.	9	1	193	5
+194	902	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Ok.	9	12	194	5
+195	903	Ímpar	Urbana	Terreno Baldio	Inspecionados	f	Aberto	Chikungunya	f	t	f	f	f	\N	\N	Ok.	9	1	195	5
+196	904	Par	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	196	5
+197	1001	Ímpar	Urbana	Residência	Ações de bloqueio	t	Bloco B Apto 1002	Zica	f	f	t	t	t	\N	\N	Foco encontrado. Ação de bloqueio na área.	10	13	197	5
+198	1002	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ausente.	10	16	198	5
+199	1003	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	199	5
+200	1004	Par	Urbana	Terreno Baldio	Inspecionados	f	\N	Zica	f	t	f	f	f	\N	\N	Ok.	10	16	200	5
+201	101	Ímpar	Urbana	Residência	Inspecionados	f	Casa A	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	1	201	6
+202	102	Par	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Foco residual encontrado em bromélia.	1	11	202	6
+203	103	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 3	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	1	1	203	6
+204	104	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	11	204	6
+205	201	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 02	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	2	2	205	6
+206	202	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	3	206	6
+207	203	Ímpar	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	7	207	6
+208	204	Par	Urbana	Comércio	Inspecionados	f	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	2	12	208	6
+209	301	Ímpar	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador atendeu. Ok.	3	4	209	6
+210	302	Par	Urbana	Residência	Inspecionados	f	Apto 101	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	210	6
+211	303	Ímpar	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Pequeno foco em ralo de quintal.	3	4	211	6
+212	304	Par	Urbana	Comércio	Inspecionados	f	Borracharia	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	212	6
+213	401	Ímpar	Urbana	Terreno Baldio	Inspecionados	f	\N	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	213	6
+214	402	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	9	214	6
+215	403	Ímpar	Urbana	Comércio	Fechados	f	Supermercado	\N	f	f	f	f	f	\N	\N	Fechado.	4	14	215	6
+216	404	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	216	6
+217	501	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	5	1	217	6
+218	502	Par	Urbana	Terreno Baldio	Inspecionados	f	Murado	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	5	7	218	6
+219	503	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	219	6
+220	504	Par	Urbana	Outros	Inspecionados	f	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	5	15	220	6
+221	601	Ímpar	Urbana	Residência	Inspecionados	f	Apto 202	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	6	8	221	6
+222	602	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	6	16	222	6
+223	603	Ímpar	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Água empoçada na laje.	6	15	223	6
+224	604	Par	Urbana	Comércio	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	224	6
+225	701	Ímpar	Urbana	Comércio	Inspecionados	f	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	7	9	225	6
+226	702	Par	Urbana	Residência	Inspecionados	f	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	226	6
+227	703	Ímpar	Urbana	Comércio	Fechados	f	Clínica	\N	f	f	f	f	f	\N	\N	Fechado.	7	15	227	6
+228	704	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	228	6
+229	801	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	11	229	6
+230	802	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	230	6
+231	803	Ímpar	Urbana	Residência	Ações de bloqueio	t	\N	Chikungunya	f	f	t	t	t	\N	\N	Foco em fonte desativada.	8	11	231	6
+232	804	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	232	6
+233	901	Ímpar	Urbana	Outros	Inspecionados	f	Escola	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	9	1	233	6
+234	902	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	9	12	234	6
+235	903	Ímpar	Urbana	Terreno Baldio	Ações de bloqueio	t	Aberto	Chikungunya	f	t	t	t	t	\N	\N	Entulho com água empoçada.	9	1	235	6
+236	904	Par	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	236	6
+237	1001	Ímpar	Urbana	Residência	Inspecionados	f	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	10	13	237	6
+238	1002	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	238	6
+239	1003	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	239	6
+240	1004	Par	Urbana	Terreno Baldio	Inspecionados	t	\N	Zica	f	t	t	t	f	\N	\N	Pequeno foco em lixo acumulado.	10	16	240	6
+241	101	Ímpar	Urbana	Residência	Inspecionados	f	Casa A	Dengue	f	f	f	f	f	\N	\N	Revisita. Ok.	1	1	241	7
+242	102	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Sem focos.	1	11	242	7
+243	103	Ímpar	Urbana	Comércio	Fechados	f	Loja 3	\N	f	f	f	f	f	\N	\N	Fechado para reforma.	1	1	243	7
+244	104	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Morador orientado.	1	11	244	7
+245	201	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 02	Dengue	f	t	f	f	f	\N	\N	Ok.	2	2	245	7
+246	202	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Caixa d'água ok.	2	3	246	7
+247	203	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Morador não atendeu, mas estava em casa.	2	7	247	7
+248	204	Par	Urbana	Comércio	Inspecionados	f	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Sem focos.	2	12	248	7
+249	301	Ímpar	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ausente.	3	4	249	7
+250	302	Par	Urbana	Residência	Inspecionados	t	Apto 101	Dengue	t	f	t	t	t	A005	1	Coletada amostra. Ralo tratado novamente.	3	13	250	7
+251	303	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	3	4	251	7
+252	304	Par	Urbana	Comércio	Inspecionados	f	Borracharia	Dengue	f	t	f	f	f	\N	\N	Pneus ok.	3	13	252	7
+253	401	Ímpar	Urbana	Terreno Baldio	Inspecionados	f	\N	Zica	f	t	f	f	f	\N	\N	Limpo.	4	5	253	7
+254	402	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Ok.	4	9	254	7
+255	403	Ímpar	Urbana	Comércio	Fechados	f	Supermercado	\N	f	f	f	f	f	\N	\N	Fechado.	4	14	255	7
+256	404	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	4	5	256	7
+257	501	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	5	1	257	7
+258	502	Par	Urbana	Terreno Baldio	Inspecionados	f	Murado	Dengue	f	t	f	f	f	\N	\N	Ok.	5	7	258	7
+259	503	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	259	7
+260	504	Par	Urbana	Outros	Inspecionados	f	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Ok.	5	15	260	7
+261	601	Ímpar	Urbana	Residência	Inspecionados	f	Apto 202	Zica	f	f	f	f	f	\N	\N	Ok.	6	8	261	7
+262	602	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	6	16	262	7
+263	603	Ímpar	Urbana	Residência	Inspecionados	f	Casa com piscina	Dengue	f	f	f	f	f	\N	\N	Piscina ok.	6	15	263	7
+264	604	Par	Urbana	Comércio	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	264	7
+265	701	Ímpar	Urbana	Comércio	Inspecionados	f	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Ok.	7	9	265	7
+266	702	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Ok.	7	16	266	7
+267	703	Ímpar	Urbana	Comércio	Inspecionados	f	Clínica	Dengue	f	t	f	f	f	\N	\N	Ok.	7	15	267	7
+268	704	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	7	16	268	7
+269	801	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	11	269	7
+270	802	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Ok.	8	16	270	7
+271	803	Ímpar	Urbana	Residência	Ações de bloqueio	t	Cond. Fechado	Chikungunya	f	f	t	t	t	\N	\N	Foco em fonte desativada.	8	11	271	7
+272	804	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Ok.	8	16	272	7
+273	901	Ímpar	Urbana	Outros	Inspecionados	f	Escola	Dengue	f	t	f	f	f	\N	\N	Ok.	9	1	273	7
+274	902	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	9	12	274	7
+275	903	Ímpar	Urbana	Terreno Baldio	Ações de bloqueio	t	Aberto	Chikungunya	f	t	t	t	t	\N	\N	Entulho com água empoçada.	9	1	275	7
+276	904	Par	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	276	7
+277	1001	Ímpar	Urbana	Residência	Inspecionados	f	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Ok.	10	13	277	7
+278	1002	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	278	7
+279	1003	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	279	7
+280	1004	Par	Urbana	Terreno Baldio	Ações de bloqueio	t	\N	Zica	f	t	t	t	t	\N	\N	Pequeno foco em lixo acumulado.	10	16	280	7
+281	101	Ímpar	Urbana	Residência	Inspecionados	f	Casa A	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	1	281	8
+282	102	Par	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Foco residual encontrado em bromélia.	1	11	282	8
+283	103	Ímpar	Urbana	Comércio	Fechados	f	Loja 3	\N	f	f	f	f	f	\N	\N	Ainda em reforma.	1	1	283	8
+284	104	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	1	11	284	8
+285	201	Ímpar	Urbana	Comércio	Inspecionados	f	Loja 02	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	2	2	285	8
+286	202	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	3	286	8
+287	203	Ímpar	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	2	7	287	8
+288	204	Par	Urbana	Comércio	Inspecionados	f	Oficina	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	2	12	288	8
+289	301	Ímpar	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Morador ausente.	3	4	289	8
+290	302	Par	Urbana	Residência	Inspecionados	f	Apto 101	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	290	8
+291	303	Ímpar	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Pequeno foco em ralo de quintal.	3	4	291	8
+292	304	Par	Urbana	Comércio	Inspecionados	f	Borracharia	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	3	13	292	8
+293	401	Ímpar	Urbana	Terreno Baldio	Inspecionados	f	\N	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	293	8
+294	402	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	9	294	8
+295	403	Ímpar	Urbana	Comércio	Fechados	f	Supermercado	\N	f	f	f	f	f	\N	\N	Fechado.	4	14	295	8
+296	404	Par	Urbana	Residência	Inspecionados	f	\N	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	4	5	296	8
+297	501	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	5	1	297	8
+298	502	Par	Urbana	Terreno Baldio	Inspecionados	f	Murado	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	5	7	298	8
+299	503	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	5	15	299	8
+300	504	Par	Urbana	Outros	Inspecionados	f	Posto de Saúde	Zica	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	5	15	300	8
+301	601	Ímpar	Urbana	Residência	Inspecionados	f	Apto 202	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	6	8	301	8
+302	602	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	6	16	302	8
+303	603	Ímpar	Urbana	Residência	Inspecionados	t	\N	Dengue	f	f	t	t	f	\N	\N	Água empoçada na laje.	6	15	303	8
+304	604	Par	Urbana	Comércio	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Comércio fechado permanentemente.	6	16	304	8
+305	701	Ímpar	Urbana	Comércio	Inspecionados	f	Restaurante	Chikungunya	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	7	9	305	8
+306	702	Par	Urbana	Residência	Inspecionados	f	Casa dos Fundos	Chikungunya	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	306	8
+307	703	Ímpar	Urbana	Comércio	Fechados	f	Clínica	\N	f	f	f	f	f	\N	\N	Fechado.	7	15	307	8
+308	704	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	7	16	308	8
+309	801	Ímpar	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	11	309	8
+310	802	Par	Urbana	Residência	Inspecionados	f	\N	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	310	8
+311	803	Ímpar	Urbana	Residência	Ações de bloqueio	t	\N	Chikungunya	f	f	t	t	t	\N	\N	Foco em fonte desativada.	8	11	311	8
+312	804	Par	Urbana	Residência	Inspecionados	f	\N	Dengue	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	8	16	312	8
+313	901	Ímpar	Urbana	Outros	Inspecionados	f	Escola	Dengue	f	t	f	f	f	\N	\N	Visita final de ciclo, ok.	9	1	313	8
+314	902	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém em casa.	9	12	314	8
+315	903	Ímpar	Urbana	Terreno Baldio	Ações de bloqueio	t	Aberto	Chikungunya	f	t	t	t	t	\N	\N	Entulho com água empoçada.	9	1	315	8
+316	904	Par	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	9	12	316	8
+317	1001	Ímpar	Urbana	Residência	Inspecionados	f	Bloco B Apto 1002	Zica	f	f	f	f	f	\N	\N	Visita final de ciclo, ok.	10	13	317	8
+318	1002	Par	Urbana	Residência	Fechados	f	\N	\N	f	f	f	f	f	\N	\N	Ninguém atendeu.	10	16	318	8
+319	1003	Ímpar	Urbana	Residência	Recusados	f	\N	\N	f	f	f	f	f	\N	\N	Recusa.	10	13	319	8
+320	1004	Par	Urbana	Terreno Baldio	Inspecionados	t	\N	Zica	f	t	t	t	f	\N	\N	Pequeno foco em lixo acumulado.	10	16	320	8
 \.
 
 
@@ -1314,6 +1625,24 @@ COPY public.registro_de_campo_arquivos (registro_de_campo_arquivo_id, registro_d
 40	142	comercio_fechado_ciclo6.jpg
 41	111	recusa_final_ciclo6.jpg
 42	123	recusa_final_ciclo6.jpg
+43	243	comercio_fechado_reforma_c7.jpg
+44	247	recusa_morador_203_c7.jpg
+45	250	amostra_A005_ralo.jpg
+46	259	recusa_persistente_503_c7.jpg
+47	271	foco_fonte_condominio_c7.jpg
+48	275	entulho_terreno_903_c7.jpg
+49	276	recusa_904_c7.jpg
+50	279	recusa_1003_c7.jpg
+51	282	foco_bromelia_c8.jpg
+52	283	comercio_ainda_fechado_c8.jpg
+53	291	ralo_quintal_tratado_c8.jpg
+54	299	recusa_503_c8.jpg
+55	303	laje_agua_parada_c8.jpg
+56	311	fonte_tratada_c8.jpg
+57	315	entulho_tratado_c8.jpg
+58	316	recusa_904_c8.jpg
+59	319	recusa_1003_c8.jpg
+60	320	lixo_foco_terreno_c8.jpg
 \.
 
 
@@ -1334,27 +1663,27 @@ COPY public.supervisor (supervisor_id, usuario_id) FROM stdin;
 --
 
 COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email, telefone_ddd, telefone_numero, estado, municipio, bairro, logradouro, numero, registro_do_servidor, cargo, situacao_atual, data_de_admissao, senha, nivel_de_acesso) FROM stdin;
-1	João da Silva	12345678901	1234567	1985-06-15	joao.silva@example.com	11	987654321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	senhaSegura123	agente
-2	Pedro Cavalcante	admin	212324567	1983-06-15	pedro.silva@example.com	11	987354321	SP	São Paulo	Centro	Rua das Flores	123	RS-2025-001	Analista	t	2025-01-10	123456	supervisor
-3	Maria Oliveira Santos	23456789012	2345678	1990-03-22	maria.santos@example.com	21	912345678	RJ	Rio de Janeiro	Copacabana	Avenida Atlântica	1702	RS-2025-002	Gerente de Projetos	t	2024-05-20	outrasenha456	agente
-4	Carlos Pereira Costa	34567890123	3456789	1988-11-01	carlos.costa@example.com	31	988776655	MG	Belo Horizonte	Savassi	Rua Fernandes Tourinho	500	RS-2025-003	Desenvolvedor Sênior	t	2023-08-15	senhaDev321	agente
-5	Ana Clara Ferreira	45678901234	4567890	1995-09-10	ana.ferreira@example.com	41	977665544	PR	Curitiba	Batel	Avenida do Batel	1868	RS-2025-004	Analista de RH	f	2024-02-01	senhaRH987	agente
-6	Pedro Rodrigues Alves	56789012345	5678901	1982-01-30	pedro.alves@example.com	51	966554433	RS	Porto Alegre	Moinhos de Vento	Rua Padre Chagas	415	RS-2025-005	Coordenador Financeiro	t	2022-11-25	senhaFin159	supervisor
-7	Juliana Souza Lima	67890123456	6789012	1998-07-12	juliana.lima@example.com	61	955443322	DF	Brasília	Asa Sul	SCS Quadra 07	10	RS-2025-006	Estagiária	t	2025-07-01	senhaEstagio753	agente
-8	Lucas Martins	78901234567	7890123	1992-04-25	lucas.martins@example.com	71	944332211	BA	Salvador	Barra	Avenida Oceânica	2400	RS-2025-007	Analista de Marketing	t	2023-03-18	senhaMkt357	agente
-9	Fernanda Gonçalves	89012345678	8901234	1986-12-08	fernanda.g@example.com	81	933221100	PE	Recife	Boa Viagem	Avenida Boa Viagem	97	RS-2025-008	Designer Gráfico	t	2024-09-02	senhaDesign123	agente
-10	Ricardo Almeida	90123456789	9012345	1979-05-19	ricardo.a@example.com	11	922110099	SP	São Paulo	Pinheiros	Rua dos Pinheiros	1000	RS-2025-009	Diretor de TI	t	2020-01-15	senhaDiretorTop	supervisor
-11	Beatriz Rocha	01234567890	0123456	2000-02-28	beatriz.rocha@example.com	21	911009988	RJ	Niterói	Icaraí	Rua Gavião Peixoto	30	RS-2025-010	Assistente Administrativo	t	2025-06-11	senhaAdmin456	agente
-12	Guilherme Barbosa	11223344556	1122334	1993-10-03	guilherme.b@example.com	31	988887777	MG	Contagem	Eldorado	Avenida João César de Oliveira	1275	RS-2025-011	Técnico de Suporte	t	2024-04-10	senhaSup555	agente
-13	Larissa Azevedo	22334455667	2233445	1991-08-14	larissa.azevedo@example.com	48	977776666	SC	Florianópolis	Centro	Rua Felipe Schmidt	515	RS-2025-012	Analista de Negócios	t	2023-10-09	senhaNegocios333	agente
-14	Rafael Ribeiro	33445566778	3344556	1987-03-29	rafael.r@example.com	85	966665555	CE	Fortaleza	Meireles	Avenida Beira Mar	4260	RS-2025-013	Desenvolvedor Pleno	t	2025-02-20	senhaPleno777	agente
-15	Camila Nogueira	44556677889	4455667	1999-01-05	camila.n@example.com	92	955554444	AM	Manaus	Adrianópolis	Rua Teresina	151	RS-2025-014	Desenvolvedor Júnior	t	2025-08-12	senhaJunior888	agente
-16	Felipe Monteiro	55667788990	5566778	1984-06-07	felipe.m@example.com	62	944443333	GO	Goiânia	Setor Bueno	Avenida T-10	100	RS-2025-015	Contador	t	2021-07-22	senhaContador999	agente
-17	Vanessa Dias	66778899001	6677889	1996-09-21	vanessa.dias@example.com	27	933332222	ES	Vitória	Jardim da Penha	Rua da Lama	50	RS-2025-016	Assistente de Marketing	f	2024-01-30	senhaAssistMkt111	agente
-18	Bruno Medeiros	77889900112	7788990	1990-11-18	bruno.m@example.com	11	922221111	SP	Guarulhos	Macedo	Avenida Paulo Faccini	1500	RS-2025-017	Analista de Logística	t	2023-05-16	senhaLog222	agente
-19	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	41	911110000	PR	São José dos Pinhais	Centro	Rua XV de Novembro	210	RS-2025-018	Gerente de RH	t	2019-12-05	senhaGerenteRH321	supervisor
-20	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	21	999998888	RJ	Duque de Caxias	Vila São Luís	Rua Genaro Lomba	15	RS-2025-019	Recrutador	t	2025-03-03	senhaRecrutador444	agente
-21	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	11	988887777	SP	Campinas	Cambuí	Rua Coronel Quirino	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	senhaArquiteto555	agente
+1	João da Silva	12345678901	1234567	1985-06-15	joao.silva@example.com	82	987654321	AL	Maceió	Ponta Verde	Rua Engenheiro Mário de Gusmão	123	RS-2025-001	Analista	t	2025-01-10	senhaSegura123	agente
+2	Pedro Cavalcante	admin	212324567	1983-06-15	pedro.silva@example.com	82	987354321	AL	Maceió	Jatiúca	Avenida Doutor Antônio Gomes de Barros	123	RS-2025-001	Analista	t	2025-01-10	123456	supervisor
+3	Maria Oliveira Santos	23456789012	2345678	1990-03-22	maria.santos@example.com	82	912345678	AL	Maceió	Pajuçara	Rua Jangadeiros Alagoanos	1702	RS-2025-002	Gerente de Projetos	t	2024-05-20	outrasenha456	agente
+4	Carlos Pereira Costa	34567890123	3456789	1988-11-01	carlos.costa@example.com	82	988776655	AL	Maceió	Farol	Avenida Fernandes Lima	500	RS-2025-003	Desenvolvedor Sênior	t	2023-08-15	senhaDev321	agente
+5	Ana Clara Ferreira	45678901234	4567890	1995-09-10	ana.ferreira@example.com	82	977665544	AL	Maceió	Gruta de Lourdes	Rua Artur Vital da Silva	1868	RS-2025-004	Analista de RH	f	2024-02-01	senhaRH987	agente
+6	Pedro Rodrigues Alves	56789012345	5678901	1982-01-30	pedro.alves@example.com	82	966554433	AL	Maceió	Mangabeiras	Rua Professora Maria Esther da Costa Barros	415	RS-2025-005	Coordenador Financeiro	t	2022-11-25	senhaFin159	supervisor
+7	Juliana Souza Lima	67890123456	6789012	1998-07-12	juliana.lima@example.com	82	955443322	AL	Maceió	Serraria	Avenida Menino Marcelo	10	RS-2025-006	Estagiária	t	2025-07-01	senhaEstagio753	agente
+8	Lucas Martins	78901234567	7890123	1992-04-25	lucas.martins@example.com	82	944332211	AL	Maceió	Cruz das Almas	Avenida Brigadeiro Eduardo Gomes de Brito	2400	RS-2025-007	Analista de Marketing	t	2023-03-18	senhaMkt357	agente
+9	Fernanda Gonçalves	89012345678	8901234	1986-12-08	fernanda.g@example.com	82	933221100	AL	Maceió	Benedito Bentes	Avenida Cachoeira do Meirim	97	RS-2025-008	Designer Gráfico	t	2024-09-02	senhaDesign123	agente
+10	Ricardo Almeida	90123456789	9012345	1979-05-19	ricardo.a@example.com	82	922110099	AL	Maceió	Jacintinho	Rua Cleto Campelo	1000	RS-2025-009	Diretor de TI	t	2020-01-15	senhaDiretorTop	supervisor
+11	Beatriz Rocha	01234567890	0123456	2000-02-28	beatriz.rocha@example.com	82	911009988	AL	Maceió	Centro	Rua Buarque de Macedo	30	RS-2025-010	Assistente Administrativo	t	2025-06-11	senhaAdmin456	agente
+12	Guilherme Barbosa	11223344556	1122334	1993-10-03	guilherme.b@example.com	82	988887777	AL	Maceió	Jatiúca	Rua Bancário Rady Gusmão do Nascimento	1275	RS-2025-011	Técnico de Suporte	t	2024-04-10	senhaSup555	agente
+13	Larissa Azevedo	22334455667	2233445	1991-08-14	larissa.azevedo@example.com	82	977776666	AL	Maceió	Ponta Verde	Avenida Álvaro Otacílio	515	RS-2025-012	Analista de Negócios	t	2023-10-09	senhaNegocios333	agente
+14	Rafael Ribeiro	33445566778	3344556	1987-03-29	rafael.r@example.com	82	966665555	AL	Maceió	Pajuçara	Rua Doutor Lessa de Azevedo	4260	RS-2025-013	Desenvolvedor Pleno	t	2025-02-20	senhaPleno777	agente
+15	Camila Nogueira	44556677889	4455667	1999-01-05	camila.n@example.com	82	955554444	AL	Maceió	Farol	Rua Doutor José de Castro Azevedo	151	RS-2025-014	Desenvolvedor Júnior	t	2025-08-12	senhaJunior888	agente
+16	Felipe Monteiro	55667788990	5566778	1984-06-07	felipe.m@example.com	82	944443333	AL	Maceió	Serraria	Rua Adolfo Gustavo	100	RS-2025-015	Contador	t	2021-07-22	senhaContador999	agente
+17	Vanessa Dias	66778899001	6677889	1996-09-21	vanessa.dias@example.com	82	933332222	AL	Maceió	Benedito Bentes	Avenida Garça Torta	50	RS-2025-016	Assistente de Marketing	f	2024-01-30	senhaAssistMkt111	agente
+18	Bruno Medeiros	77889900112	7788990	1990-11-18	bruno.m@example.com	82	922221111	AL	Maceió	Gruta de Lourdes	Rua Elói de Lemos	1500	RS-2025-017	Analista de Logística	t	2023-05-16	senhaLog222	agente
+19	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	82	911110000	AL	Maceió	Jacintinho	Rua B, Cj. José da Silva Peixoto	210	RS-2025-018	Gerente de RH	t	2019-12-05	senhaGerenteRH321	supervisor
+20	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	82	999998888	AL	Maceió	Ponta Verde	Rua Desportista Humberto Guimarães	15	RS-2025-019	Recrutador	t	2025-03-03	senhaRecrutador444	agente
+21	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	82	988887777	AL	Maceió	Jatiúca	Rua Santa Acácia	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	senhaArquiteto555	agente
 \.
 
 
@@ -1362,7 +1691,7 @@ COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email,
 -- Name: adulticida_adulticida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 12, true);
+SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 22, true);
 
 
 --
@@ -1411,7 +1740,7 @@ SELECT pg_catalog.setval('public.ciclo_area_de_visita_ciclo_area_de_visita_id_se
 -- Name: ciclos_ciclo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 4, true);
+SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 8, true);
 
 
 --
@@ -1425,21 +1754,21 @@ SELECT pg_catalog.setval('public.denuncia_denuncia_id_seq', 5, true);
 -- Name: depositos_deposito_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 240, true);
+SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 320, true);
 
 
 --
 -- Name: doentes_confirmados_doente_confirmado_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 15, true);
+SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 52, true);
 
 
 --
 -- Name: larvicida_larvicida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 29, true);
+SELECT pg_catalog.setval('public.larvicida_larvicida_id_seq', 48, true);
 
 
 --
@@ -1453,14 +1782,14 @@ SELECT pg_catalog.setval('public.nudges_nudges_id_seq', 6, true);
 -- Name: registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq', 42, true);
+SELECT pg_catalog.setval('public.registro_de_campo_arquivos_registro_de_campo_arquivo_id_seq', 60, true);
 
 
 --
 -- Name: registro_de_campo_registro_de_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 160, true);
+SELECT pg_catalog.setval('public.registro_de_campo_registro_de_campo_id_seq', 320, true);
 
 
 --
@@ -1670,6 +1999,14 @@ ALTER TABLE ONLY public.registro_de_campo
 
 
 --
+-- Name: doentes_confirmados fk_area_de_visita; Type: FK CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY public.doentes_confirmados
+    ADD CONSTRAINT fk_area_de_visita FOREIGN KEY (area_de_visita_id) REFERENCES public.area_de_visita(area_de_visita_id) ON DELETE CASCADE;
+
+
+--
 -- Name: registro_de_campo fk_ciclo; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -1785,5 +2122,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict SZ8fgLauFP04ZbtrZEHunU04BW3m06aD4TnXBncMGFhDEaAKYSiMXjPSrt6m5fz
+\unrestrict qHIrnBNJEzgmn4KThcfox0JX0oYE2vduERMr7fo5hExNvwTEYL9lqlbh2Hc8hD4
 
