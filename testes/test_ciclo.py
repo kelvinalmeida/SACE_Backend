@@ -69,7 +69,7 @@ def test_workflow_supervisor_ciclo_completo(auth_client):
     assert resp_finalizar.status_code == 201 
     assert "Ciclo desativado" in resp_finalizar.json['message']
     # Confirma que o ciclo finalizado foi o ID 4
-    assert resp_finalizar.json['novo_ciclo']['id'] == 4 
+    assert resp_finalizar.json['novo_ciclo']['id'] == 8 
 
     # --- 4. Verificar estado (agora deve ser 'inativo') ---
     resp_status_2 = auth_client.get('/ciclos/status')
@@ -83,18 +83,18 @@ def test_workflow_supervisor_ciclo_completo(auth_client):
     
     novo_ciclo = resp_criar_ok.json['novo_ciclo']
     assert novo_ciclo['ano'] == 2025  # O ano não mudou
-    assert novo_ciclo['numero'] == 3  # O ciclo incrementou (de 2 para 3)
-    assert novo_ciclo['id'] == 5      # O ID da tabela (PK) incrementou (de 4 para 5)
+    assert novo_ciclo['numero'] == 5  # O ciclo incrementou (de 4 para 5)
+    assert novo_ciclo['id'] == 9     # O ID da tabela (PK) incrementou (de 8 para 9)
 
     # --- 6. Verificar estado (ativo novamente, com o ciclo 5) ---
     resp_status_3 = auth_client.get('/ciclos/status')
     assert resp_status_3.status_code == 200
     assert resp_status_3.json['status'] == 'ativo'
     detalhes_3 = resp_status_3.json['detalhes']
-    assert detalhes_3['ciclo_id'] == 5
-    assert detalhes_3['ciclo_numero'] == 3
+    assert detalhes_3['ciclo_id'] == 9
+    assert detalhes_3['ciclo_numero'] == 5
 
     # --- 7. Verificar /anos_ciclos (agora deve ter 2025: [1, 2, 3]) ---
     resp_anos = auth_client.get('/anos_ciclos')
     assert resp_anos.status_code == 200
-    assert resp_anos.json['2025'] == [1, 2, 3] # A lista deve ter sido atualizada
+    assert resp_anos.json['2025'] == [1, 2, 3, 4, 5] # A lista deve ter sido atualizada

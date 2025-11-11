@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict qHIrnBNJEzgmn4KThcfox0JX0oYE2vduERMr7fo5hExNvwTEYL9lqlbh2Hc8hD4
+\restrict Izj52qQ6uAV2egTiBA04OU9kQFUpm6EPhWODbEaCVcvCp1cpaRJl6I1pRW0A39I
 
 -- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
 -- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
@@ -606,6 +606,8 @@ COPY public.agente (agente_id, usuario_id) FROM stdin;
 15	17
 16	18
 17	20
+18	22
+19	23
 \.
 
 
@@ -640,6 +642,10 @@ COPY public.agente_area_de_visita (agente_area_de_visita_id, agente_id, area_de_
 24	9	4
 25	15	6
 26	16	7
+27	18	1
+28	18	2
+29	19	1
+30	19	2
 \.
 
 
@@ -789,6 +795,7 @@ COPY public.denuncia (denuncia_id, supervisor_id, deposito_id, agente_responsave
 3	3	3	4	Rua Professor Guedes de Miranda	455	Farol	Residência	Concluída	Casa de esquina com muro branco e portão azul.	2025-09-19	09:15:00	Caixa d'água destampada no quintal, visível da rua.
 4	1	4	\N	Rua Desportista Humberto Guimarães	789	Ponta Verde	Comércio	Pendente	Restaurante	2025-09-19	16:45:00	Garrafas e baldes acumulados no pátio traseiro do estabelecimento.
 5	2	5	1	Rua Buarque de Macedo	550	Centro	Imóvel abandonado	Concluída	Prédio antigo com janelas quebradas.	2025-09-20	08:00:00	Calhas entupidas e muito lixo no interior do imóvel.
+6	1	\N	18	Rua Engenheiro Mário de Gusmão	12	Serraria	residencia	Pendente	Perto do posto	2025-10-02	15:45:00	Acúmulo de lixo e entulho com vários recipientes de água parada. Possível foco de dengue.
 \.
 
 
@@ -1163,20 +1170,23 @@ COPY public.doentes_confirmados (doente_confirmado_id, nome, tipo_da_doenca, rua
 36	Ricardo Alves	Dengue	Av. Menino Marcelo	1500	Serraria	6	\N
 37	Sofia Lima	Dengue	Rua das Acácias	305	Gruta de Lourdes	6	\N
 38	Thiago Santos	Chikungunya	Rua Cleto Campelo	88	Jacintinho	6	\N
-39	Ulisses Costa	Zica	Av. Brigadeiro E. Gomes	310	Cruz das Almas	7	\N
-40	Vitória Mendonça	Dengue	Rua D. Antônio Brandão	620	Farol	7	\N
-41	Walter Nogueira	Dengue	Rua H, Cj. Castelo Branco	70	Jatiúca	7	\N
-42	Vanessa Oliveira	Dengue	Rua Jangadeiros Alagoanos	1010	Pajuçara	8	\N
-43	Silvia Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
-44	Maria Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
-45	Fabricio Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
-46	Ana Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
-47	Pedro Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
-48	Carlos Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
-49	Pedro Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
-50	Fabiana Santos	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
-51	Lucas Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
-52	Yasmin Farias	Chikungunya	Rua H, Cj. Castelo Branco	75	Jatiúca	8	\N
+39	Maria Costa	Zica	Av. Brigadeiro E. Gomes	310	Cruz das Almas	6	\N
+40	Pedro Costa	Zica	Av. Brigadeiro E. Gomes	310	Cruz das Almas	6	\N
+41	Lucas Costa	Zica	Av. Brigadeiro E. Gomes	310	Cruz das Almas	6	\N
+42	Ulisses Costa	Zica	Av. Brigadeiro E. Gomes	310	Cruz das Almas	7	\N
+43	Vitória Mendonça	Dengue	Rua D. Antônio Brandão	620	Farol	7	\N
+44	Walter Nogueira	Dengue	Rua H, Cj. Castelo Branco	70	Jatiúca	7	\N
+45	Vanessa Oliveira	Dengue	Rua Jangadeiros Alagoanos	1010	Pajuçara	8	\N
+46	Silvia Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+47	Maria Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+48	Fabricio Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+49	Ana Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+50	Pedro Moraes	Dengue	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+51	Carlos Moraes	Zica	Av. Cachoeira do Meirim	2040	Benedito Bentes	8	\N
+52	Pedro Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+53	Fabiana Santos	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+54	Lucas Moraes	Zica	Av. Cachoeira do Meirim	2040	Farol	8	\N
+55	Yasmin Farias	Chikungunya	Rua H, Cj. Castelo Branco	75	Jatiúca	8	\N
 \.
 
 
@@ -1684,6 +1694,8 @@ COPY public.usuario (usuario_id, nome_completo, cpf, rg, data_nascimento, email,
 19	Helena Justino	88990011223	8899001	1980-02-13	helena.j@example.com	82	911110000	AL	Maceió	Jacintinho	Rua B, Cj. José da Silva Peixoto	210	RS-2025-018	Gerente de RH	t	2019-12-05	senhaGerenteRH321	supervisor
 20	Igor Fernandes	99001122334	9900112	1997-07-07	igor.f@example.com	82	999998888	AL	Maceió	Ponta Verde	Rua Desportista Humberto Guimarães	15	RS-2025-019	Recrutador	t	2025-03-03	senhaRecrutador444	agente
 21	Tiago Moreira	00112233445	0011223	1989-10-26	tiago.m@example.com	82	988887777	AL	Maceió	Jatiúca	Rua Santa Acácia	200	RS-2025-020	Arquiteto de Soluções	t	2022-09-01	senhaArquiteto555	agente
+22	kelvin dos Santos Ferreira	124e6s09	4644564	1999-08-22	mateus.m@dwail.com	82	98713973	AL	Maceió	santa lucia	Condomínio Residencial Galápagos	26	mat374347	Agente de Endemias	t	2024-08-12	123456789	agente
+23	kelvin dos Santos Ferreira	1d24e6s09	4644564	1999-08-22	matedus.m@dwail.com	82	98713973	AL	Maceió	santa lucia	Condomínio Residencial Galápagos	26	mat374347	Agente de Endemias	t	2024-08-12	123456789	agente
 \.
 
 
@@ -1698,14 +1710,14 @@ SELECT pg_catalog.setval('public.adulticida_adulticida_id_seq', 22, true);
 -- Name: agente_agente_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_agente_id_seq', 17, true);
+SELECT pg_catalog.setval('public.agente_agente_id_seq', 19, true);
 
 
 --
 -- Name: agente_area_de_visita_agente_area_de_visita_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 26, true);
+SELECT pg_catalog.setval('public.agente_area_de_visita_agente_area_de_visita_id_seq', 30, true);
 
 
 --
@@ -1747,7 +1759,7 @@ SELECT pg_catalog.setval('public.ciclos_ciclo_id_seq', 8, true);
 -- Name: denuncia_denuncia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.denuncia_denuncia_id_seq', 5, true);
+SELECT pg_catalog.setval('public.denuncia_denuncia_id_seq', 6, true);
 
 
 --
@@ -1761,7 +1773,7 @@ SELECT pg_catalog.setval('public.depositos_deposito_id_seq', 320, true);
 -- Name: doentes_confirmados_doente_confirmado_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 52, true);
+SELECT pg_catalog.setval('public.doentes_confirmados_doente_confirmado_id_seq', 55, true);
 
 
 --
@@ -1803,7 +1815,7 @@ SELECT pg_catalog.setval('public.supervisor_supervisor_id_seq', 4, true);
 -- Name: usuario_usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 21, true);
+SELECT pg_catalog.setval('public.usuario_usuario_id_seq', 23, true);
 
 
 --
@@ -2122,5 +2134,5 @@ ALTER TABLE ONLY public.supervisor
 -- PostgreSQL database dump complete
 --
 
-\unrestrict qHIrnBNJEzgmn4KThcfox0JX0oYE2vduERMr7fo5hExNvwTEYL9lqlbh2Hc8hD4
+\unrestrict Izj52qQ6uAV2egTiBA04OU9kQFUpm6EPhWODbEaCVcvCp1cpaRJl6I1pRW0A39I
 

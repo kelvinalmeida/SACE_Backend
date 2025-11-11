@@ -16,7 +16,7 @@ coordenadas_bairros_maceio = {
     "Farol": {"latitude": -9.6421, "longitude": -35.7350},
     "Cruz das Almas": {"latitude": -9.6255, "longitude": -35.7075},
     "Jacintinho": {"latitude": -9.6497, "longitude": -35.7203},
-    "Benedito Bentes": {"latitude": -9.5413, "longitude": -35.7356},
+    "Benedito Bentes": {"latitude": -9.55249, "longitude": -35.72574},
     "Serraria": {"latitude": -9.5859, "longitude": -35.7554},
     "Gruta de Lourdes": {"latitude": -9.6291, "longitude": -35.7389},
     "Mangabeiras": {"latitude": -9.6562, "longitude": -35.7089},
@@ -34,6 +34,7 @@ coordenadas_bairros_maceio = {
     "Antares": {"latitude": -9.5787, "longitude": -35.7401},
     "Clima Bom": {"latitude": -9.5815, "longitude": -35.7546},
 }
+
 
 
 @area_para_visita.route('/area_de_visita', methods=['POST'])
