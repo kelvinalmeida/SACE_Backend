@@ -11,15 +11,14 @@ def test_seguranca_permissoes_agente_area_visita(agente_client):
     de gerenciamento de áreas de visita, que são restritas a supervisores.
     """
     
-    # 1. Agente NÃO PODE listar todas as áreas (GET /area_de_visita)
-    # De acordo com `get_all.py`, a rota verifica o supervisor_id
-    # response_get_all = agente_client.get('/area_de_visita')
-    # assert response_get_all.status_code == 403
+    # # 1. Agente  PODE listar todas as áreas (GET /area_de_visita)
+    response_get_all = agente_client.get('/area_de_visita')
+    assert response_get_all.status_code == 200
     # assert "É nescessário ser supervisor" in response_get_all.json['error']
 
-    # 2. Agente NÃO PODE buscar uma área por ID (GET /area_de_visita/1)
-    # response_get_one = agente_client.get('/area_de_visita/1')
-    # assert response_get_one.status_code == 403
+    # 2. Agente PODE buscar uma área por ID (GET /area_de_visita/1)
+    response_get_one = agente_client.get('/area_de_visita/1')
+    assert response_get_one.status_code == 200
     # assert "É nescessário ser supervisor" in response_get_one.json['error']
 
     # 3. Agente NÃO PODE criar áreas (POST /area_de_visita)
@@ -144,9 +143,9 @@ def test_get_registros_por_area_visita(agente_client, auth_client):
     Esta rota busca os registros de campo (imóveis) APENAS do ciclo ATIVO.
     """
     
-    # No backup.sql, o ciclo ATIVO é o 8 (2025/2).
+    # No backup.sql, o ciclo ATIVO é o 8 (2025/4).
     # A area_de_visita_id=1 (Ponta Verde) tem 4 registros nesse ciclo
-    # (IDs 121, 122, 123, 124).
+    # (IDs 281, 282, 283, 284).
     
     # 1. Testar como AGENTE
     resp_agente = agente_client.get('/area_de_visita/1/registros')
@@ -157,7 +156,7 @@ def test_get_registros_por_area_visita(agente_client, auth_client):
     # Verifica se os dados estão corretos (status, número, etc.)
     assert resp_agente.json[0]['registro_de_campo_id'] == 281
     assert resp_agente.json[0]['imovel_numero'] == '101'
-    assert resp_agente.json[0]['imovel_status'] == 'bloqueado'
+    assert resp_agente.json[0]['imovel_status'] == 'inspecionado'
 
     # 2. Testar como SUPERVISOR (deve ter o mesmo resultado)
     resp_super = auth_client.get('/area_de_visita/1/registros')
@@ -165,4 +164,4 @@ def test_get_registros_por_area_visita(agente_client, auth_client):
     assert resp_super.status_code == 200
     assert isinstance(resp_super.json, list)
     assert len(resp_super.json) == 4
-    assert resp_super.json[0]['registro_de_campo_id'] == 121
+    assert resp_super.json[0]['registro_de_campo_id'] == 281
