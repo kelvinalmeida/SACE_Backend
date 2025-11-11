@@ -135,6 +135,12 @@ def criar_ciclo(current_user):
                     False                           # t
                 )
                 cursor.execute(insert_new_registro_query, novo_registro_data)
+
+        # Seta todas as areas de visita como Não Visitado
+        update_areas_query = """
+            UPDATE area_de_visita SET status = 'Não Visitado';
+        """
+        cursor.execute(update_areas_query)
         
         # CORREÇÃO 3: O `commit` deve ocorrer aqui, ao final do bloco `try`, se tudo deu certo.
         conn.commit()
